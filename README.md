@@ -1,6 +1,47 @@
-# InnovaRT - Patent-Aware Innovation & Commercialization System
+# InnovArt - Patent-Aware Innovation & Commercialization System
 
-A multi-agent Python system for technology scouting, innovation analysis, patent landscaping, and commercialization — fully compliant with intellectual property law.
+A multi-agent Python system for technology scouting, innovation analysis, patent landscaping, and commercialization — fully compliant with intellectual property law. Now with a **futuristic web dashboard**, a **FastAPI backend**, **SQLite persistence**, and a **one-click Windows desktop app**.
+
+## Dashboard & Desktop App
+
+InnovArt ships with an Innovation Command Center dashboard:
+
+- **Overview** — animated stat cards, TAM/SAM/SOM market sizing bars, priority donut, recent runs
+- **Run Pipeline** — launch all 10 agents with a live agent-flow animation
+- **Opportunities / Concepts** — score-bar cards for every result across all runs
+- **History** — every run stored in SQLite, view or delete any run
+
+### Run the dashboard (dev)
+
+```bash
+pip install -r requirements.txt
+uvicorn server.app:app --port 8765
+# open http://127.0.0.1:8765
+```
+
+### Build the Windows desktop app (.exe + shortcut)
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\pip install -r requirements.txt
+.\build_exe.ps1     # builds dist\InnovArt.exe and creates a desktop shortcut
+```
+
+Double-click the **InnovArt** desktop shortcut: the backend starts on localhost, the dashboard opens in its own window, and the server shuts itself down when you close it. Data persists in `%LOCALAPPDATA%\InnovArt\innovart.db` (SQLite — free, embedded, zero-config).
+
+### REST API
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/health` | Server + DB status |
+| GET | `/api/stats` | Dashboard aggregates |
+| GET | `/api/agents` | The 10-agent pipeline definition |
+| POST | `/api/pipeline/run` | Launch a run `{query, max_results}` (202 + run_id) |
+| GET | `/api/runs` | Run history |
+| GET | `/api/runs/{id}` | Full run detail (opportunities, concepts, market) |
+| DELETE | `/api/runs/{id}` | Delete a run |
+| GET | `/api/opportunities` | All opportunities, score-sorted |
+| GET | `/api/concepts` | All concepts, novelty-sorted |
 
 ## Architecture
 
@@ -49,9 +90,17 @@ python main.py --status
 ```
 innovart/
 ├── main.py                  # CLI entry point
+├── desktop.py               # Desktop app launcher (PyInstaller entry point)
+├── build_exe.ps1            # Builds InnovArt.exe + desktop shortcut
 ├── requirements.txt
 ├── pyproject.toml
 ├── README.md
+├── server/
+│   ├── app.py               # FastAPI backend (REST API + static hosting)
+│   ├── db.py                # SQLite persistence layer
+│   └── static/              # Dashboard frontend (HTML/CSS/JS, no build step)
+├── assets/
+│   └── make_icon.py         # App icon generator
 ├── innovart/
 │   ├── __init__.py
 │   ├── config.py            # System configuration

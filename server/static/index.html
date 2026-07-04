@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InnovArt — Innovation Command Center</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9889;</text></svg>">
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">IA</div>
+    <div class="logo-text">INNOV<span>ART</span></div>
+  </div>
+  <nav>
+    <button class="nav-item active" data-view="overview">
+      <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Overview
+    </button>
+    <button class="nav-item" data-view="pipeline">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      Run Pipeline
+    </button>
+    <button class="nav-item" data-view="opportunities">
+      <svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Opportunities
+    </button>
+    <button class="nav-item" data-view="concepts">
+      <svg viewBox="0 0 24 24"><path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"/></svg>
+      Concepts
+    </button>
+    <button class="nav-item" data-view="history">
+      <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.9 3.9L9 12H6a7 7 0 1 1 2 4.9l-1.4 1.4A9 9 0 1 0 13 3zm-1 5v5l4.3 2.5.7-1.2-3.5-2.1V8H12z"/></svg>
+      History
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="status-dot" id="apiStatus"></div>
+    <span id="apiStatusText">Connecting…</span>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- OVERVIEW -->
+  <section class="view active" id="view-overview">
+    <header class="view-header">
+      <div>
+        <h1>Innovation Command Center</h1>
+        <p class="subtitle">Patent-aware innovation &amp; commercialization at a glance</p>
+      </div>
+      <button class="btn btn-primary" onclick="switchView('pipeline')">&#9889; New Pipeline Run</button>
+    </header>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Pipeline Runs</div>
+        <div class="stat-value" id="statRuns">0</div>
+        <div class="stat-sub" id="statRunsSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Opportunities</div>
+        <div class="stat-value accent-cyan" id="statOpps">0</div>
+        <div class="stat-sub" id="statOppsSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Concepts</div>
+        <div class="stat-value accent-violet" id="statConcepts">0</div>
+        <div class="stat-sub" id="statConceptsSub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Commercial Potential</div>
+        <div class="stat-value accent-green" id="statCommercial">0%</div>
+        <div class="stat-sub">across all opportunities</div>
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="panel">
+        <h3>Market Sizing <span class="hint">latest run</span></h3>
+        <div id="marketBars" class="market-bars">
+          <div class="empty-hint">Run the pipeline to generate market analysis</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Priority Breakdown</h3>
+        <div class="donut-wrap">
+          <svg id="priorityDonut" viewBox="0 0 120 120" width="130" height="130"></svg>
+          <div id="donutLegend" class="donut-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Recent Runs</h3>
+      <div id="recentRuns" class="run-list"><div class="empty-hint">No runs yet — launch your first pipeline</div></div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="view" id="view-pipeline">
+    <header class="view-header">
+      <div>
+        <h1>Run Pipeline</h1>
+        <p class="subtitle">Launch all 10 agents against a technology domain</p>
+      </div>
+    </header>
+
+    <div class="panel launch-panel">
+      <div class="launch-form">
+        <div class="field">
+          <label for="queryInput">Technology domain</label>
+          <input id="queryInput" type="text" value="AI healthcare" maxlength="300"
+                 placeholder="e.g. clean energy, quantum computing, biotech…">
+        </div>
+        <div class="field field-small">
+          <label for="maxResults">Max results <span id="maxResultsVal">5</span></label>
+          <input id="maxResults" type="range" min="1" max="25" value="5">
+        </div>
+        <button class="btn btn-primary btn-launch" id="launchBtn">&#9889; Launch Pipeline</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Agent Pipeline</h3>
+      <div class="agent-flow" id="agentFlow"></div>
+    </div>
+
+    <div class="panel" id="runResultPanel" style="display:none">
+      <h3>Run Results <span class="hint" id="runResultId"></span></h3>
+      <div id="runResultBody"></div>
+    </div>
+  </section>
+
+  <!-- OPPORTUNITIES -->
+  <section class="view" id="view-opportunities">
+    <header class="view-header">
+      <div>
+        <h1>Opportunities</h1>
+        <p class="subtitle">Patent white-space discovered across all runs</p>
+      </div>
+    </header>
+    <div id="oppList" class="card-grid"><div class="empty-hint">No opportunities yet</div></div>
+  </section>
+
+  <!-- CONCEPTS -->
+  <section class="view" id="view-concepts">
+    <header class="view-header">
+      <div>
+        <h1>Innovation Concepts</h1>
+        <p class="subtitle">Novel inventions generated by the Innovation Architect</p>
+      </div>
+    </header>
+    <div id="conceptList" class="card-grid"><div class="empty-hint">No concepts yet</div></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="view" id="view-history">
+    <header class="view-header">
+      <div>
+        <h1>Run History</h1>
+        <p class="subtitle">Every pipeline run, stored locally in SQLite</p>
+      </div>
+    </header>
+    <div class="panel">
+      <div id="historyList" class="run-list"><div class="empty-hint">No runs yet</div></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

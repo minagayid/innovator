@@ -48,6 +48,9 @@ htmlcov/
 *.log
 logs/
 
+# PyInstaller
+*.spec
+
 # InnovaRT data directories (generated at runtime)
 innovart/data/
 innovart/reports/
