@@ -3,7 +3,8 @@ InnovaRT Orchestrator
 Coordinates all agents in the innovation pipeline.
 """
 
-from typing import List, Dict, Any, Optional
+import time
+from typing import List, Dict, Any, Optional, Callable
 from .models import PipelineResult, Opportunity, InnovationConcept, MarketAnalysis
 from .agents import (
     PatentScout,
@@ -66,51 +67,38 @@ class InnovaRTOrchestrator:
         self.logger.info("Starting InnovaRT Pipeline")
         self.logger.info("=" * 50)
 
-        # Step 1: Patent Scout
-        patent_scout = self.pipeline[0][1]
-        opportunities = patent_scout.run(query=query, max_results=max_results)
+        trace: List[Dict[str, Any]] = []
 
-        # Step 2: Research Agent
-        research_agent = self.pipeline[1][1]
-        research_findings = research_agent.run(opportunities)
+        # Each stage is wrapped so a single agent failure is recorded in the
+        # trace and the pipeline continues (degrading downstream stages that
+        # depend on the missing output) instead of crashing the whole run.
+        opportunities = self._stage(trace, "Patent Scout",
+                                     lambda: self.pipeline[0][1].run(query=query, max_results=max_results),
+                                     default=[])
+        research_findings = self._stage(trace, "Research Agent",
+                                        lambda: self.pipeline[1][1].run(opportunities),
+                                        default=[])
+        concepts = self._stage(trace, "Innovation Architect",
+                               lambda: self.pipeline[2][1].run(opportunities, research_findings),
+                               default=[])
+        self._stage(trace, "Multimodal Design", lambda: self.pipeline[3][1].run(concepts), default=[])
+        self._stage(trace, "Patentability Analyzer", lambda: self.pipeline[4][1].run(concepts), default=[])
+        self._stage(trace, "Engineering Optimizer", lambda: self.pipeline[5][1].run(concepts), default=[])
+        market_analysis = self._stage(trace, "Market Intelligence",
+                                      lambda: self.pipeline[6][1].run(concepts),
+                                      default=None)
+        self._stage(trace, "Commercialization",
+                    lambda: self.pipeline[7][1].run(concepts, market_analysis), default=[])
+        self._stage(trace, "Marketing", lambda: self.pipeline[8][1].run(concepts), default=[])
+        self._stage(trace, "Sales", lambda: self.pipeline[9][1].run(concepts), default=[])
 
-        # Step 3: Innovation Architect
-        innovation_architect = self.pipeline[2][1]
-        concepts = innovation_architect.run(opportunities, research_findings)
-
-        # Step 4: Multimodal Design
-        design_agent = self.pipeline[3][1]
-        designs = design_agent.run(concepts)
-
-        # Step 5: Patentability Analyzer
-        patentability = self.pipeline[4][1]
-        patent_reports = patentability.run(concepts)
-
-        # Step 6: Engineering Optimizer
-        optimizer = self.pipeline[5][1]
-        optimizations = optimizer.run(concepts)
-
-        # Step 7: Market Intelligence
-        market_agent = self.pipeline[6][1]
-        market_analysis = market_agent.run(concepts)
-
-        # Step 8: Commercialization
-        commercialization = self.pipeline[7][1]
-        commercial_plans = commercialization.run(concepts, market_analysis)
-
-        # Step 9: Marketing
-        marketing = self.pipeline[8][1]
-        marketing_plans = marketing.run(concepts)
-
-        # Step 10: Sales
-        sales = self.pipeline[9][1]
-        sales_strategies = sales.run(concepts)
-
-        # Compile results
+        failed = [s["stage"] for s in trace if s["status"] == "failed"]
         result = PipelineResult(
             opportunities=opportunities,
             concepts=concepts,
             market_analysis=market_analysis,
+            status="ok" if not failed else "partial",
+            execution_trace=trace,
             reports={
                 "research_findings": "Research findings saved",
                 "patent_analysis": "Patent reports saved",
@@ -122,12 +110,41 @@ class InnovaRTOrchestrator:
         )
 
         self.logger.info("=" * 50)
-        self.logger.info("InnovaRT Pipeline Complete")
+        self.logger.info("InnovaRT Pipeline Complete (%s)", result.status)
         self.logger.info(f"Opportunities: {len(opportunities)}")
         self.logger.info(f"Concepts: {len(concepts)}")
+        if failed:
+            self.logger.warning("Failed stages: %s", ", ".join(failed))
         self.logger.info("=" * 50)
 
         return result
+
+    def _stage(self, trace: List[Dict[str, Any]], name: str, fn: Callable[[], Any], default: Any) -> Any:
+        """Run one pipeline stage, recording status, timing and any error.
+
+        On failure the error is logged and captured in the trace, and
+        ``default`` is returned so downstream stages can proceed with an
+        empty input rather than the whole pipeline aborting.
+        """
+        start = time.monotonic()
+        try:
+            value = fn()
+            trace.append({
+                "stage": name,
+                "status": "ok",
+                "duration_ms": round((time.monotonic() - start) * 1000, 2),
+                "error": None,
+            })
+            return value
+        except Exception as exc:
+            self.logger.error("Stage '%s' failed: %s", name, exc)
+            trace.append({
+                "stage": name,
+                "status": "failed",
+                "duration_ms": round((time.monotonic() - start) * 1000, 2),
+                "error": f"{type(exc).__name__}: {exc}",
+            })
+            return default
 
     def run_single_agent(self, agent_name: str, *args, **kwargs) -> Any:
         """Run a single agent by name."""

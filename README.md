@@ -51,6 +51,13 @@ Patentability Analyzer → Engineering Optimizer → Market Intelligence →
 Commercialization → Marketing → Sales
 ```
 
+**Resilient orchestration.** Each stage is wrapped so a single agent failure
+is recorded and the pipeline continues — degrading downstream stages that
+depended on the missing output — instead of crashing the whole run. Every run
+carries an `execution_trace` (per-stage status, duration and error) and an
+overall `status` of `ok` or `partial`, both persisted with the run and
+returned from `GET /api/runs/{id}`.
+
 ## Agents (10 total)
 
 | # | Agent | Role |

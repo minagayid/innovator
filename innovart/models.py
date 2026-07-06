@@ -110,11 +110,22 @@ class PipelineResult:
     market_analysis: Optional[MarketAnalysis] = None
     reports: Dict[str, str] = field(default_factory=dict)
     completed_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    # "ok" when every stage completed, "partial" if any stage failed.
+    status: str = "ok"
+    # Per-stage record: {stage, status, duration_ms, error}. Lets callers see
+    # exactly which agents ran, how long they took, and what (if anything) failed.
+    execution_trace: List[Dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def failed_stages(self) -> List[str]:
+        return [s["stage"] for s in self.execution_trace if s.get("status") == "failed"]
 
     def to_json(self) -> str:
         return json.dumps({
             "pipeline_id": self.pipeline_id,
+            "status": self.status,
             "opportunities_count": len(self.opportunities),
             "concepts_count": len(self.concepts),
+            "failed_stages": self.failed_stages,
             "completed_at": self.completed_at,
         }, indent=2)

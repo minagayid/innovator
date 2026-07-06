@@ -53,6 +53,39 @@ class TestOrchestrator:
         assert isinstance(status, dict)
         assert len(status) == 10
 
+    def test_run_pipeline_records_execution_trace(self):
+        orch = InnovaRTOrchestrator()
+        result = orch.run_pipeline(query="AI", max_results=2)
+        assert result.status == "ok"
+        assert len(result.execution_trace) == 10
+        for stage in result.execution_trace:
+            assert stage["status"] == "ok"
+            assert stage["error"] is None
+            assert "duration_ms" in stage
+        assert result.failed_stages == []
+
+    def test_pipeline_degrades_to_partial_on_stage_failure(self):
+        orch = InnovaRTOrchestrator()
+
+        # Force the Market Intelligence agent to raise; the pipeline should
+        # record the failure, continue, and return a 'partial' result rather
+        # than crashing.
+        def boom(*args, **kwargs):
+            raise RuntimeError("market data unavailable")
+
+        orch.pipeline[6][1].run = boom  # Market Intelligence
+        result = orch.run_pipeline(query="AI", max_results=2)
+
+        assert result.status == "partial"
+        assert "Market Intelligence" in result.failed_stages
+        assert result.market_analysis is None
+        # Upstream stages still produced their outputs.
+        assert len(result.opportunities) > 0
+        assert len(result.concepts) > 0
+        # Downstream stages still ran after the failure.
+        stage_names = [s["stage"] for s in result.execution_trace]
+        assert stage_names.index("Sales") > stage_names.index("Market Intelligence")
+
     def test_save_results(self, tmp_path):
         import json
         orch = InnovaRTOrchestrator()

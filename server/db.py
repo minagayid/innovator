@@ -85,6 +85,16 @@ def connect() -> sqlite3.Connection:
 def init_db() -> None:
     with connect() as conn:
         conn.executescript(SCHEMA)
+        _migrate(conn)
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Additive migrations so existing databases keep working."""
+    cols = {row["name"] for row in conn.execute("PRAGMA table_info(runs)")}
+    if "execution_trace" not in cols:
+        conn.execute("ALTER TABLE runs ADD COLUMN execution_trace TEXT")
+    if "pipeline_status" not in cols:
+        conn.execute("ALTER TABLE runs ADD COLUMN pipeline_status TEXT")
 
 
 def create_run(run_id: str, query: str, max_results: int, started_at: str) -> None:
@@ -147,14 +157,20 @@ def complete_run(run_id: str, result: Any, completed_at: str) -> None:
                 ),
             )
         conn.execute(
-            "UPDATE runs SET status='completed', completed_at=? WHERE id=?",
-            (completed_at, run_id),
+            "UPDATE runs SET status='completed', completed_at=?, "
+            "execution_trace=?, pipeline_status=? WHERE id=?",
+            (
+                completed_at,
+                json.dumps(getattr(result, "execution_trace", [])),
+                getattr(result, "status", "ok"),
+                run_id,
+            ),
         )
 
 
 def _row_to_dict(row: sqlite3.Row) -> Dict[str, Any]:
     d = dict(row)
-    for key in ("tags", "specs", "competitors"):
+    for key in ("tags", "specs", "competitors", "execution_trace"):
         if key in d and d[key]:
             try:
                 d[key] = json.loads(d[key])
