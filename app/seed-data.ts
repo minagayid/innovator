@@ -1,0 +1,18 @@
+export type Invention = {
+  id: string; title: string; summary: string; category: string; stage: string; risk: "Low" | "Medium" | "High";
+  license: string; interest: number; owner: { name: string; initials: string }; updated: string; tags: string[]; art: string; symbol: string;
+};
+
+export const inventions: Invention[] = [
+  { id:"prosthetic", title:"Modular Prosthetic Hand", summary:"A field-repairable, body-powered hand with interchangeable grip modules and locally printable structural parts.", category:"Health and accessibility", stage:"Bench prototype", risk:"Medium", license:"CERN OHL-S", interest:12, owner:{name:"Amir Khalil",initials:"AK"}, updated:"2 days ago", tags:["Assistive tech","3D printing"], art:"coral", symbol:"⌁" },
+  { id:"dryer", title:"Solar Crop Dryer", summary:"A flat-pack solar dryer that reduces post-harvest loss for small farms without electricity.", category:"Climate and energy", stage:"Field testing", risk:"Low", license:"CERN OHL-P", interest:28, owner:{name:"Nia Okafor",initials:"NO"}, updated:"5 hours ago", tags:["Agriculture","Solar thermal"], art:"gold", symbol:"☼" },
+  { id:"filter", title:"FlowSafe Filter Bottle", summary:"A gravity-assisted water bottle with a visible filter-life indicator and replaceable media cartridge.", category:"Health and accessibility", stage:"Validated concept", risk:"High", license:"CC BY-SA", interest:9, owner:{name:"Mateo Ruiz",initials:"MR"}, updated:"yesterday", tags:["Water","Public health"], art:"blue", symbol:"◒" },
+  { id:"scope", title:"FoldScope Classroom Kit", summary:"A robust, adjustable phone-to-microscope mount designed for shared classroom equipment.", category:"Education hardware", stage:"Pilot batch", risk:"Medium", license:"CERN OHL-S", interest:17, owner:{name:"Leila Haddad",initials:"LH"}, updated:"3 days ago", tags:["Education","Optics"], art:"violet", symbol:"◎" },
+  { id:"energy", title:"OpenWatt Home Monitor", summary:"A clip-on energy monitor with local-first data, appliance signatures, and no cloud dependency.", category:"Climate and energy", stage:"Bench prototype", risk:"Medium", license:"TAPR OHL", interest:21, owner:{name:"Jon Bell",initials:"JB"}, updated:"1 week ago", tags:["Energy","Electronics"], art:"mint", symbol:"ϟ" },
+];
+
+export const priorArt = [
+  { score:71, source:"USPTO", number:"US-2018-0318112-A1", date:"2018", title:"Cable-operated prosthetic hand assembly", abstract:"A body-powered terminal device using tensioned cables to actuate multiple articulated digits.", concepts:["cable actuation","articulated digits"], overlap:"Shares the broad actuation method and articulated finger layout. It does not describe the proposed removable tension cartridge.", url:"https://patents.google.com/patent/US20180318112A1/en" },
+  { score:58, source:"WIPO", number:"WO-2020-094672-A1", date:"2020", title:"Modular digit system for assistive devices", abstract:"Interchangeable digit elements coupled to a shared palm support for customized functional grips.", concepts:["modular fingers","shared chassis"], overlap:"The modularity goal is similar, while the interface geometry and field-repair workflow appear different.", url:"https://patentscope.wipo.int/" },
+  { score:46, source:"EPO", number:"EP-3345578-A1", date:"2018", title:"Adjustable prosthetic cable tensioner", abstract:"A threaded adjustment mechanism for setting operating cable tension in an upper-limb prosthesis.", concepts:["cable tension","adjustment"], overlap:"Both inventions address cable tension. This record relies on threaded adjustment rather than a tool-free replaceable cartridge.", url:"https://worldwide.espacenet.com/" },
+];
