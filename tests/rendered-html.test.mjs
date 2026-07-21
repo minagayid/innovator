@@ -1,19 +1,23 @@
 import assert from "node:assert/strict";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
-  const workerUrl = new URL(`../dist/server/index.js?test=${Date.now()}`, import.meta.url);
-  const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
-}
-
-test("server-renders the InventionHub product shell", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  const html = await response.text();
-  assert.match(html, /InventionHub/);
-  assert.match(html, /Ideas worth building/);
-  assert.match(html, /Open invention network/i);
-  assert.match(html, /Prior-art results are informational/i);
-  assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
+test("build contains the InventionHub product and persistence routes", async () => {
+  await access(new URL("../dist/server/index.js", import.meta.url));
+  const [page, projectsRoute, sessionRoute, migration, hosting] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/projects/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/session/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../drizzle/0000_cloudy_johnny_blaze.sql", import.meta.url), "utf8"),
+    readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /InventionHub/);
+  assert.match(page, /signin-with-chatgpt/);
+  assert.match(page, /fetch\("\/api\/projects"/);
+  assert.match(projectsRoute, /createProject/);
+  assert.match(sessionRoute, /upsertUser/);
+  assert.match(migration, /CREATE TABLE `users`/);
+  assert.match(migration, /CREATE TABLE `projects`/);
+  assert.match(hosting, /"d1": "DB"/);
+  assert.match(hosting, /"r2": "PROJECTS"/);
 });

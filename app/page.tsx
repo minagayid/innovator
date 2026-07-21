@@ -1,10 +1,12 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { inventions, priorArt, type Invention } from "./seed-data";
 
 type View = "gallery" | "workspace" | "create" | "sources" | "manufacturing";
 type Tab = "Overview" | "Prior Art" | "Files" | "BOM" | "Prototype Plan" | "Collaborators" | "Manufacturing" | "License & Terms";
+type SessionUser = { id: string; email: string; displayName: string };
+type StoredProject = { id: string; title: string; summary: string; category: string; readinessStage: string; ownerName: string; updatedAt: string; visibility: string };
 
 const tabs: Tab[] = ["Overview", "Prior Art", "Files", "BOM", "Prototype Plan", "Collaborators", "Manufacturing", "License & Terms"];
 
@@ -57,14 +59,15 @@ function Sidebar({ view, setView }: { view: View; setView: (v: View) => void }) 
   );
 }
 
-function Topbar({ setView }: { setView: (v: View) => void }) {
-  return <header className="topbar"><div className="global-search"><span>⌕</span><input aria-label="Search inventions" placeholder="Search inventions, components, inventors…" /><kbd>⌘ K</kbd></div><button className="icon-button" aria-label="Notifications">♢<i /></button><button className="new-button" onClick={() => setView("create")}>＋ New invention</button><button className="user-menu"><span>AK</span><span><b>Amir Khalil</b><small>Inventor</small></span><span>⌄</span></button></header>;
+function Topbar({ setView, user, sessionReady }: { setView: (v: View) => void; user: SessionUser | null; sessionReady: boolean }) {
+  const initials = user?.displayName.split(/\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase() || "IH";
+  return <header className="topbar"><div className="global-search"><span>⌕</span><input aria-label="Search inventions" placeholder="Search inventions, components, inventors…" /><kbd>⌘ K</kbd></div><button className="icon-button" aria-label="Notifications">♢<i /></button><button className="new-button" onClick={() => setView("create")}>＋ New invention</button>{sessionReady && user ? <a className="user-menu" href="/signout-with-chatgpt?return_to=%2F" title="Sign out"><span>{initials}</span><span><b>{user.displayName}</b><small>Signed in · Log out</small></span><span>⌄</span></a> : <div className="auth-actions"><a href="/signin-with-chatgpt?return_to=%2F">Log in</a><a className="signup-button" href="/signin-with-chatgpt?return_to=%2F">Sign up</a></div>}</header>;
 }
 
-function Gallery({ open, setView }: { open: (i: Invention) => void; setView: (v: View) => void }) {
+function Gallery({ open, setView, items }: { open: (i: Invention) => void; setView: (v: View) => void; items: Invention[] }) {
   const [filter, setFilter] = useState("All inventions");
   const [sort, setSort] = useState("Recently updated");
-  const shown = useMemo(() => filter === "All inventions" ? inventions : inventions.filter(i => i.category.includes(filter.replace(" & ", " and "))), [filter]);
+  const shown = useMemo(() => filter === "All inventions" ? items : items.filter(i => i.category.includes(filter.replace(" & ", " and "))), [filter, items]);
   return <main className="page gallery-page">
     <section className="page-heading"><div><p className="eyebrow">OPEN INVENTION NETWORK</p><h1>Ideas worth building,<br /><em>together.</em></h1><p>Discover open physical inventions, contribute your expertise, and help move useful ideas from sketch to production.</p></div><div className="heading-metrics"><div><b>248</b><span>Open inventions</span></div><div><b>1,492</b><span>Contributors</span></div><div><b>37</b><span>In production</span></div></div></section>
     <section className="filter-row"><div className="filters">{["All inventions", "Health & accessibility", "Climate & energy", "Agriculture", "Education hardware"].map(x => <button key={x} className={filter === x ? "selected" : ""} onClick={() => setFilter(x)}>{x}</button>)}</div><label className="sort">Sort by <select value={sort} onChange={e => setSort(e.target.value)}><option>Recently updated</option><option>Lowest risk</option><option>Most interest</option></select></label></section>
@@ -114,6 +117,8 @@ function CreateInvention({ onCreated }: { onCreated: (i: Invention) => void }) {
   const [category, setCategory] = useState("Health and accessibility");
   const [generated, setGenerated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   async function structure(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -122,7 +127,24 @@ function CreateInvention({ onCreated }: { onCreated: (i: Invention) => void }) {
       setGenerated(true);
     } finally { setLoading(false); }
   }
-  return <main className="page create-page"><div className="create-heading"><p className="eyebrow">GPT DISCLOSURE ASSISTANT</p><h1>Turn a rough idea into a clear invention record.</h1><p>Describe the problem, your proposed solution, and anything you have already tried. The assistant will structure—not judge—your possible novelty.</p></div><div className="create-grid"><form className="content-card idea-form" onSubmit={structure}><div className="step-label"><span>1</span><p><b>Start with your own words</b><small>Messy notes are welcome.</small></p></div><label>What are you building?<textarea value={notes} onChange={e=>setNotes(e.target.value)} rows={9} /></label><label>Category<select value={category} onChange={e=>setCategory(e.target.value)}><option>Health and accessibility</option><option>Climate and energy</option><option>Agriculture</option><option>Education hardware</option></select></label><div className="privacy-note">⌁ Your draft stays private until you choose to publish.</div><button className="primary generate" disabled={loading || !notes.trim()}>{loading ? "Structuring disclosure…" : "✦ Structure with GPT-5.6"}</button></form><section className={`content-card disclosure-preview ${generated ? "ready" : ""}`}>{!generated ? <div className="empty-preview"><span>✦</span><h2>Your disclosure will appear here</h2><p>The assistant will extract a title, problem, operating principle, components, possible differentiators, and open questions.</p></div> : <><div className="step-label"><span>2</span><p><b>Review the structured disclosure</b><small>Demo fallback generated · Edit anything</small></p></div><div className="generated-title"><span>POSSIBLE TITLE</span><h2>Field-Repairable Modular Prosthetic Hand</h2></div><div className="generated-fields"><div><span>PROBLEM</span><p>Affordable upper-limb prostheses are difficult to fit, adapt, and repair in resource-limited clinics.</p></div><div><span>OPERATING PRINCIPLE</span><p>Body-powered cables actuate interchangeable grip modules mounted to a printable common chassis.</p></div><div><span>POSSIBLE NOVELTY</span><p>A tool-free cable tension cartridge combined with a standardized grip-module interface.</p></div><div><span>MAIN COMPONENTS</span><div className="tag-row"><span>Palm chassis</span><span>Grip modules</span><span>Cable cartridge</span><span>Adaptive socket</span></div></div></div><div className="question-box"><b>3 questions to strengthen the disclosure</b><p>How is tension retained under repeated loading? What grip forces are targeted? Which parts contact skin?</p></div><button className="primary" onClick={() => onCreated(inventions[0])}>Create private workspace →</button></>}</section></div></main>;
+  async function saveProject() {
+    setSaving(true); setError("");
+    try {
+      const response = await fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+        title: "Field-Repairable Modular Prosthetic Hand",
+        summary: "A field-repairable, body-powered hand with interchangeable grip modules and locally printable structural parts.",
+        category, visibility: "private",
+        document: { rawNotes: notes, disclosure: { problem: "Affordable upper-limb prostheses are difficult to fit, adapt, and repair in resource-limited clinics.", operatingPrinciple: "Body-powered cables actuate interchangeable grip modules mounted to a printable common chassis.", noveltyHypothesis: "A tool-free cable tension cartridge combined with a standardized grip-module interface.", components: ["Palm chassis", "Grip modules", "Cable cartridge", "Adaptive socket"] } },
+      }) });
+      const payload = await response.json() as { project?: StoredProject; error?: string; signIn?: string };
+      if (response.status === 401 && payload.signIn) { window.location.href = payload.signIn; return; }
+      if (!response.ok || !payload.project) throw new Error(payload.error || "Could not save this project.");
+      const project = payload.project;
+      onCreated({ id: project.id, title: project.title, summary: project.summary, category: project.category, stage: project.readinessStage, risk: "Medium", license: "Private draft", interest: 0, owner: { name: project.ownerName, initials: project.ownerName.split(/\s+/).map(x => x[0]).join("").slice(0,2).toUpperCase() }, updated: "just now", tags: ["Private", "AI structured"], art: "coral", symbol: "⌁" });
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save this project."); }
+    finally { setSaving(false); }
+  }
+  return <main className="page create-page"><div className="create-heading"><p className="eyebrow">GPT DISCLOSURE ASSISTANT</p><h1>Turn a rough idea into a clear invention record.</h1><p>Describe the problem, your proposed solution, and anything you have already tried. The assistant will structure—not judge—your possible novelty.</p></div><div className="create-grid"><form className="content-card idea-form" onSubmit={structure}><div className="step-label"><span>1</span><p><b>Start with your own words</b><small>Messy notes are welcome.</small></p></div><label>What are you building?<textarea value={notes} onChange={e=>setNotes(e.target.value)} rows={9} /></label><label>Category<select value={category} onChange={e=>setCategory(e.target.value)}><option>Health and accessibility</option><option>Climate and energy</option><option>Agriculture</option><option>Education hardware</option></select></label><div className="privacy-note">⌁ Your draft stays private until you choose to publish.</div><button className="primary generate" disabled={loading || !notes.trim()}>{loading ? "Structuring disclosure…" : "✦ Structure with GPT-5.6"}</button></form><section className={`content-card disclosure-preview ${generated ? "ready" : ""}`}>{!generated ? <div className="empty-preview"><span>✦</span><h2>Your disclosure will appear here</h2><p>The assistant will extract a title, problem, operating principle, components, possible differentiators, and open questions.</p></div> : <><div className="step-label"><span>2</span><p><b>Review the structured disclosure</b><small>Structured result · Saved securely after sign-in</small></p></div><div className="generated-title"><span>POSSIBLE TITLE</span><h2>Field-Repairable Modular Prosthetic Hand</h2></div><div className="generated-fields"><div><span>PROBLEM</span><p>Affordable upper-limb prostheses are difficult to fit, adapt, and repair in resource-limited clinics.</p></div><div><span>OPERATING PRINCIPLE</span><p>Body-powered cables actuate interchangeable grip modules mounted to a printable common chassis.</p></div><div><span>POSSIBLE NOVELTY</span><p>A tool-free cable tension cartridge combined with a standardized grip-module interface.</p></div><div><span>MAIN COMPONENTS</span><div className="tag-row"><span>Palm chassis</span><span>Grip modules</span><span>Cable cartridge</span><span>Adaptive socket</span></div></div></div><div className="question-box"><b>3 questions to strengthen the disclosure</b><p>How is tension retained under repeated loading? What grip forces are targeted? Which parts contact skin?</p></div>{error && <p className="form-error">{error}</p>}<button className="primary" onClick={saveProject} disabled={saving}>{saving ? "Saving workspace…" : "Create private workspace →"}</button></>}</section></div></main>;
 }
 
 function Sources() { return <main className="page directory-page"><div className="create-heading"><p className="eyebrow">SEARCH PROVIDERS</p><h1>Prior-art sources, with provenance.</h1><p>InventionHub separates search adapters from similarity analysis so every result keeps a visible source.</p></div><div className="source-grid">{[["DEMO","Curated demo dataset","24 reliable sample records","Connected"],["USPTO","PatentsView adapter","US patent research interface","Adapter ready"],["EPO","Open Patent Services","European publication records","Planned"],["WIPO","PATENTSCOPE","International PCT publications","Planned"]].map(x=><section className="content-card" key={x[0]}><span>{x[0]}</span><h2>{x[1]}</h2><p>{x[2]}</p><b>{x[3]}</b></section>)}</div></main> }
@@ -132,6 +154,25 @@ function ManufacturingDirectory({ open }: { open: (i:Invention)=>void }) { retur
 export default function Home() {
   const [view, setView] = useState<View>("gallery");
   const [selected, setSelected] = useState(inventions[0]);
-  function open(i: Invention) { setSelected(i); setView("workspace"); window.scrollTo({top:0, behavior:"smooth"}); }
-  return <div className="app-shell"><Sidebar view={view} setView={setView} /><div className="app-body"><Topbar setView={setView} />{view === "gallery" && <Gallery open={open} setView={setView} />}{view === "workspace" && <Workspace invention={selected} />}{view === "create" && <CreateInvention onCreated={open} />}{view === "sources" && <Sources />}{view === "manufacturing" && <ManufacturingDirectory open={open} />}<footer><span>InventionHub · Open physical innovation</span><span>Prior-art results are informational and not legal advice.</span></footer></div></div>;
+  const [items, setItems] = useState<Invention[]>(inventions);
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/session").then(r => r.json()) as Promise<{ user: SessionUser | null }>,
+      fetch("/api/projects").then(r => r.json()) as Promise<{ projects: StoredProject[] }>,
+    ]).then(([session, data]) => {
+      setUser(session.user);
+      const stored = (data.projects || []).map((project, index): Invention => ({
+        id: project.id, title: project.title, summary: project.summary, category: project.category, stage: project.readinessStage,
+        risk: "Medium", license: project.visibility === "public" ? "Open project" : "Private draft", interest: 0,
+        owner: { name: project.ownerName, initials: project.ownerName.split(/\s+/).map(x => x[0]).join("").slice(0,2).toUpperCase() },
+        updated: new Date(project.updatedAt).toLocaleDateString(), tags: [project.visibility === "public" ? "Public" : "Private", "Saved project"],
+        art: ["coral","gold","blue","violet","mint"][index % 5], symbol: "⌁",
+      }));
+      setItems([...stored, ...inventions.filter(seed => !stored.some(project => project.id === seed.id))]);
+    }).finally(() => setSessionReady(true));
+  }, []);
+  function open(i: Invention) { setSelected(i); setItems(current => current.some(item => item.id === i.id) ? current : [i, ...current]); setView("workspace"); window.scrollTo({top:0, behavior:"smooth"}); }
+  return <div className="app-shell"><Sidebar view={view} setView={setView} /><div className="app-body"><Topbar setView={setView} user={user} sessionReady={sessionReady} />{view === "gallery" && <Gallery open={open} setView={setView} items={items} />}{view === "workspace" && <Workspace invention={selected} />}{view === "create" && <CreateInvention onCreated={open} />}{view === "sources" && <Sources />}{view === "manufacturing" && <ManufacturingDirectory open={open} />}<footer><span>InventionHub · Open physical innovation</span><span>Prior-art results are informational and not legal advice.</span></footer></div></div>;
 }

@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1784633289265,
+      "tag": "0000_cloudy_johnny_blaze",
+      "breakpoints": true
+    }
+  ]
 }
