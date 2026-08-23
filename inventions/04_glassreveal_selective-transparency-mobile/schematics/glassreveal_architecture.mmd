@@ -1,0 +1,42 @@
+flowchart LR
+  subgraph F["Front interaction surface"]
+    FG["Strengthened cover glass"] --> FO["Conventional opaque OLED + touch"]
+    FO --> FS["Conventional display support / frame"]
+  end
+
+  subgraph C["Opaque protected service cassette"]
+    B["Opaque battery module"]
+    L["Opaque logic / memory module"]
+    T["Graphite / vapour-chamber thermal path"]
+    CAM["Opaque camera modules"]
+  end
+
+  subgraph R["Rear selective-reveal surface"]
+    RG["Rear strengthened glass"] --> EL["Patterned transparent electrode edge bus"]
+    EL --> RL["Normally scattering reveal film"]
+    RL --> OA["Optical adhesive + protected cassette view zone"]
+  end
+
+  subgraph P["Conventional protected functions"]
+    SP["Narrow structural spine"]
+    ANT["Dedicated antenna apertures"]
+    IO["Speaker, port and sensor zones"]
+  end
+
+  OA --> C
+  SP --> C
+  ANT --> SP
+  IO --> SP
+  CTRL["Low-duty optical-film controller"] --> RL
+  TEST["Coupon → rear-cover mule → integration mule"] --> R
+  REJECT["Reject/reframe if haze, drift, heat, repair or functional isolation fails"]
+  TEST -. "falsifies" .-> REJECT
+
+  classDef optical fill:#eaf5f5,stroke:#287680,color:#173e45;
+  classDef opaque fill:#f3efe8,stroke:#816540,color:#433520;
+  classDef conventional fill:#edf0f8,stroke:#4c6596,color:#243657;
+  classDef test fill:#fff4dd,stroke:#9b7924,color:#503e10;
+  class RG,EL,RL,OA optical;
+  class B,L,T,CAM opaque;
+  class FG,FO,FS,SP,ANT,IO conventional;
+  class CTRL,TEST,REJECT test;

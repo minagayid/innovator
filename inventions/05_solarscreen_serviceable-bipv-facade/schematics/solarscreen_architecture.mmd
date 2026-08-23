@@ -1,0 +1,41 @@
+flowchart LR
+  SUN["Incident solar spectrum"] --> OUT["Outboard safety glass"]
+  OUT --> PAT["Patterned PV shading fraction"]
+  OUT --> VIS["Clear vision fraction"]
+  PAT --> DC["PV DC output"]
+  VIS --> DAY["Daylight / view / glare measurement"]
+  PAT --> TH["Absorbed heat + cell-temperature measurement"]
+
+  subgraph IGU["Long-lived insulated-glass unit"]
+    PAT
+    VIS
+    CAV["Cavity / spacer / low-e or solar-control stack"]
+    SEAL["Seals / drainage / frame interface"]
+    PAT --> CAV
+    VIS --> CAV
+    CAV --> SEAL
+  end
+
+  subgraph M["Replaceable mullion service cassette"]
+    PROT["DC isolation + protection"]
+    CONV["Power conditioning + monitoring"]
+    SENS["Irradiance / temperature / fault sensing"]
+    DISP["Optional low-duty information strip\nseparately metered"]
+    DC --> PROT --> CONV
+    TH --> SENS
+    SENS --> CONV
+    CONV --> DISP
+  end
+
+  CONV --> CORE["Report core energy separately:\nPV − conditioning − controls"]
+  DISP --> TOTAL["Report information-layer energy separately"]
+  TEST["Coupon → representative IGU → outdoor mock-up → project qualification"]
+  FAIL["Reframe as passive BIPV/spandrel if\noptical/thermal/electrical balance or serviceability fails"]
+  TEST -. "falsifies" .-> FAIL
+
+  classDef glass fill:#eaf5f5,stroke:#287680,color:#173e45;
+  classDef electronic fill:#edf0f8,stroke:#4c6596,color:#243657;
+  classDef metric fill:#fff4dd,stroke:#9b7924,color:#503e10;
+  class OUT,PAT,VIS,CAV,SEAL glass;
+  class PROT,CONV,SENS,DISP electronic;
+  class DAY,TH,CORE,TOTAL,TEST,FAIL metric;
