@@ -1,0 +1,23 @@
+flowchart LR
+    U[Inventor] --> G[Public invention gallery]
+    G --> W[Invention workspace]
+    U --> D[Disclosure assistant]
+    D --> F[Structured invention fields]
+    F --> R[Reproducible prior-art demo data]
+    R --> S[Explainable similarity score and overlap notes]
+    W --> B[BOM and prototype plan]
+    W --> C[Collaborators and open-hardware license]
+    W --> M[Manufacturing-readiness brief]
+    D -. optional credentialed path .-> O[OpenAI Responses API]
+    D -. no key .-> X[Deterministic demo fallback]
+    S --> H[Human review and legal verification]
+    M --> H
+
+    classDef user fill:#e8f0fe,stroke:#1a73e8,color:#174ea6;
+    classDef core fill:#e8f5e9,stroke:#188038,color:#137333;
+    classDef data fill:#fff8e1,stroke:#f9ab00,color:#8a4b00;
+    classDef guard fill:#fce8e6,stroke:#d93025,color:#a50e0e;
+    class U user;
+    class G,W,D,F,B,C,M core;
+    class R,S,O,X data;
+    class H guard;

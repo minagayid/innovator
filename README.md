@@ -61,6 +61,8 @@ pnpm lint
 - Local seed records for predictable gallery and prior-art demos
 - Provider-oriented prior-art model ready for USPTO, EPO, or WIPO adapters
 
+The system flow is documented in [`INVENTIONHUB_ARCHITECTURE.mmd`](INVENTIONHUB_ARCHITECTURE.mmd) and rendered as [`INVENTIONHUB_ARCHITECTURE.png`](INVENTIONHUB_ARCHITECTURE.png). The diagram distinguishes the credential-free deterministic demo fallback from the optional OpenAI path and ends at human review and legal verification; it does not claim patentability or manufacturing validation.
+
 ## Demo walkthrough (under 3 minutes)
 
 1. Open the gallery and show real invention categories, readiness, risk, licensing, and manufacturing interest.
