@@ -10,6 +10,63 @@ type StoredProject = { id: string; title: string; summary: string; category: str
 
 const tabs: Tab[] = ["Overview", "Prior Art", "Files", "BOM", "Prototype Plan", "Collaborators", "Manufacturing", "License & Terms"];
 
+const REPO_ROOT = "https://github.com/minagayid/innovator/tree/main/inventions";
+
+type EngineeringPackage = {
+  label: string;
+  renderPath: string;
+  scope: string;
+  mechanism: string;
+  firstGate: string;
+  command?: string;
+  documents: { label: string; path: string }[];
+  modelChecks: string[];
+};
+
+const engineeringPackages: Record<string, EngineeringPackage> = {
+  aurora: {
+    label: "AURORA — non-nuclear thermal containment rig",
+    renderPath: "/engineering/aurora_multisector_test_rig.png",
+    scope: "Finite, deterministic thermal-network evidence only. This workspace does not model a reactor, plasma, magnetic field, neutron transport, or a licensed safety case.",
+    mechanism: "Four abstract heat sectors are coupled through controlled thermal paths. The validation model compares nominal operation, a localized loss-of-flow surrogate, and a deliberately degraded common-cooling path.",
+    firstGate: "An electrically heated, multi-sector rig must retain the chosen adjacent-sector margin during a pre-registered single-fault test.",
+    command: "cd inventions/01_aurora_veilight_energy-and-interstellar/validation && python3 aurora_thermal_containment.py --output-dir outputs/aurora",
+    documents: [
+      { label: "Model specification", path: "01_aurora_veilight_energy-and-interstellar/validation/MODEL_SPEC.md" },
+      { label: "Python validation script", path: "01_aurora_veilight_energy-and-interstellar/validation/aurora_thermal_containment.py" },
+      { label: "Regeneration guide", path: "01_aurora_veilight_energy-and-interstellar/validation/README.md" },
+    ],
+    modelChecks: ["Sector-isolated fault stays within configured finite temperature limits.", "Common-cooling negative control must be distinguishable.", "Halving the numerical time step must preserve maxima within the stated tolerance."],
+  },
+  veilight: {
+    label: "VEILIGHT — low-power sail coupon laboratory",
+    renderPath: "/engineering/veilight_coupon_test_chamber.png",
+    scope: "Finite low-power laboratory-coupon evidence only. This workspace does not design a high-power array, certify beam safety, predict an interstellar mission, or claim destination braking.",
+    mechanism: "A flat-specular control is compared with an abstracted restoring and damped coupon response while tracking photon-force accounting and radiative thermal balance.",
+    firstGate: "A vacuum coupon test must show measured lateral recovery and thermal margin relative to a flat control before any larger test is considered.",
+    command: "cd inventions/01_aurora_veilight_energy-and-interstellar/validation && python3 veilight_sail_dynamics.py --output-dir outputs/veilight",
+    documents: [
+      { label: "Model specification", path: "01_aurora_veilight_energy-and-interstellar/validation/MODEL_SPEC.md" },
+      { label: "Python validation script", path: "01_aurora_veilight_energy-and-interstellar/validation/veilight_sail_dynamics.py" },
+      { label: "Regeneration guide", path: "01_aurora_veilight_energy-and-interstellar/validation/README.md" },
+    ],
+    modelChecks: ["Candidate endpoint is checked against its initial lateral offset.", "Candidate lateral response is compared against a flat-specular control.", "Thermal negative control must cross the stated coupon limit; time-step sensitivity must pass."],
+  },
+  tidegill: {
+    label: "TIDEGILL — traceable direct-carbon research module",
+    renderPath: "/engineering/tidegill_direct_carbon_research_module.png",
+    scope: "A gated manufacturing roadmap for a sealed research module. It is not a commercial carbon plant, battery-material source, or operating recipe.",
+    mechanism: "A cassette-first, serialised research module separates feed and buffer, cell containment, power and control, gas management, carbon custody and the run-data ledger.",
+    firstGate: "A fully traceable R&D campaign must reconcile feed, energy, gas, solid mass, equipment condition and sample custody before material-quality claims are considered.",
+    documents: [
+      { label: "Manufacturing and supply-chain roadmap", path: "02_tidegill_carbon-cycle/manufacturing/MANUFACTURING_AND_SUPPLY_CHAIN_ROADMAP.md" },
+      { label: "Supplier-qualification template", path: "02_tidegill_carbon-cycle/manufacturing/supplier_qualification_template.csv" },
+      { label: "Refined system design", path: "02_tidegill_carbon-cycle/REFINED_DESIGN.md" },
+    ],
+    modelChecks: ["Supplier and lot identity must be recorded for each safety-critical component class.", "Every run requires calibrated analyzer, energy, feed, gas and sample-custody evidence.", "Battery-grade or durable-removal claims remain out of scope until separately qualified."],
+  },
+};
+
 function RiskBadge({ risk }: { risk: Invention["risk"] }) {
   return <span className={`risk risk-${risk.toLowerCase()}`}><i />{risk} risk</span>;
 }
@@ -83,7 +140,7 @@ function Workspace({ invention }: { invention: Invention }) {
     <div className="crumbs">Gallery <span>›</span> {invention.category} <span>›</span> {invention.title}</div>
     <section className="workspace-hero"><div className={`workspace-symbol art-${invention.art}`}>{invention.symbol}</div><div className="workspace-title"><div className="workspace-kicker"><span>PUBLIC INVENTION</span><span>Version 1.4</span></div><h1>{invention.title}</h1><p>{invention.summary}</p><div className="workspace-meta"><div className="author"><span className="avatar">{invention.owner.initials}</span><span><b>{invention.owner.name}</b><small>Lead inventor · Cairo, Egypt</small></span></div><span className="meta-divider" /><StageBadge stage={invention.stage} /><RiskBadge risk={invention.risk} /><span className="watch">◉ {invention.interest} watching</span></div></div><div className="hero-actions"><button className="secondary">↗ Share</button><button className="primary">＋ Contribute</button></div></section>
     <div className="tabs" role="tablist">{tabs.map(t => <button role="tab" aria-selected={tab === t} key={t} className={tab === t ? "active" : ""} onClick={() => setTab(t)}>{t}{t === "Prior Art" && <span>3</span>}{t === "BOM" && <span>8</span>}</button>)}</div>
-    {tab === "Overview" && <Overview invention={invention} onPriorArt={() => setTab("Prior Art")} />}
+    {tab === "Overview" && (engineeringPackages[invention.id] ? <EngineeringOverview invention={invention} /> : <Overview invention={invention} onPriorArt={() => setTab("Prior Art")} />)}
     {tab === "Prior Art" && <PriorArt />}
     {tab === "Files" && <Files />}
     {tab === "BOM" && <Bom />}
@@ -92,6 +149,11 @@ function Workspace({ invention }: { invention: Invention }) {
     {tab === "Manufacturing" && <Manufacturing interest={interest} setInterest={setInterest} />}
     {tab === "License & Terms" && <License />}
   </main>;
+}
+
+function EngineeringOverview({ invention }: { invention: Invention }) {
+  const workspace = engineeringPackages[invention.id];
+  return <div className="workspace-layout engineering-layout"><div className="workspace-main"><section className="content-card readme engineering-readme"><div className="card-header"><span><b>REPRODUCIBLE ENGINEERING WORKSPACE</b><small>Version-controlled source and bounded evidence</small></span><a href={`${REPO_ROOT}/${workspace.documents[0].path.split("/").slice(0, 2).join("/")}`} target="_blank" rel="noreferrer">Open repository ↗</a></div><article><p className="doc-label">CURRENT SCOPE</p><h2>{workspace.label}</h2><p>{workspace.scope}</p><figure className="engineering-render"><img src={workspace.renderPath} alt={`${workspace.label} concept render`} /><figcaption>Concept render of the bounded first test article; it is a design reference, not a build-ready drawing.</figcaption></figure><div className="callout"><span>✦</span><div><b>Testable mechanism</b><p>{workspace.mechanism}</p></div></div><p className="doc-label">FIRST DECISIVE GATE</p><p className="gate-copy">{workspace.firstGate}</p><p className="doc-label">REPRODUCE THE WORKSPACE</p>{workspace.command ? <pre className="run-command"><code>{workspace.command}</code></pre> : <p>The controlled manufacturing documents and supplier template are versioned in the linked repository directory.</p>}<div className="engineering-checks">{workspace.modelChecks.map((check, index) => <div key={check}><span>{String(index + 1).padStart(2, "0")}</span><p>{check}</p></div>)}</div></article></section><section className="content-card engineering-files"><div className="panel-heading"><div><p className="doc-label">VERSIONED ARTIFACTS</p><h2>Open, regenerate, inspect</h2><p>Source files are served from the public repository; review scope and limitations before reusing a result.</p></div></div><div className="file-list">{workspace.documents.map((document) => <a key={document.path} className="engineering-file" href={`${REPO_ROOT}/${document.path}`} target="_blank" rel="noreferrer"><span>DOC</span><p><b>{document.label}</b><small>{document.path}</small></p><b>Open ↗</b></a>)}</div></section></div><aside className="insight-rail"><section className="insight-card risk-report"><div className="insight-title"><span>VALIDATION STATUS</span><RiskBadge risk="High" /></div><div className="risk-score"><b>01</b><span>/05</span><div><strong>Bounded research</strong><small>Not a deployment claim</small></div></div><div className="score-bar"><i style={{width:"20%"}} /></div><p>Every model has an explicit control, a finite pass condition and an unresolved proof-gap ledger.</p></section><section className="insight-card readiness"><div className="insight-title"><span>READINESS</span><b>1 of 6</b></div>{["Mechanism stated", "Model / architecture", "Bench evidence", "Independent replication", "Design for manufacture", "Deployment review"].map((label, index) => <div className={index < 1 ? "done" : ""} key={label}><span>{index < 1 ? "✓" : index + 1}</span><p><b>{label}</b>{index===0 && <small>Current stage</small>}</p></div>)}</section><section className="insight-card terms"><span>RESPONSIBLE USE</span><p className="terms-block">These files are research artifacts. They are not operating instructions, a safety case, a commercial specification or a legal opinion.</p></section></aside></div>;
 }
 
 function Overview({ invention, onPriorArt }: { invention: Invention; onPriorArt: () => void }) {

@@ -1,0 +1,9 @@
+component_class,criticality,required_capability,second_source_required,incoming_acceptance_record,configuration_change_rule
+Research electrodes and current collectors,High,Lot-controlled composition and repeatable small-batch fabrication,Yes,CoA plus dimensions plus baseline electrical measurement,Engineering and safety review before substitution
+Electrolyte and containment materials,High,Traceable composition compatible packaging and current SDS,Yes,CoA plus packaging inspection plus contaminants plan,Safety review and updated compatibility record before substitution
+Refractory insulation and enclosure materials,High,Traceable grade controlled machining and thermal-cycling suitability,Yes,Material certificate plus dimensions plus inspection,Released drawing revision required
+Seals fittings and tubing,High,Declared media compatibility and lot traceability,Yes,Part-number and lot check plus pressure/leak test,Approved-part-list update required
+Power electronics and sensors,High,Industrial rating calibration path and support horizon,Yes,Functional test plus calibration certificate plus firmware version,Electrical review and regression test required
+Gas analyzers and sampling hardware,High,Calibratable for specified stream classes and traceable standard support,Yes,Zero/span record plus response-time check,Measurement-system review required
+Carbon sample containers,Medium,Inert sealed serializable laboratory-compatible containers,Yes,Tare mass plus closure integrity plus identifier verification,Custody-system review required
+Skid fabrication and panel assembly,High,Documented quality system drawing control and process-skid experience,Yes,FAT dossier plus as-built documentation plus electrical reports,Change control board approval required

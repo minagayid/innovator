@@ -17,3 +17,7 @@ This directory contains three **research design packages**, not commercially rea
 ## Suggested reading order
 
 Begin with the package `README.md`, then read `REFINED_DESIGN.md` and `RE_AUDIT.md`. The `supporting/` directory contains legacy/full background dossiers and transparent accounting notes; the `assets/` directory contains concept renders and system diagrams. No source file should be interpreted as a fabrication drawing, hazard analysis, regulatory submission, or patent opinion.
+
+## Publication status
+
+The local application build completed successfully. Cloudflare publication remains unverified: the configured account returned no Workers through the authorized binding inventory, and the dashboard session did not surface an authenticated deployment target. The version-controlled site is ready to deploy when an authenticated target is supplied or configured.

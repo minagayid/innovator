@@ -1,0 +1,118 @@
+{
+  "nominal_control": {
+    "config": {
+      "sectors": 4,
+      "duration_s": 1800.0,
+      "time_step_s": 0.5,
+      "coolant_temperature_k": 300.0,
+      "initial_temperature_k": 330.0,
+      "heat_input_w": 5000.0,
+      "heat_capacity_j_per_k": 180000.0,
+      "nominal_conductance_w_per_k": 210.0,
+      "cross_coupling_w_per_k": 4.0,
+      "fault_sector": 1,
+      "fault_start_s": 1801.0,
+      "fault_conductance_factor": 0.18,
+      "common_conductance_factor": 1.0,
+      "unfaulted_max_temperature_k": 360.0,
+      "any_sector_max_temperature_k": 430.0,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "max_temperature_by_sector_k": [
+        330.0,
+        330.0,
+        330.0,
+        330.0
+      ],
+      "unfaulted_sector_max_temperature_k": 330.0,
+      "any_sector_max_temperature_k": 330.0,
+      "unfaulted_margin_k": 30.0,
+      "any_sector_margin_k": 100.0,
+      "passes_unfaulted_limit": true,
+      "passes_any_sector_limit": true
+    }
+  },
+  "sector_isolated_fault": {
+    "config": {
+      "sectors": 4,
+      "duration_s": 1800.0,
+      "time_step_s": 0.5,
+      "coolant_temperature_k": 300.0,
+      "initial_temperature_k": 330.0,
+      "heat_input_w": 5000.0,
+      "heat_capacity_j_per_k": 180000.0,
+      "nominal_conductance_w_per_k": 210.0,
+      "cross_coupling_w_per_k": 4.0,
+      "fault_sector": 1,
+      "fault_start_s": 300.0,
+      "fault_conductance_factor": 0.18,
+      "common_conductance_factor": 1.0,
+      "unfaulted_max_temperature_k": 360.0,
+      "any_sector_max_temperature_k": 430.0,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "max_temperature_by_sector_k": [
+        330.0,
+        355.30784,
+        330.0,
+        330.0
+      ],
+      "unfaulted_sector_max_temperature_k": 330.0,
+      "any_sector_max_temperature_k": 355.30784,
+      "unfaulted_margin_k": 30.0,
+      "any_sector_margin_k": 74.69216,
+      "passes_unfaulted_limit": true,
+      "passes_any_sector_limit": true
+    }
+  },
+  "common_cooling_negative_control": {
+    "config": {
+      "sectors": 4,
+      "duration_s": 1800.0,
+      "time_step_s": 0.5,
+      "coolant_temperature_k": 300.0,
+      "initial_temperature_k": 330.0,
+      "heat_input_w": 5000.0,
+      "heat_capacity_j_per_k": 180000.0,
+      "nominal_conductance_w_per_k": 210.0,
+      "cross_coupling_w_per_k": 4.0,
+      "fault_sector": 1,
+      "fault_start_s": 300.0,
+      "fault_conductance_factor": 1.0,
+      "common_conductance_factor": 0.05,
+      "unfaulted_max_temperature_k": 360.0,
+      "any_sector_max_temperature_k": 430.0,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "max_temperature_by_sector_k": [
+        365.70977,
+        365.70977,
+        365.70977,
+        365.70977
+      ],
+      "unfaulted_sector_max_temperature_k": 365.70977,
+      "any_sector_max_temperature_k": 365.70977,
+      "unfaulted_margin_k": -5.70977,
+      "any_sector_margin_k": 64.29023,
+      "passes_unfaulted_limit": false,
+      "passes_any_sector_limit": true
+    }
+  },
+  "time_step_sensitivity": {
+    "coarse_time_step_s": 0.5,
+    "fine_time_step_s": 0.25,
+    "coarse_peak_k": 355.30783885,
+    "fine_peak_k": 355.30707163,
+    "relative_difference": 2.1593e-06,
+    "passes": true
+  },
+  "model_scope": "Finite, deterministic, non-nuclear lumped-parameter evidence only. It is not a reactor, blanket, plasma, magnetic-field, or safety-certification model.",
+  "overall": {
+    "isolated_fault_passes_temperature_checks": true,
+    "negative_control_is_distinguishable": true,
+    "time_step_check_passes": true
+  }
+}

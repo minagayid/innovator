@@ -1,0 +1,114 @@
+{
+  "flat_specular_control": {
+    "config": {
+      "duration_s": 90.0,
+      "time_step_s": 0.01,
+      "optical_power_w": 1.2,
+      "reflectance": 0.995,
+      "absorptance": 0.0005,
+      "emissivity": 0.75,
+      "area_m2": 0.003,
+      "mass_kg": 0.0003,
+      "thermal_capacity_j_per_k": 0.2,
+      "environment_temperature_k": 295.0,
+      "initial_temperature_k": 295.0,
+      "initial_offset_m": 0.01,
+      "initial_velocity_m_per_s": 0.0,
+      "restoring_gain_n_per_m": 0.0,
+      "damping_n_s_per_m": 0.0,
+      "temperature_limit_k": 450.0,
+      "endpoint_fraction_limit": 0.5,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "forward_photon_force_n": 7.96551059333187e-09,
+      "initial_offset_m": 0.01,
+      "peak_abs_offset_m": 0.01,
+      "final_abs_offset_m": 0.01,
+      "max_temperature_k": 295.04566004307344,
+      "endpoint_ratio": 1.0,
+      "passes_temperature": true,
+      "passes_endpoint": false
+    }
+  },
+  "candidate_restoring_coupon": {
+    "config": {
+      "duration_s": 90.0,
+      "time_step_s": 0.01,
+      "optical_power_w": 1.2,
+      "reflectance": 0.995,
+      "absorptance": 0.0005,
+      "emissivity": 0.75,
+      "area_m2": 0.003,
+      "mass_kg": 0.0003,
+      "thermal_capacity_j_per_k": 0.2,
+      "environment_temperature_k": 295.0,
+      "initial_temperature_k": 295.0,
+      "initial_offset_m": 0.01,
+      "initial_velocity_m_per_s": 0.0,
+      "restoring_gain_n_per_m": 2.2e-05,
+      "damping_n_s_per_m": 1.8e-05,
+      "temperature_limit_k": 450.0,
+      "endpoint_fraction_limit": 0.5,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "forward_photon_force_n": 7.96551059333187e-09,
+      "initial_offset_m": 0.01,
+      "peak_abs_offset_m": 0.01,
+      "final_abs_offset_m": 0.0003529556080168209,
+      "max_temperature_k": 295.04566004307344,
+      "endpoint_ratio": 0.035295560801682085,
+      "passes_temperature": true,
+      "passes_endpoint": true
+    }
+  },
+  "thermal_negative_control": {
+    "config": {
+      "duration_s": 90.0,
+      "time_step_s": 0.01,
+      "optical_power_w": 5.0,
+      "reflectance": 0.995,
+      "absorptance": 0.95,
+      "emissivity": 0.01,
+      "area_m2": 0.003,
+      "mass_kg": 0.0003,
+      "thermal_capacity_j_per_k": 0.01,
+      "environment_temperature_k": 295.0,
+      "initial_temperature_k": 295.0,
+      "initial_offset_m": 0.01,
+      "initial_velocity_m_per_s": 0.0,
+      "restoring_gain_n_per_m": 2.2e-05,
+      "damping_n_s_per_m": 1.8e-05,
+      "temperature_limit_k": 450.0,
+      "endpoint_fraction_limit": 0.5,
+      "numerical_tolerance_fraction": 0.01
+    },
+    "assessment": {
+      "forward_photon_force_n": 3.318962747221613e-08,
+      "initial_offset_m": 0.01,
+      "peak_abs_offset_m": 0.01,
+      "final_abs_offset_m": 0.0003529556080168209,
+      "max_temperature_k": 1293.5530169545464,
+      "endpoint_ratio": 0.035295560801682085,
+      "passes_temperature": false,
+      "passes_endpoint": true
+    }
+  },
+  "time_step_sensitivity": {
+    "coarse_time_step_s": 0.01,
+    "fine_time_step_s": 0.005,
+    "coarse_peak_offset_m": 0.01,
+    "fine_peak_offset_m": 0.01,
+    "relative_difference": 0.0,
+    "passes": true
+  },
+  "overall": {
+    "candidate_recovers_relative_to_initial_offset": true,
+    "candidate_stays_within_flat_control_envelope": true,
+    "candidate_thermal_check_passes": true,
+    "thermal_negative_control_is_distinguishable": true,
+    "time_step_check_passes": true
+  },
+  "model_scope": "Finite low-power laboratory coupon evidence only. It is not a high-power optical-array, spacecraft mission, materials qualification, beam-safety, or interstellar-trajectory model."
+}
