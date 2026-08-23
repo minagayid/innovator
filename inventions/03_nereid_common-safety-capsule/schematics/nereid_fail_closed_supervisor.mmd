@@ -1,0 +1,31 @@
+flowchart LR
+  START(["Requested kit-mode entry"]) --> Q1{"Primary lock\nvalid?"}
+  Q1 -->|"No / unknown"| D1["Deny entry\nlock recovery"]
+  Q1 -->|"Yes"| Q2{"Independent secondary\nlock valid?"}
+  Q2 -->|"No / disagreement"| D1
+  Q2 -->|"Yes"| Q3{"Mode controller +\nreserve low-voltage valid?"}
+  Q3 -->|"No / unknown"| D2["Deny entry\ncontroller power recovery"]
+  Q3 -->|"Yes"| Q4{"Environment permit +\nenergy reserve valid?"}
+  Q4 -->|"No / unknown"| D3["Deny entry\nretain safe baseline"]
+  Q4 -->|"Yes"| MODE{"Water-dependent\nmode?"}
+  MODE -->|"No: road / restricted flight"| A1["Admit configured test mode\nwithin its site boundary"]
+  MODE -->|"Yes"| Q5{"Leak boundary\nvalid?"}
+  Q5 -->|"No / unknown"| D4["Water-integrity recovery\nno new water-mode entry"]
+  Q5 -->|"Yes"| SUB{"Shallow submersion\nrequested?"}
+  SUB -->|"No: surface water"| A2["Admit protected-water test"]
+  SUB -->|"Yes"| Q6{"Positive ascent\nreserve valid?"}
+  Q6 -->|"No / unknown"| D5["Ascent / manual recovery\nno submersion entry"]
+  Q6 -->|"Yes"| A3["Admit uncrewed\nshallow-basin test"]
+
+  D1 --> SAFE["Safe state ledger +\noperator inspection required"]
+  D2 --> SAFE
+  D3 --> SAFE
+  D4 --> SAFE
+  D5 --> SAFE
+
+  classDef decision fill:#fff8db,stroke:#9a7b20,color:#544311,stroke-width:1.5px;
+  classDef admit fill:#e9f6ed,stroke:#287451,color:#153c2a,stroke-width:1.5px;
+  classDef deny fill:#fff0ec,stroke:#aa5444,color:#692d24,stroke-width:1.5px;
+  class Q1,Q2,Q3,Q4,Q5,SUB,Q6,MODE decision;
+  class A1,A2,A3 admit;
+  class D1,D2,D3,D4,D5,SAFE deny;

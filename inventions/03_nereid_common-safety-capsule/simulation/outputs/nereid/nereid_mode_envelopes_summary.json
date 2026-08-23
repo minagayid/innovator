@@ -1,0 +1,505 @@
+{
+  "config": {
+    "road_mass_kg": 850.0,
+    "road_grade": 0.1,
+    "road_acceleration_mps2": 0.55,
+    "road_rolling_resistance": 0.02,
+    "road_nominal_mu": 0.7,
+    "road_negative_mu": 0.1,
+    "road_required_margin_fraction": 0.2,
+    "flight_mass_kg": 960.0,
+    "flight_lift_units": 8,
+    "flight_unit_static_thrust_n": 1600.0,
+    "flight_min_twr": 1.3,
+    "surface_mass_kg": 820.0,
+    "surface_nominal_displacement_m3": 1.15,
+    "surface_negative_displacement_m3": 0.98,
+    "surface_min_reserve_n": 2000.0,
+    "surface_min_excess_volume_m3": 0.2,
+    "sub_mass_kg": 860.0,
+    "sub_nominal_volume_m3": 1.05,
+    "sub_negative_volume_m3": 0.96,
+    "sub_downward_drag_allowance_n": 300.0,
+    "sub_min_upward_reserve_n": 1000.0,
+    "sub_quadratic_drag_n_per_mps2": 420.0,
+    "sub_duration_s": 2.0,
+    "sub_time_step_s": 0.002,
+    "numerical_tolerance_fraction": 0.01
+  },
+  "road_nominal": {
+    "friction_coefficient": 0.7,
+    "available_traction_force_n": 5805.99896951681,
+    "declared_force_demand_n": 1462.8141090600247,
+    "force_margin_fraction": 2.9690613684657645,
+    "passes": true
+  },
+  "road_negative_control": {
+    "friction_coefficient": 0.1,
+    "available_traction_force_n": 829.4284242166873,
+    "declared_force_demand_n": 1462.8141090600247,
+    "force_margin_fraction": -0.43299123307631926,
+    "passes": false
+  },
+  "flight_nominal": {
+    "available_lift_units": 8,
+    "total_static_thrust_n": 12800.0,
+    "weight_n": 9414.384,
+    "thrust_to_weight_ratio": 1.3596216173039044,
+    "passes": true
+  },
+  "flight_single_unit_loss": {
+    "available_lift_units": 7,
+    "total_static_thrust_n": 11200.0,
+    "weight_n": 9414.384,
+    "thrust_to_weight_ratio": 1.1896689151409163,
+    "passes": false
+  },
+  "surface_nominal": {
+    "mass_kg": 820.0,
+    "displacement_m3": 1.15,
+    "buoyancy_force_n": 11277.6475,
+    "weight_n": 8041.4529999999995,
+    "reserve_force_n": 3236.1944999999996,
+    "excess_displacement_volume_m3": 0.32999999999999996,
+    "passes_reserve": true,
+    "passes_excess_volume": true,
+    "passes": true
+  },
+  "surface_negative_control": {
+    "mass_kg": 820.0,
+    "displacement_m3": 0.98,
+    "buoyancy_force_n": 9610.517,
+    "weight_n": 8041.4529999999995,
+    "reserve_force_n": 1569.0640000000003,
+    "excess_displacement_volume_m3": 0.16000000000000003,
+    "passes_reserve": false,
+    "passes_excess_volume": false,
+    "passes": false
+  },
+  "submersion_nominal": {
+    "volume_m3": 1.05,
+    "upward_reserve_n": 1563.263500000001,
+    "terminal_velocity_proxy_mps": 1.8422176430628416,
+    "upward_displacement_proxy_m": 2.485945933493215,
+    "passes": true
+  },
+  "submersion_negative_control": {
+    "volume_m3": 0.96,
+    "upward_reserve_n": 680.6650000000009,
+    "terminal_velocity_proxy_mps": 1.0775421875982931,
+    "upward_displacement_proxy_m": 1.2903667050309235,
+    "passes": false
+  },
+  "fault_matrix_safeguarded": {
+    "rows": [
+      {
+        "mode": "road",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "lock_secondary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "lock_secondary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "lock_secondary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "leak_monitor",
+        "state": "RECOVERY_WATER_INTEGRITY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "lock_secondary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "leak_monitor",
+        "state": "RECOVERY_WATER_INTEGRITY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "positive_ascent_reserve",
+        "state": "RECOVERY_ASCENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      }
+    ],
+    "unsafe_admissions": 0,
+    "passes": true
+  },
+  "fault_matrix_negative_control": {
+    "rows": [
+      {
+        "mode": "road",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "lock_secondary",
+        "state": "ADMIT_MODE",
+        "unsafe_admission": true,
+        "fail_closed": false
+      },
+      {
+        "mode": "road",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "road",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "lock_secondary",
+        "state": "ADMIT_MODE",
+        "unsafe_admission": true,
+        "fail_closed": false
+      },
+      {
+        "mode": "flight",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "flight",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "lock_secondary",
+        "state": "ADMIT_MODE",
+        "unsafe_admission": true,
+        "fail_closed": false
+      },
+      {
+        "mode": "surface",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "leak_monitor",
+        "state": "RECOVERY_WATER_INTEGRITY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "surface",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "lock_primary",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "lock_secondary",
+        "state": "ADMIT_MODE",
+        "unsafe_admission": true,
+        "fail_closed": false
+      },
+      {
+        "mode": "submersion",
+        "fault": "mode_controller",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "reserve_low_voltage",
+        "state": "DENY_LOCK_OR_CONTROLLER",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "leak_monitor",
+        "state": "RECOVERY_WATER_INTEGRITY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "energy_margin",
+        "state": "DENY_ENERGY",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "environment_permit",
+        "state": "DENY_ENVIRONMENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      },
+      {
+        "mode": "submersion",
+        "fault": "positive_ascent_reserve",
+        "state": "RECOVERY_ASCENT",
+        "unsafe_admission": false,
+        "fail_closed": true
+      }
+    ],
+    "unsafe_admissions": 4,
+    "passes": false
+  },
+  "time_step_sensitivity": {
+    "coarse_time_step_s": 0.002,
+    "fine_time_step_s": 0.001,
+    "coarse_terminal_velocity_proxy_mps": 1.8422176430628416,
+    "fine_terminal_velocity_proxy_mps": 1.8422176430630812,
+    "relative_difference": 1.3005310725163652e-13,
+    "passes": true
+  },
+  "overall": {
+    "road_nominal_passes": true,
+    "road_negative_control_is_distinguishable": true,
+    "flight_nominal_passes": true,
+    "flight_loss_control_is_distinguishable": true,
+    "surface_nominal_passes": true,
+    "surface_negative_control_is_distinguishable": true,
+    "submersion_nominal_passes": true,
+    "submersion_negative_control_is_distinguishable": true,
+    "safeguarded_fault_matrix_passes": true,
+    "fault_matrix_negative_control_is_distinguishable": true,
+    "time_step_check_passes": true
+  },
+  "model_scope": "Finite, deterministic, one-kit-at-a-time research-screening evidence only. It is not a vehicle architecture release, flight, road, vessel, pressure-hull, public-operation, or safety-certification result."
+}

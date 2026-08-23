@@ -1,0 +1,34 @@
+flowchart TD
+  P0["Phase 0\nDigital mass / interface / hazard model"] --> G0{"Closed mass, centre-of-gravity,\nenergy and recovery margins?"}
+  G0 -->|"No"| R0["Revise model"]
+  R0 --> P0
+  G0 -->|"Yes"| P1
+
+  P1["Phase 1\nCapsule-interface rig\nlocks + isolation + leak boundary + supervisor"] --> G1{"Every defined\nsingle fault fail-closed?"}
+  G1 -->|"No"| R1["Revise interface / supervisor"]
+  R1 --> P1
+  G1 -->|"Yes"| P2
+
+  P2["Phase 2\nSeparate uncrewed kit tests\nroad · restricted flight · surface water · shallow basin"] --> G2{"Each kit clears\nits own domain gate?"}
+  G2 -->|"No"| R2["Return to the affected\nkit only"]
+  R2 --> P2
+  G2 -->|"Yes"| P3
+
+  P3["Phase 3\nCapsule + one kit\ninterface load and recovery trials"] --> G3{"No interface-induced\ncommon-mode failure?"}
+  G3 -->|"No"| P1
+  G3 -->|"Yes"| P4
+
+  P4["Phase 4\nSequential capsule-kit changes\nconfiguration-control audit"] --> G4{"Repeatable inspection\nand safe changeover?"}
+  G4 -->|"No"| P3
+  G4 -->|"Yes"| P5
+
+  P5["Phase 5\nOptional combined research configuration\nindependent review required"] --> BOUNDARY["Boundary: no crew carriage,\npublic operation or deep submersion\nwithout separate evidence and approvals"]
+
+  classDef phase fill:#edf7f3,stroke:#176b48,color:#123a2a,stroke-width:1.5px;
+  classDef gate fill:#fff8db,stroke:#9a7b20,color:#544311;
+  classDef revise fill:#fff0ec,stroke:#aa5444,color:#692d24;
+  classDef boundary fill:#edf1fb,stroke:#416eaa,color:#183d71,stroke-width:2px;
+  class P0,P1,P2,P3,P4,P5 phase;
+  class G0,G1,G2,G3,G4 gate;
+  class R0,R1,R2 revise;
+  class BOUNDARY boundary;

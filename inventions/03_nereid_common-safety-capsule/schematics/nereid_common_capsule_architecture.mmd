@@ -1,0 +1,54 @@
+flowchart TB
+  subgraph C["NEREID common safety capsule — uncrewed research article"]
+    IF["Certified interface frame\nmechanical loads + keyed locks"]
+    HV["High-voltage service spine\nsegregated contactors + service disconnect"]
+    LV["Independent low-voltage reserve\nmode controller and recovery bus"]
+    MC["Fail-closed mode supervisor\nindependent hardware check"]
+    IM["Instrumentation mast\nlocks, leak, energy, thermal, navigation"]
+    RB["Recovery hardpoints\ntow + manual recovery"]
+    IF --> MC
+    HV --> MC
+    LV --> MC
+    IM --> MC
+    RB --> MC
+  end
+
+  MC -->|"admit only when\nconfiguration + reserve + environment valid"| RK
+  MC -->|"admit only when\nconfiguration + reserve + environment valid"| FK
+  MC -->|"admit only when\nconfiguration + reserve + environment valid"| SK
+  MC -->|"admit only when\nconfiguration + reserve + environment valid"| UK
+
+  subgraph RK["Road kit — one at a time"]
+    RW["Low-speed wheel / brake module"]
+    RR["Controlled-course recovery state"]
+  end
+  subgraph FK["Restricted-flight kit — one at a time"]
+    FP["Distributed lift module\nstatic-test envelope only"]
+    FR["Tether / thrust-inhibit recovery state"]
+  end
+  subgraph SK["Surface-water kit — one at a time"]
+    SH["Protected-water hull / flotation module"]
+    SR["Tow / float recovery state"]
+  end
+  subgraph UK["Shallow-submersion kit — one at a time"]
+    UH["Uncrewed basin buoyancy / ballast module"]
+    UR["Positive-ascent + recovery state"]
+  end
+
+  MC -. "loss / disagreement" .-> DENY["DENY MODE ENTRY\nor activate mode-specific recovery"]
+  DENY --> RR
+  DENY --> FR
+  DENY --> SR
+  DENY --> UR
+
+  classDef capsule fill:#edf7f3,stroke:#166a4e,color:#123a2a,stroke-width:2px;
+  classDef road fill:#f2f5ee,stroke:#617469,color:#223127;
+  classDef flight fill:#eef4fa,stroke:#2c6a93,color:#173a51;
+  classDef water fill:#eef8fa,stroke:#237e8d,color:#164651;
+  classDef deny fill:#fff0ec,stroke:#aa5444,color:#692d24,stroke-width:2px;
+  class IF,HV,LV,MC,IM,RB capsule;
+  class RW,RR road;
+  class FP,FR flight;
+  class SH,SR water;
+  class UH,UR water;
+  class DENY deny;
