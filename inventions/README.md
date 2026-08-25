@@ -17,6 +17,10 @@ This directory contains six **research design packages**, not commercially ready
 
 **[S] Sourced** claims are traceable to external references. **[I] Inferred** claims follow from stated sources, equations, or transparent engineering accounting. **[P] Proposed** statements are design hypotheses. **[U] Unresolved** statements require further research or test data.
 
+## Reusable methods
+
+The reusable evidence, formalization, and computational workflows that informed the current repository standard are versioned separately in [`../skills.md/eureka_skill/`](../skills.md/eureka_skill/). That collection does not validate any individual invention package; it provides reusable gates for future research work.
+
 ## Suggested reading order
 
 Begin with the package `README.md`, then read `REFINED_DESIGN.md` and, where provided, `RE_AUDIT.md`. The `simulation/` directory records a pre-registered model/test plan; `supporting/` directories contain legacy/full background dossiers where retained; `assets/` and `schematics/` contain visual materials. No source file should be interpreted as a fabrication drawing, hazard analysis, regulatory submission, or patent opinion.

@@ -1,50 +1,57 @@
-# InventionHub
+# Innovator
 
-**An open-source workspace for physical inventions.** InventionHub helps inventors turn rough notes into structured disclosures, inspect explainable prior-art matches, coordinate open collaboration, and prepare useful hardware for manufacturing.
+**Innovator** is a repository for an experimental invention-workspace application, documented invention research packages, and a versioned collection of reusable advanced-mathematics and innovation skills. The repository retains earlier application material while its reusable-methods surface is now the canonical [`skills.md/eureka_skill/`](skills.md/eureka_skill/) collection.
 
-![InventionHub workflow](https://img.shields.io/badge/workflow-idea%20%E2%86%92%20prior%20art%20%E2%86%92%20manufacturing-176b48)
+> **Evidence boundary.** Repository materials can document hypotheses, simulations, finite checks, design studies, and research workflows. They do **not** by themselves establish a theorem, safe physical design, patentability, freedom to operate, certification, manufacturing readiness, or commercial viability.
 
-## The problem
+| Repository area | What it contains | Primary entry point |
+|---|---|---|
+| Application | A Vinext/Vite, React, and Cloudflare Worker-compatible vertical-slice invention workspace with deterministic demo behavior and an optional OpenAI disclosure route. | [`app/`](app/) and [`package.json`](package.json) |
+| Invention archive | Bounded research packages, supporting visual material, models, and explicit limitations from prior work. | [`inventions/`](inventions/) |
+| Reusable methods | The **eureka_skill** collection: 16 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, and formal-claim auditing. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
+| Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
-Physical invention knowledge is fragmented across notebooks, CAD folders, patent databases, and manufacturing contacts. Independent inventors often repeat research, struggle to document possible novelty, and lack a transparent path from prototype to production.
+## `eureka_skill`: reusable advanced-mathematics and innovation methods
 
-## The solution
+The literal `skills.md/` directory name preserves the requested repository path. It is a directory—not a single Markdown file—because every child is a self-contained skill package with a `SKILL.md` and only the scripts, templates, or references it needs.
 
-InventionHub brings the workflow into one practical workspace:
+The collection is organized around an evidence-first contract. It labels claims as **sourced, computed, inferred, proposed, or unresolved**; requires baselines, meaningful negative controls, decision-reversal conditions, and explicit proof gaps; and keeps verification, model validation, uncertainty quantification, and reproducibility distinct. The included computational extensions are not a claim that the repository provides supercomputer hardware or results.
 
-- A seeded public gallery of open physical inventions
-- A GPT-powered disclosure assistant that uses careful “possible novelty” language
-- A patent-source adapter concept and reliable demo prior-art dataset
-- Explainable similarity scoring, overlap notes, and differentiation hypotheses
-- README-style invention documentation, files, BOM, and prototype planning
-- Contributor attribution and open-hardware licensing
-- Manufacturing readiness and a clearly labeled proposed 50/50 net-profit split
+| Collection component | Package(s) | Function |
+|---|---|---|
+| Research and critique | `critical-creative-thinking`, `research-synthesis-hypothesis`, `frontier-research-architect` | Frame decisions, audit evidence coverage, and expose assumptions. |
+| Mechanism generation | `innovation-breakthrough-design`, `contradiction-mechanism-lab`, `cross-domain-recombination`, `invention-generation-orchestrator` | Create and compare falsifiable mechanism candidates. |
+| Formalization and validation | `conjecture-formalization-lab`, `invention-validation-lab`, `bounded-invention-engineering` | Bound models, hypotheses, and kill/continue/reframe decisions. |
+| Mathematics and high-integrity computation | `advanced-mathematics-computation`, `math-research-orchestrator`, `eureka-computational-lab`, `eureka-design-space-lab`, `eureka-formal-logic-lab` | Plan VVUQ-aware studies, constrained trade-offs, finite/exhaustive checks, certificates, and counterexample search. |
+| Mega router | `eureka-skill` | Expose the user-facing **eureka_skill** routing workflow. |
 
-The app is a polished vertical-slice demo. Every core flow works without external credentials.
+Read the complete collection charter, validation record, and cited research grounding in [`skills.md/eureka_skill/COLLECTION.md`](skills.md/eureka_skill/COLLECTION.md). Individual packages are available under [`skills.md/eureka_skill/skills/`](skills.md/eureka_skill/skills/).
 
-## Quick start
+## Local development
 
-Requirements: Node.js 22.13+ and pnpm.
+The application requires **Node.js 22.13+** and pnpm. Install the locked dependency set and start the local development server as follows.
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open the local URL shown in the terminal. Choose any invention to inspect its complete workspace, or select **New invention** to run the disclosure flow.
+Open the local URL printed by the development server. The app remains an experimental vertical slice: its deterministic demo path runs without external credentials, while the optional disclosure endpoint can use an API key when configured.
 
-## Optional OpenAI integration
+## Optional OpenAI configuration
 
-Copy `.env.example` to `.env.local` and add an API key:
+Copy `.env.example` to `.env.local` and supply values appropriate to your environment.
 
 ```text
 OPENAI_API_KEY=your_key_here
 OPENAI_MODEL=gpt-5.6
 ```
 
-`POST /api/disclosure` uses the OpenAI Responses API when a key exists and returns a deterministic demo disclosure otherwise. The system prompt explicitly avoids patentability claims and requests structured invention fields.
+Do not treat generated disclosure text or prior-art-like similarity output as legal, scientific, or engineering validation. Human subject-matter review remains necessary.
 
-## Validate
+## Verification commands
+
+Run the repository checks before proposing or merging changes.
 
 ```bash
 pnpm build
@@ -52,43 +59,26 @@ pnpm test
 pnpm lint
 ```
 
-## Architecture
+The `test` script runs a production build before its rendered-HTML test. The reusable skills carry their own structural validation instructions; the current collection release records its validation status in [`COLLECTION.md`](skills.md/eureka_skill/COLLECTION.md). A structural validator checks package shape and required sections; it cannot certify mathematical correctness or physical readiness.
 
-- Next.js-compatible TypeScript app powered by vinext/Vite
-- React client workspace with accessible, responsive interactions
-- Cloudflare Worker-compatible server output
-- OpenAI Responses API route with credential-free fallback
-- Local seed records for predictable gallery and prior-art demos
-- Provider-oriented prior-art model ready for USPTO, EPO, or WIPO adapters
+## Static companion and deployment boundary
 
-The system flow is documented in [`INVENTIONHUB_ARCHITECTURE.mmd`](INVENTIONHUB_ARCHITECTURE.mmd) and rendered as [`INVENTIONHUB_ARCHITECTURE.png`](INVENTIONHUB_ARCHITECTURE.png). The diagram distinguishes the credential-free deterministic demo fallback from the optional OpenAI path and ends at human review and legal verification; it does not claim patentability or manufacturing validation.
+The main application includes server-rendered routes and API behavior, which GitHub Pages cannot execute. The repository therefore provides a separate static research companion rather than pretending the full application is a static deploy.
 
-## Demo walkthrough (under 3 minutes)
+```bash
+pnpm run pages:build
+```
 
-1. Open the gallery and show real invention categories, readiness, risk, licensing, and manufacturing interest.
-2. Create an invention from rough prosthetic-hand notes and structure the disclosure.
-3. Open the workspace and inspect the repetition-risk report, overlap explanations, and source links.
-4. Show the BOM, prototype plan, collaborators, and manufacturing brief.
-5. Register manufacturing interest and explain the proposed, non-binding 50/50 commercialization split.
+This writes a reviewable static artifact to `dist-pages/`, which is intentionally ignored by Git. The tested deployment workflow remains a template because the available automation credential could not create a GitHub Actions workflow file. See [`GITHUB_PAGES.md`](GITHUB_PAGES.md) for the administrator activation step and the exact static-versus-server boundary.
 
-## Legal and safety boundaries
+## Legal, safety, and research boundaries
 
-- Prior-art results are informational and are not legal advice.
-- A low risk score does not guarantee patentability, freedom to operate, or non-infringement.
-- Manufacturing interest does not create a binding agreement.
-- Safety-critical inventions require qualified review before use.
-- Demo patent matches are illustrative and should be verified at the linked official or public source.
+Prior-art-like outputs are informational only and not legal advice. A low similarity score does not guarantee novelty, patentability, non-infringement, or freedom to operate. Simulation convergence does not automatically validate a physical model, and a documented invention package does not make a device safe or ready to manufacture. Safety-critical, regulated, and high-consequence work requires qualified independent review, measured evidence, and applicable regulatory/legal processes.
 
-## Build Week
+## Historical implementation note
 
-This Build Week submission was created from the product plan in `INVENTIONHUB_CODEX_PLAN.md`. Codex helped scaffold the application, translate the product requirements into the complete interface, implement the demo data and OpenAI fallback, and validate the production build. GPT-5.6 is the configured model for live disclosure structuring.
-
-## Known limitations
-
-- Demo state resets on refresh; persistence and authentication are intentionally outside this vertical slice.
-- Prior-art ranking uses curated demo results; production use requires live source adapters and legal review.
-- Manufacturing cost figures and partner enquiries are illustrative.
+The source tree and a few internal filenames retain the earlier **InventionHub** label because they are part of the preserved application implementation. The repository identity and current documentation are **Innovator**. The former Build Week/demo framing is retained only as historical implementation context in tracked source material, not as the current description of this project.
 
 ## License
 
-Application code is available under the [MIT License](LICENSE). Individual invention pages can declare their own hardware licenses, such as CERN-OHL-S-2.0.
+Application code is available under the [MIT License](LICENSE). Individual invention packages and reusable skills may state their own licensing or usage terms where applicable.
