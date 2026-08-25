@@ -39,11 +39,13 @@ It sweeps \(\alpha\in\{0.25,0.5,1,2\}\), \(r_0\in\{0.5,1,2\}\), and four grid re
 |---|---|
 | [`REFINED_DESIGN.md`](REFINED_DESIGN.md) | Separates the toy wormhole ansatz from black-hole and white-hole comparison terminology. |
 | [`PROOF_GAP.md`](PROOF_GAP.md) | Records the no-build decision, unresolved physics, and reversal conditions. |
+| [`REVERSAL_CRITERIA.md`](REVERSAL_CRITERIA.md) | Defines the six linked criteria that would be required to reverse the no-build decision. |
+| [`ADVERSARIAL_RESULTS.md`](ADVERSARIAL_RESULTS.md) | Records the independent symbolic and numerical audit and explains why it does not satisfy physical reversal criteria. |
 | [`simulation/MODEL_SPEC.md`](simulation/MODEL_SPEC.md) | Defines equations, units, assumptions, controls, VVUQ status, and stop criteria. |
 | [`simulation/FORMAL_CLAIM.md`](simulation/FORMAL_CLAIM.md) | States the exact symbolic/finite claim boundary and counterexample strategy. |
 | [`simulation/EXTERNAL_CONSTRAINTS_LEDGER.md`](simulation/EXTERNAL_CONSTRAINTS_LEDGER.md) | Cites the governing theoretical constraints. |
 | [`simulation/RESULTS.md`](simulation/RESULTS.md) | Summarizes the verified finite result and its limitations. |
-| [`simulation/outputs/`](simulation/outputs/) | Contains CSV profiles, plots, case summary, provenance manifest, and output hashes. |
+| [`simulation/outputs/`](simulation/outputs/) | Contains CSV profiles, plots, case summary, provenance manifest, output hashes, independent-audit results, and a symbolic certificate. |
 
 ## Reproduce the finite study
 
@@ -53,6 +55,9 @@ Run the following commands from the simulation directory.
 python3 test_model.py
 python3 model.py
 python3 validate_outputs.py
+python3 test_adversarial_audit.py
+python3 adversarial_audit.py
+python3 symbolic_audit.py
 python3 /home/ubuntu/skills/eureka-formal-logic-lab/scripts/validate_formal_claim.py FORMAL_CLAIM.md
 ```
 
@@ -63,6 +68,8 @@ The test suite verifies the analytic formula, throat and flare-out identities, f
 ![Radial NEC profiles for the prescribed toy family](simulation/outputs/nec_profiles.png)
 
 ![Finite-difference refinement against the analytic NEC expression](simulation/outputs/refinement.png)
+
+![Independent integrated radial NEC audit](simulation/outputs/integrated_nec_debt.png)
 
 ## No-build conclusion
 

@@ -22,6 +22,10 @@ The finite study verifies that the implementation reproduces the expected radial
 
 For the code, an analytic sign mismatch, non-refining finite-difference error, nonzero flat-space control, or failure of throat/flare-out checks falsifies the **implementation**. For the proposed physical narrative, the present evidence already fails the required-source and stability gates. Therefore the appropriate stop condition is reached: **do not progress to fabrication, energy budgeting, control design, or transport proposals.**
 
+## Adversarial-audit update
+
+The new symbolic certificate and independent 48-case integral/shape audit verify that the selected family’s radial NEC requirement is not an artifact of the first finite-difference route. This **narrows an implementation uncertainty only**. It does not provide a physical source or satisfy any of the R1–R6 reversal criteria documented in [`REVERSAL_CRITERIA.md`](REVERSAL_CRITERIA.md). The full audit is recorded in [`ADVERSARIAL_RESULTS.md`](ADVERSARIAL_RESULTS.md).
+
 ## Language allowed by this release
 
 The package may say that it contains a cited mathematical review, a prescribed classical metric family, a deterministic finite implementation-verification study, comparison geometries, and an explicit set of unresolved obligations. It must not say that it has maintained a wormhole, controlled a black hole or white hole, invented a portal, attained superluminal travel, or reached a perfect design.
@@ -35,3 +39,7 @@ The package may say that it contains a cited mathematical review, a prescribed c
 [3] [Ford, L. H. and Roman, T. A., “Quantum field theory constrains traversable wormhole geometries,” *Physical Review D* 53, 5496–5507 (1996).](https://doi.org/10.1103/PhysRevD.53.5496)
 
 [4] [Guendelman, E. et al., “Kruskal-Penrose Formalism for Lightlike Thin-Shell Wormholes,” (2016).](https://arxiv.org/abs/1512.08029)
+
+[5] [Kontou, E.-A., “Wormhole restrictions from quantum energy inequalities,” *Universe* 10, 291 (2024).](https://arxiv.org/abs/2405.05963)
+
+[6] [Cañate, P. and Maldonado-Villamizar, F. H., “Novel traversable wormhole in general relativity and Einstein-Scalar-Gauss-Bonnet theory supported by nonlinear electrodynamics,” *Physical Review D* 106, 044063 (2022).](https://doi.org/10.1103/PhysRevD.106.044063)

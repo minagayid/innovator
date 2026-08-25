@@ -1,0 +1,31 @@
+{
+  "study": "symbolic_static_morris_thorne_identity_audit",
+  "created_utc": "2026-08-25T19:28:55.683192+00:00",
+  "assumptions": "r>0, r0>0, R>0, alpha>0; finite; R is treated as an outer radius.",
+  "expressions": {
+    "shape_function": "r0**(alpha + 1)/r**alpha",
+    "shape_derivative": "-alpha*(r0/r)**(alpha + 1)",
+    "radial_nec": "r**(-alpha - 3)*r0**(alpha + 1)*(-alpha - 1)/(8*pi)",
+    "expected_radial_nec": "r**(-alpha - 3)*r0**(alpha + 1)*(-alpha - 1)/(8*pi)",
+    "integrated_radial_nec": "r0*(-R**alpha*alpha - R**alpha + alpha*r0**alpha + r0**alpha)/(2*R**alpha*alpha)",
+    "expected_integrated_radial_nec": "r0*(-R**alpha + r0**alpha)*(alpha + 1)/(2*R**alpha*alpha)"
+  },
+  "checks": {
+    "shape_derivative_identity": true,
+    "throat_identity": true,
+    "flare_out_expression": true,
+    "nec_identity": true,
+    "integrated_nec_identity": true
+  },
+  "environment": {
+    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "sympy": "1.14.0"
+  },
+  "source_sha256": {
+    "symbolic_audit.py": "985b2d865f4ecb7c6666109d7548f7e5ce6e55ff7dabfa8d090e37cee9679559",
+    "FORMAL_CLAIM.md": "de390e4cb3bfd2a876dd5656b00ddc2fd41280d5b28516b4687dc4e4c5164138",
+    "MODEL_SPEC.md": "a0b133850678dfb31cdadb657570d7be9d48f824326e4911c2cd01cbd1030af3"
+  },
+  "conclusion_boundary": "Symbolic identity verification for a prescribed static metric ansatz only; not a source, stability, quantum-gravity, causality, or portal-feasibility proof."
+}
