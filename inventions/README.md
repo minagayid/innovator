@@ -1,6 +1,6 @@
 # Refined Invention Programmes
 
-This directory contains six **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Each programme has been re-audited against mechanism, energy / mass / momentum conservation, nearest-known technologies, certification or safety boundaries, and a defined test that could disprove its central hypothesis.
+This directory contains seven **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Each programme has been re-audited against mechanism, energy / mass / momentum conservation, nearest-known technologies, certification or safety boundaries, and a defined test that could disprove its central hypothesis.
 
 | Folder | Programme | Refined contribution | First decisive experiment |
 |---|---|---|---|
@@ -10,6 +10,7 @@ This directory contains six **research design packages**, not commercially ready
 | [`04_glassreveal_selective-transparency-mobile`](04_glassreveal_selective-transparency-mobile/) | **GlassReveal** | A rear selective-reveal laminate and clear perimeter around a conventional opaque handset core. | Instrumented rear-laminate mule with baseline and negative-control optical stacks. |
 | [`05_solarscreen_serviceable-bipv-facade`](05_solarscreen_serviceable-bipv-facade/) | **SolarScreen** | A serviceable spatial BIPV vision façade with long-lived glazing/PV separated from mullion electronics. | Coupon then representative IGU comparison against matched passive/BIPV baselines. |
 | [`06_transistormesh_locality-tile`](06_transistormesh_locality-tile/) | **TransistorMesh** | A process-portable locality-and-guard-band accelerator-tile hypothesis, not a new transistor. | Matched post-layout workload-energy comparison with an over-meshed negative control. |
+| [`07_horizon-weave_portal-topology-lab`](07_horizon-weave_portal-topology-lab/) | **Horizon-Weave** | A non-operational general-relativity toy-metric and evidence-audit package; it rejects claims of a maintainable wormhole, black/white-hole portal, or transport device. | Analytic-identity and finite-grid verification of a prescribed Morris–Thorne NEC diagnostic with flat-space and horizon-lapse controls. |
 
 > The name of a concept, a diagram, or a rendered image is never evidence that it works. The `RE_AUDIT.md` file in each package records what was changed, what remains unresolved, and what result would falsify the proposal.
 
