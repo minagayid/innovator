@@ -17,6 +17,7 @@
 | `eureka-computational-lab` | Super computation | High-integrity VVUQ, ensemble and manifest workflow. |
 | `eureka-design-space-lab` | Super computation | Constraint-first multi-objective and trade-off studies. |
 | `eureka-formal-logic-lab` | Super computation | Formal/finite claim boundaries, certificates and counterexamples. |
+| `adversarial-peer-review` | Debate and red-team gate | Multi-round attacks, concrete repair, residual-risk and reversal criteria. |
 | `eureka-skill` | Mega router | Minimum specialist route and bounded delivery contract. |
 
 The catalog is an orchestration map, not evidence of legal novelty, proof, certification, or availability of proprietary tools/PDKs.

@@ -1,6 +1,6 @@
 # `eureka_skill` Collection Charter
 
-**Collection version:** `2026.08.25-v1`
+**Collection version:** `2026.09.03-v2`
 **Repository path:** [`skills.md/eureka_skill/`](./)
 **Installable package path:** [`skills.md/eureka_skill/skills/`](./skills/)
 
@@ -14,6 +14,7 @@ The collection operationalizes a deliberately strict distinction: **verification
 | Mechanism discovery | `innovation-breakthrough-design`, `contradiction-mechanism-lab`, `cross-domain-recombination`, `invention-generation-orchestrator` | Generate causal candidates with baselines, constraint accounting, transfer checks, and falsifiers. |
 | Formalization and invention validation | `conjecture-formalization-lab`, `invention-validation-lab`, `bounded-invention-engineering` | Turn claims into bounded models and kill/continue/reframe decisions. |
 | Mathematics and high-integrity computation | `advanced-mathematics-computation`, `math-research-orchestrator`, `eureka-computational-lab`, `eureka-design-space-lab`, `eureka-formal-logic-lab` | Route theorem-aware computation, VVUQ studies, constrained trade-offs, finite/exhaustive evidence, and proof-gap reporting. |
+| Debate and adversarial review | `adversarial-peer-review` | Apply evidence-based attacks, concrete repairs, bounded re-review, residual-risk tracking, and reversal criteria. |
 | Collection router | `eureka-skill` | Expose the user-facing **eureka_skill** route and select the minimum sufficient specialist workflow. |
 
 ## Non-negotiable evidence contract
@@ -22,10 +23,11 @@ Every material result must state its evidence label: **sourced, computed, inferr
 
 | Validation performed for this release | Result |
 |---|---|
-| Official structural validation | All **16** packages passed `quick_validate.py`. |
+| Official structural validation | All **17** packages passed `quick_validate.py`. |
 | New computation validator | Accepted a complete 10-section sample and rejected a deliberately incomplete sample. |
 | New design-space validator | Accepted a complete 9-section sample after normalizing punctuation in headings. |
 | New formal-logic validator | Accepted a complete 9-section finite-claim sample. |
+| Adversarial review validator | Accepted a complete review report and rejected a deliberately incomplete report. |
 
 The validators are **structural checks only**. They do not establish mathematical truth, domain coverage, a correct solver encoding, physical model validity, or engineering readiness.
 

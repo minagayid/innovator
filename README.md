@@ -8,7 +8,7 @@
 |---|---|---|
 | Application | A Vinext/Vite, React, and Cloudflare Worker-compatible vertical-slice invention workspace with deterministic demo behavior and an optional OpenAI disclosure route. | [`app/`](app/) and [`package.json`](package.json) |
 | Invention archive | Bounded research packages, supporting visual material, models, and explicit limitations from prior work. | [`inventions/`](inventions/) |
-| Reusable methods | The **eureka_skill** collection: 16 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, and formal-claim auditing. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
+| Reusable methods | The **eureka_skill** collection: 17 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, formal-claim auditing, and adversarial peer review. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
 | Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
 ## `eureka_skill`: reusable advanced-mathematics and innovation methods
@@ -19,10 +19,11 @@ The collection is organized around an evidence-first contract. It labels claims 
 
 | Collection component | Package(s) | Function |
 |---|---|---|
-| Research and critique | `critical-creative-thinking`, `research-synthesis-hypothesis`, `frontier-research-architect` | Frame decisions, audit evidence coverage, and expose assumptions. |
+| Research and critique | `critical-creative-thinking`, `research-synthesis-hypothesis`, `frontier-research-architect`, `adversarial-peer-review` | Frame decisions, audit evidence coverage, expose assumptions, and run bounded attack-and-repair review loops. |
 | Mechanism generation | `innovation-breakthrough-design`, `contradiction-mechanism-lab`, `cross-domain-recombination`, `invention-generation-orchestrator` | Create and compare falsifiable mechanism candidates. |
 | Formalization and validation | `conjecture-formalization-lab`, `invention-validation-lab`, `bounded-invention-engineering` | Bound models, hypotheses, and kill/continue/reframe decisions. |
 | Mathematics and high-integrity computation | `advanced-mathematics-computation`, `math-research-orchestrator`, `eureka-computational-lab`, `eureka-design-space-lab`, `eureka-formal-logic-lab` | Plan VVUQ-aware studies, constrained trade-offs, finite/exhaustive checks, certificates, and counterexample search. |
+| Debate and red-team gate | `adversarial-peer-review` | Attack structure, logic, evidence, safety, and execution; apply concrete repairs; and record residual risks and reversal criteria. |
 | Mega router | `eureka-skill` | Expose the user-facing **eureka_skill** routing workflow. |
 
 Read the complete collection charter, validation record, and cited research grounding in [`skills.md/eureka_skill/COLLECTION.md`](skills.md/eureka_skill/COLLECTION.md). Individual packages are available under [`skills.md/eureka_skill/skills/`](skills.md/eureka_skill/skills/).
