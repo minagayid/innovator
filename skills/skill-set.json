@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "name": "innovator-codex-skillset",
+  "version": "2026.09.12",
+  "purpose": "A focused, reusable bundle for safe tool creation, ethical website optimization, and verified publication of Codex skills.",
+  "derived_from": {
+    "pinned_patterns": [
+      "invention architecture and publication",
+      "open mathematical research with independent verification",
+      "advanced research skill-set design",
+      "skill bundle installation and validation",
+      "Blender and product-design skill routing",
+      "separate project planning and external outreach"
+    ],
+    "unpinned_patterns": [
+      "SEO optimization and contributor communications",
+      "content originality and writing-quality controls",
+      "marketing and UI/UX assignment deliverables",
+      "invention repository publishing",
+      "agentic workflow and robotics implementation",
+      "hackathon and portal submission readiness"
+    ],
+    "privacy_boundary": "Sensitive personal-health conversations were not used as skill-training material."
+  },
+  "skills": [
+    {"name": "tool-creator", "path": "tool-creator", "role": "Design, scaffold, validate, and dry-run callable tool contracts."},
+    {"name": "seo-optimizer", "path": "seo-optimizer", "role": "Audit and prioritize ethical SEO improvements with explicit evidence limits."},
+    {"name": "innovator-repo-publisher", "path": "innovator-repo-publisher", "role": "Review and publish skill/tool bundles to an authorized repository."}
+  ],
+  "tools": [
+    {"name": "text_echo", "path": "tools/text-echo/tool.json", "kind": "function", "external_side_effects": false, "approval_required": false}
+  ],
+  "validation": {
+    "skill_validator": "skill-creator/scripts/quick_validate.py (resolve from the local skill installation)",
+    "bundle_checker": "innovator-repo-publisher/scripts/check_bundle.py",
+    "manifest_generator": "innovator-repo-publisher/scripts/make_manifest.py"
+  }
+}

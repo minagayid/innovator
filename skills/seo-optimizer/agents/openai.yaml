@@ -1,0 +1,4 @@
+interface:
+  display_name: "SEO Optimizer"
+  short_description: "Audit and improve ethical website SEO"
+  default_prompt: "Use $seo-optimizer to audit this website and prioritize ethical SEO improvements."

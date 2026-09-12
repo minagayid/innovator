@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "tools": [
+    {
+      "name": "text_echo",
+      "manifest": "text-echo/tool.json",
+      "description": "A local, read-only fixture demonstrating strict function arguments, output validation, and unknown-field rejection.",
+      "execution": {"mode": "read_only", "external_side_effects": false, "approval_required": false}
+    }
+  ]
+}

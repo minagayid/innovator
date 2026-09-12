@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tool Creator"
+  short_description: "Design and test reliable callable tools"
+  default_prompt: "Use $tool-creator to design and validate a safe callable tool."

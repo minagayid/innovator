@@ -1,0 +1,4 @@
+interface:
+  display_name: "Innovator Repo Publisher"
+  short_description: "Package, verify, and publish skill bundles"
+  default_prompt: "Use $innovator-repo-publisher to package and verify this skill bundle for the innovator repository."

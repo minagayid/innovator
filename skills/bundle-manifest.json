@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "bundle": "innovator-skills",
+  "files": [
+    {
+      "path": "innovator-repo-publisher/agents/openai.yaml",
+      "sha256": "06d7dd5cad71697569c7b76efa26b7d02789874d1bfcbf323a5fc60232c30fe7",
+      "bytes": 244
+    },
+    {
+      "path": "innovator-repo-publisher/references/publishing-checklist.md",
+      "sha256": "fc614821161997cac5a5c5b6656ba03df21b5ead29cea7829dd50aebeafe7880",
+      "bytes": 678
+    },
+    {
+      "path": "innovator-repo-publisher/scripts/check_bundle.py",
+      "sha256": "37012b82070935a34c3abc4a4467646f10bf0b7ab64116c8d481444ee073c94a",
+      "bytes": 2419
+    },
+    {
+      "path": "innovator-repo-publisher/scripts/make_manifest.py",
+      "sha256": "41ecfdf66906f59563fd1ba0d8869e24c1cb0a3d9a64aa86a45ea55cd163506f",
+      "bytes": 1212
+    },
+    {
+      "path": "innovator-repo-publisher/SKILL.md",
+      "sha256": "0b3f6af5a9b9a5b04869ff0add98f60c3ebe83b00d56f3e469a0184e9e7ab542",
+      "bytes": 2386
+    },
+    {
+      "path": "seo-optimizer/agents/openai.yaml",
+      "sha256": "bdf95782230bffa804d7f445bbde270a0b4a8d5d1f523b26c96336c80ce4de8e",
+      "bytes": 210
+    },
+    {
+      "path": "seo-optimizer/references/audit-checklist.md",
+      "sha256": "3aaa505314c42ac23a131fbf614538e2c7da4e187a5acbde715c83c03b2b7e2e",
+      "bytes": 1457
+    },
+    {
+      "path": "seo-optimizer/scripts/audit_html.py",
+      "sha256": "d2db7f4540276aa186aa200b630773da00ebd0ea80ed25c70173f25f66e483be",
+      "bytes": 4826
+    },
+    {
+      "path": "seo-optimizer/SKILL.md",
+      "sha256": "4cd0dfd600084f1e36e59ce08189a5d9f3c0ed86247d919b96f1bb5c949b3241",
+      "bytes": 2637
+    },
+    {
+      "path": "skill-set.json",
+      "sha256": "3634dfda72ea23e20bb91db97fc39fc768e6a616374b400b21a1c886103d33fa",
+      "bytes": 1954
+    },
+    {
+      "path": "tool-creator/agents/openai.yaml",
+      "sha256": "a9868a9e0494a7f5a29f869c4b4b84c0c678a946b9db75456e5c46eff1efe9fc",
+      "bytes": 192
+    },
+    {
+      "path": "tool-creator/references/examples/text_echo.tool.json",
+      "sha256": "3ffa4ef734f6c9aa2268c653970ebe0c54643c9449014838d085ba061bad99b3",
+      "bytes": 1210
+    },
+    {
+      "path": "tool-creator/references/tool-manifest.md",
+      "sha256": "769848bac8fd1770a45a6e4755df1753208a7d55ff32d3770bf35d293ad0526f",
+      "bytes": 1757
+    },
+    {
+      "path": "tool-creator/references/tool-manifest.schema.json",
+      "sha256": "cbb84d19f0eb41b387abb8c1d6e501ad99c830e67fe17f58a19b1981081a565e",
+      "bytes": 2693
+    },
+    {
+      "path": "tool-creator/scripts/scaffold_tool.py",
+      "sha256": "05709dd400169db872d3dee8206b466f98dc5d52e059360c996e16ee31af7f6f",
+      "bytes": 2481
+    },
+    {
+      "path": "tool-creator/scripts/validate_tool.py",
+      "sha256": "7ad001d67f47205492b9f54243dde4208adaf690b514dc4b2f177624d3775969",
+      "bytes": 6087
+    },
+    {
+      "path": "tool-creator/SKILL.md",
+      "sha256": "fa3c98b6eac26debbf4fc886ed74d99f30e76d1aece12ed704cc3834dd2aada8",
+      "bytes": 2771
+    },
+    {
+      "path": "tools/catalog.json",
+      "sha256": "d13c9b2861702bcfe6c328ac97747cdda787900595dee711736cd385ca9fef3c",
+      "bytes": 369
+    },
+    {
+      "path": "tools/text-echo/tool.json",
+      "sha256": "6f561acd8df1462b2a069243ea1ed1865d4573e028d2f61da1f65073ac4c4336",
+      "bytes": 1603
+    }
+  ]
+}
