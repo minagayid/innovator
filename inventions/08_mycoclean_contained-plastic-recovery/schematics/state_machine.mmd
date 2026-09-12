@@ -1,0 +1,18 @@
+stateDiagram-v2
+  [*] --> SAFE_IDLE
+  SAFE_IDLE --> CAPTURE : intake authorized
+  CAPTURE --> SORT : solids retained
+  SORT --> PRETREAT : polymer confidence above threshold
+  SORT --> SECURED_REJECT : uncertain / mixed / fouled
+  PRETREAT --> REACTOR_READY : boundary checks pass
+  REACTOR_READY --> REACTING : closed valves and sensors healthy
+  REACTING --> ANALYZE : scheduled sample
+  ANALYZE --> RECOVER : products identified and particles absent
+  ANALYZE --> RECYCLE : unknown product or polymer remains
+  RECYCLE --> ANALYZE : repeat bounded cycle
+  RECOVER --> SAFE_IDLE : purge and inspection pass
+  REACTING --> FAIL_CLOSED : leak, pressure, particle or sensor fault
+  PRETREAT --> FAIL_CLOSED : containment fault
+  FAIL_CLOSED --> SECURED_REJECT : isolate and retain
+  SECURED_REJECT --> SAFE_IDLE : documented recovery
+

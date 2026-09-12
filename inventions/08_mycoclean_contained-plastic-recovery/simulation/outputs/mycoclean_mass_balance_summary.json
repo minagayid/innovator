@@ -1,0 +1,33 @@
+{
+  "model": "mycoclean_illustrative_mass_balance",
+  "parameter_status": "illustrative placeholders; not field-ready values",
+  "scenarios": {
+    "nominal": {
+      "input_kg_day": 1000.0,
+      "captured_kg_day": 900.0,
+      "accepted_kg_day": 765.0,
+      "product_kg_day": 516.375,
+      "residue_kg_day": 483.625,
+      "energy_kwh_day": 1147.5,
+      "mass_balance_error_kg_day": 0.0
+    },
+    "lower_recovery": {
+      "input_kg_day": 1000.0,
+      "captured_kg_day": 750.0,
+      "accepted_kg_day": 525.0,
+      "product_kg_day": 177.1875,
+      "residue_kg_day": 822.8125,
+      "energy_kwh_day": 1155.0,
+      "mass_balance_error_kg_day": 0.0
+    },
+    "upper_recovery": {
+      "input_kg_day": 1000.0,
+      "captured_kg_day": 950.0,
+      "accepted_kg_day": 874.0,
+      "product_kg_day": 698.3259999999999,
+      "residue_kg_day": 301.6740000000001,
+      "energy_kwh_day": 1048.8,
+      "mass_balance_error_kg_day": 0.0
+    }
+  }
+}

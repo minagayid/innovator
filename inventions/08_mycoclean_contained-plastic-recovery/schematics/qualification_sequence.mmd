@@ -1,0 +1,21 @@
+sequenceDiagram
+  participant F as Feed stream
+  participant S as Sorter
+  participant R as Closed reactor
+  participant A as Analytics
+  participant P as Product recovery
+  participant Q as Safety supervisor
+  F->>S: Captured and dewatered material
+  S->>Q: Polymer confidence and reject status
+  Q-->>R: Permit only if boundary checks pass
+  S->>R: Single-polymer test lot
+  R->>A: Effluent and product samples
+  A->>Q: Product identity, particles, alarms
+  alt all acceptance checks pass
+    Q-->>P: Release identified product stream
+    P-->>Q: Purity and mass-balance record
+  else any unknown product or particle escape
+    Q-->>R: Stop and isolate
+    R-->>Q: Secured residue and inspection record
+  end
+

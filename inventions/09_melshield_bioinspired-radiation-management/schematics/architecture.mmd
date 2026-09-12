@@ -1,0 +1,15 @@
+flowchart TB
+  R[Incident radiation] --> A[Outer protective skin]
+  A --> B[Melanin-containing nonliving composite]
+  B --> C[Hydrogen-rich moderator / absorber]
+  C --> D[Optional neutron-management layer]
+  D --> E[Structural boundary]
+  E --> F[Protected payload]
+  B --> G[Temperature / strain / moisture sensors]
+  C --> G
+  G --> H[Dose and health-monitoring controller]
+  H --> I[Maintenance or retirement decision]
+  B --> J[Thermal spreader]
+  J --> K[Heat rejection]
+  L[Living engineered fungus] -. not in deployed first article .-> B
+

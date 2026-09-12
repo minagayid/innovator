@@ -1,0 +1,15 @@
+stateDiagram-v2
+  [*] --> UNQUALIFIED
+  UNQUALIFIED --> COUPON_SCREEN : material batch documented
+  COUPON_SCREEN --> CALIBRATED_TEST : density, thickness and sensors pass
+  COUPON_SCREEN --> REJECT : defects or batch uncertainty
+  CALIBRATED_TEST --> SPECTRUM_TEST : declared spectrum and dosimetry ready
+  SPECTRUM_TEST --> AGEING_TEST : transmitted dose and secondary checks pass
+  SPECTRUM_TEST --> REFRAME : spectrum-specific failure
+  AGEING_TEST --> INTEGRATION_REVIEW : thermal and mechanical checks pass
+  AGEING_TEST --> REFRAME : degradation or delamination
+  INTEGRATION_REVIEW --> UNQUALIFIED : new geometry or spectrum
+  INTEGRATION_REVIEW --> REFRAME : missing independent review
+  REFRAME --> UNQUALIFIED
+  REJECT --> UNQUALIFIED : corrected batch
+

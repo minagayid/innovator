@@ -1,6 +1,6 @@
 # Refined Invention Programmes
 
-This directory contains seven **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Each programme has been re-audited against mechanism, energy / mass / momentum conservation, nearest-known technologies, certification or safety boundaries, and a defined test that could disprove its central hypothesis.
+This directory contains nine **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Each programme has been re-audited against mechanism, energy / mass / momentum conservation, nearest-known technologies, certification or safety boundaries, and a defined test that could disprove its central hypothesis.
 
 | Folder | Programme | Refined contribution | First decisive experiment |
 |---|---|---|---|
@@ -11,6 +11,8 @@ This directory contains seven **research design packages**, not commercially rea
 | [`05_solarscreen_serviceable-bipv-facade`](05_solarscreen_serviceable-bipv-facade/) | **SolarScreen** | A serviceable spatial BIPV vision façade with long-lived glazing/PV separated from mullion electronics. | Coupon then representative IGU comparison against matched passive/BIPV baselines. |
 | [`06_transistormesh_locality-tile`](06_transistormesh_locality-tile/) | **TransistorMesh** | A process-portable locality-and-guard-band accelerator-tile hypothesis, not a new transistor. | Matched post-layout workload-energy comparison with an over-meshed negative control. |
 | [`07_horizon-weave_portal-topology-lab`](07_horizon-weave_portal-topology-lab/) | **Horizon-Weave** | A non-operational general-relativity toy-metric and evidence-audit package; it rejects claims of a maintainable wormhole, black/white-hole portal, or transport device. | Analytic-identity and finite-grid verification of a prescribed Morris–Thorne NEC diagnostic with flat-space and horizon-lapse controls. |
+| [`08_mycoclean_contained-plastic-recovery`](08_mycoclean_contained-plastic-recovery/) | **MYCO-CLEAN** | A contained, polymer-specific recovery platform using enzyme modules, optical sorting, pretreatment, product recovery and fail-closed effluent monitoring; open-ocean biological release is excluded. | Finite mass-balance and recovery-envelope check followed by a closed-reactor PET benchmark against mechanical recycling. |
+| [`09_melshield_bioinspired-radiation-management`](09_melshield_bioinspired-radiation-management/) | **MEL-SHIELD** | A bio-inspired melanin composite integrated with conventional hydrogen-rich and neutron-management layers; radiation destruction and human deployment are not claimed. | Areal-mass accounting followed by calibrated spectrum-specific attenuation and aging tests against matched conventional stacks. |
 
 > The name of a concept, a diagram, or a rendered image is never evidence that it works. The `RE_AUDIT.md` file in each package records what was changed, what remains unresolved, and what result would falsify the proposal.
 

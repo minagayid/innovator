@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant M as Material batch
+  participant C as Coupon lab
+  participant D as Dosimetry
+  participant S as Safety reviewer
+  participant T as Thermal/mechanical lab
+  M->>C: Document composition, density and geometry
+  C->>S: Batch traceability and nonliving status
+  S-->>D: Permit declared calibration test
+  D->>C: Spectrum-specific exposure and dosimetry
+  C->>S: Transmitted dose, secondary signatures and alarms
+  alt acceptance checks pass
+    S-->>T: Permit aging and integration tests
+    T->>S: Thermal, strain, moisture and post-test chemistry
+  else any failed or unknown result
+    S-->>C: Stop, isolate and reframe
+  end
+

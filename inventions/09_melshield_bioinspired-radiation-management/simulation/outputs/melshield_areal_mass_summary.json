@@ -1,0 +1,24 @@
+{
+  "model": "melshield_illustrative_areal_mass",
+  "parameter_status": "illustrative placeholders; no attenuation claim",
+  "area_m2": 1.0,
+  "layer_areal_mass_kg_m2": {
+    "outer_skin": 2.25,
+    "melanin_composite": 2.4,
+    "hydrogen_rich_layer": 9.5,
+    "neutron_management_layer": 1.1
+  },
+  "total_areal_mass_kg_m2": 15.25,
+  "total_mass_kg": 15.25,
+  "thickness_sensitivity": {
+    "0.5": {
+      "areal_mass_kg_m2": 7.625
+    },
+    "1.0": {
+      "areal_mass_kg_m2": 15.25
+    },
+    "2.0": {
+      "areal_mass_kg_m2": 30.5
+    }
+  }
+}

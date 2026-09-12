@@ -1,0 +1,19 @@
+flowchart LR
+  A[Controlled intake] --> B[Capture + dewater]
+  B --> C[Optical/NIR identification]
+  C --> D{Polymer lane}
+  D -->|PET| E[Wash + size + bounded activation]
+  D -->|PUR| F[PUR research lane]
+  D -->|PE/PP/PS| G[Discovery lane]
+  E --> H[Closed retained-enzyme reactor]
+  F --> H
+  G --> H
+  H --> I[Product analytics]
+  I --> J[Recovery / purification]
+  H --> K[Particle sensor]
+  K --> L{Unknown or polymer remains?}
+  L -->|Yes| M[Fail-closed recycle or secured residue]
+  L -->|No| J
+  N[Regulated enzyme production] -. purified enzymes only .-> H
+  O[Open ocean release] -. prohibited .-> H
+
