@@ -1,8 +1,15 @@
 {
   "schema_version": "1.0",
   "name": "innovator-codex-skillset",
-  "version": "2026.09.12",
-  "purpose": "A focused, reusable bundle for safe tool creation, ethical website optimization, and verified publication of Codex skills.",
+  "version": "2026.09.14",
+  "purpose": "A reusable bundle for safe tool creation, ethical website optimization, verified publication, and the imported Claude/Manus/Codex skill set.",
+  "imported_skill_count": 232,
+  "imported_skill_manifest": "bundle-manifest.json",
+  "imported_sources": [
+    "codex-hermes-skills.zip",
+    "claude-skills-export.zip",
+    "reusable-skills.gz"
+  ],
   "derived_from": {
     "pinned_patterns": [
       "invention architecture and publication",

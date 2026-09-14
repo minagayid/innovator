@@ -1,0 +1,52 @@
+{
+  "release_tag": "v0.1.0",
+  "title": "",
+  "authors": [
+    {
+      "name": "",
+      "orcid": "",
+      "affiliation": ""
+    }
+  ],
+  "corresponding_author": {
+    "name": "",
+    "email": ""
+  },
+  "license": "",
+  "funding_statement": "",
+  "conflict_statement": "",
+  "preprint": {
+    "platform": "arXiv",
+    "category": "",
+    "status": "not requested",
+    "identifier": "",
+    "url": ""
+  },
+  "archive": {
+    "platform": "Zenodo",
+    "doi": "",
+    "url": "",
+    "published": false
+  },
+  "orcid": {
+    "record": "",
+    "work_added": false,
+    "work_type": "",
+    "work_doi": "",
+    "visibility": ""
+  },
+  "repository": {
+    "url": "",
+    "commit": "",
+    "release_url": ""
+  },
+  "artifacts": [],
+  "approved_destinations": [],
+  "approval": {
+    "publication_approved": false,
+    "sharing_approved": false,
+    "approved_by": "",
+    "approved_at": ""
+  },
+  "provenance_disclosure": ""
+}
