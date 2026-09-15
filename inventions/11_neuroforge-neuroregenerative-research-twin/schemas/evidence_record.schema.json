@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/neuroforge/evidence_record.schema.json",
+  "title": "NeuroForge evidence record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidence_id", "study_type", "source_kind", "publication_date", "reviewer", "evidence_level", "source_provenance", "disease_context", "endpoint", "model_limitations", "uncertainty", "negative_or_conflicting_evidence", "transferability_limits"],
+  "$defs": {
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_url", "retrieved_on", "license_or_consent_basis", "dataset_or_model_version"],
+      "properties": {
+        "source_url": {"type": "string", "pattern": "^https://"},
+        "retrieved_on": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "license_or_consent_basis": {"type": "string", "minLength": 3},
+        "dataset_or_model_version": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "properties": {
+    "evidence_id": {"type": "string", "pattern": "^NF-EVID-[0-9]{3}$"},
+    "study_type": {"enum": ["human_clinical", "human_observational", "animal", "organoid_assembloid", "in_vitro", "computational", "expert_hypothesis"]},
+    "source_kind": {"enum": ["peer_reviewed_article", "conference_abstract", "press_release", "clinical_trial_registry", "guideline", "review", "preprint", "synthetic_example", "other"]},
+    "publication_date": {"anyOf": [{"type": "string", "format": "date"}, {"type": "null"}]},
+    "reviewer": {"type": "string", "minLength": 3},
+    "evidence_level": {"enum": ["approved_clinical", "clinical_investigational", "preclinical", "in_vitro", "computational", "hypothesis", "unknown"]},
+    "source_provenance": {"$ref": "#/$defs/provenance"},
+    "disease_context": {"const": "parkinson_disease"},
+    "endpoint": {"type": "string", "minLength": 5},
+    "model_limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "uncertainty": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "negative_or_conflicting_evidence": {"type": "array", "items": {"type": "string"}},
+    "transferability_limits": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "conflict_of_interest": {"type": "string"}
+  }
+}

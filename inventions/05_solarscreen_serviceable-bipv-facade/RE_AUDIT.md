@@ -23,3 +23,19 @@ If a candidate IGU cannot show a defensible optical/thermal/electrical trade-off
 ## Unresolved
 
 Long-term laminate/edge durability, project-specific structural/fire/weathering qualification, facade access, glare/planning, maintenance economics and climate-specific building performance remain unresolved.
+
+## Scientific review additions
+
+Name the measurement methods and freeze the glazing build-up, orientation,
+frame, PV-area fraction, and matched passive/conventional-BIPV baselines
+before comparison. For current tests, use [ISO 9050:2026](https://www.iso.org/standard/88642.html)
+for luminous/solar glazing characteristics and [IEC TS 63092-3:2026](https://webstore.iec.ch/en/publication/68573)
+for BIPV SHGC, with [IEC 63092-1](https://webstore.iec.ch/en/publication/32158)
+and [IEC 63092-2](https://webstore.iec.ch/en/publication/32329) used for their
+respective module/system boundaries. ISO 9050 excludes angular optical
+properties; assess glare/daylight at relevant incidence angles separately.
+
+Meter PV output at maximum power point and conditioning/control loads
+separately. Keep optional display use outside core net-energy claims. Declare
+climate, orientation, uncertainty, and numeric pass margins before the test;
+do not infer whole-building savings from a component coupon.

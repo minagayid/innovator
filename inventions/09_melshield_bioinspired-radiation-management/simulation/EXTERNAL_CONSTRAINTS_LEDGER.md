@@ -6,7 +6,9 @@
 | R2 | NASA studies melanin pigmentation and DNA-repair pathways as separate factors in fungal spaceflight survival. [2] | A radiation-tolerant organism is not automatically a shield material. | [S] |
 | R3 | NASA identifies low-atomic-number/hydrogen-rich materials, including polyethylene, as useful for many space-radiation conditions and emphasizes a systems approach. [3] | Melanin must be compared with, and integrated into, conventional layers. | [S] |
 | R4 | NASA describes polyethylene and boron-containing materials as relevant to shielding trade-offs, with structural and secondary-radiation challenges. [4] | Neutron and charged-particle behavior must be tested separately. | [S] |
-| R5 | NIH guidance requires institutional risk assessment and IBC oversight for covered recombinant/synthetic-nucleic-acid work. [5] | Any living engineered production route is outside this package's authorization boundary. | [S] |
+| R5 | NIH guidance requires institutional risk assessment and IBC oversight for covered work within the Guidelines' scope. [5] | This package authorizes no living engineered production route; separate funder, institutional, and jurisdictional review may apply. | [S] |
+| R6 | A 2020 β-radiation study found no improved shielding by melanin versus cellulose under its tested conditions. [6] | Do not presume melanin's chemistry alone improves attenuation; compare matched material controls. | [S] |
+| R7 | A 2025 PNAS study reported composition- and orientation-dependent behavior for specific PLA/melanin composites after about six months in LEO, including reduced darkening of a PVC backing versus unshielded controls. [7] | Supports only that tested nonliving material stack and exposure; it does not establish human dose-equivalent protection or deep-space/GCR qualification. | [S] |
 
 ## Search limits
 
@@ -23,4 +25,8 @@ This is not a systematic radiation-transport review, materials qualification, pa
 [4] [NASA, Real Martians and hydrogen-rich shielding.](https://www.nasa.gov/science-research/heliophysics/real-martians-how-to-protect-astronauts-from-space-radiation-on-mars/)
 
 [5] [NIH Guidelines for Research Involving Recombinant or Synthetic Nucleic Acid Molecules (2024).](https://osp.od.nih.gov/wp-content/uploads/NIH_Guidelines.pdf)
+
+[6] [Vasileiou & Summerer, *PLOS ONE* (2020), melanin versus cellulose β-radiation shielding.](https://doi.org/10.1371/journal.pone.0229921)
+
+[7] [Cordero et al., *PNAS* (2025), fungal-melanin PLA composites in low Earth orbit.](https://doi.org/10.1073/pnas.2427118122)
 

@@ -11,7 +11,11 @@ python3 nereid_mode_envelopes.py --output-dir outputs/nereid
 python3 -m unittest -v test_nereid_mode_envelopes.py
 ```
 
-The first command regenerates a JSON evidence record and `nereid_mode_envelopes.png`. The test reruns the simulation in a temporary directory and verifies the nominal scenarios, negative controls, fault matrix, and time-step check.
+The first command regenerates a JSON evidence record. If Matplotlib is
+installed, it also writes `nereid_mode_envelopes.png`; the numerical summary
+and tests do not require plotting support. The test reruns the simulation in a
+temporary directory and verifies the nominal scenarios, negative controls,
+fault matrix, and time-step check.
 
 ## What the suite checks
 
@@ -21,8 +25,12 @@ The first command regenerates a JSON evidence record and `nereid_mode_envelopes.
 | Restricted flight | Eight-unit static thrust screen clears the chosen thrust-to-weight proxy. | One lost unit falls below the threshold. |
 | Surface water | Declared enclosed displacement clears force and excess-volume proxies. | Reduced displacement fails. |
 | Shallow submersion | Uncrewed basin recovery proxy has a positive declared upward reserve. | Reduced reserve volume fails. |
-| Mode supervisor | Every named **mode-relevant** single fault denies hazardous admission. | Ignoring secondary-lock evidence produces unsafe admissions. |
+| Mode supervisor | Every named **pre-entry** single fault denies hazardous admission. Active-mode interlock loss is represented as `RECOVERY_REQUIRED_NO_ACTION_VALIDATED`. | Ignoring secondary-lock evidence produces unsafe admissions. |
 
-> Passing this suite means only that its equations and declared finite controls behave as specified. The plots and JSON do **not** establish real vehicle margins or system safety.
+> `RECOVERY_REQUIRED_NO_ACTION_VALIDATED` is an abstract state label, not a recovery action. Passing this suite means only that its equations and declared finite controls behave as specified. The plots and JSON do **not** establish real vehicle margins, recovery capability, or system safety.
+
+The schematic recovery paths elsewhere in this package describe proposed
+architecture only. The numerical suite tests pre-entry denial and does not
+model active-mode actuator response or safe egress.
 
 Read `NEREID_SIMULATION_SPEC.md` before using any result. Read `EXTERNAL_CONSTRAINTS_LEDGER.md` for the regulatory and publication boundaries used to scope the work.

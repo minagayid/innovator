@@ -1,0 +1,10 @@
+{
+  "scope_id": "neuroforge-parkinson-v1",
+  "active_disease": "parkinson_disease",
+  "active_modality": "dopaminergic_cell_replacement_research",
+  "research_only": true,
+  "human_review_required": true,
+  "clinical_decision_support": false,
+  "patient_specific_outputs": false,
+  "operational_protocols": false
+}

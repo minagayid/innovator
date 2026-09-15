@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the independent shape and integrated-NEC audit."""
+"""Regression tests for the shape-domain and NEC quadrature checks."""
 from __future__ import annotations
 
 import math

@@ -143,9 +143,15 @@ The later crewed article must follow a formal hazard analysis, failure modes and
 | Feasibility | Moderate for individual modes; low for an integrated all-domain crewed demonstrator because mass and certification effects compound. |
 | Safety | Requires conservative staged testing; deep submersion and public operation are explicitly excluded from baseline. |
 | Strongest competing approach | A modular vehicle with detachable flight or submersible pod is mechanically simpler and likely more practical. |
-| Decisive test | An unmanned basin / flight rig must prove that every single credible lock, leak, sensor, and propulsion fault leaves the vehicle in a recoverable state. |
+| Decisive test | An uncrewed interface rig must establish pre-entry denial for defined faults. Any active-mode physical recovery claim needs separate timed hardware-in-the-loop and basin/flight evidence; no recovery is established by this dossier. |
 | Confidence | High that the concept properly frames the systems engineering problem; low that it can be commercialised as a one-vehicle consumer product without major compromises. |
 
 ## Reference
 
 [1] [Federal Aviation Administration, “Advanced Air Mobility | Air Taxis.”](https://www.faa.gov/air-taxis)
+# Historical proposal boundary
+
+This dossier preserves the initial concept. Its supervisor and recovery
+statements are proposals, not validated vehicle behavior. Use the refined
+design, simulation specification, and `RE_AUDIT.md` for the current evidence
+boundary; this package establishes pre-entry screening only.

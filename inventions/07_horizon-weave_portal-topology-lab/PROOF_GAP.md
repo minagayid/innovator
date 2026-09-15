@@ -24,7 +24,13 @@ For the code, an analytic sign mismatch, non-refining finite-difference error, n
 
 ## Adversarial-audit update
 
-The new symbolic certificate and independent 48-case integral/shape audit verify that the selected family’s radial NEC requirement is not an artifact of the first finite-difference route. This **narrows an implementation uncertainty only**. It does not provide a physical source or satisfy any of the R1–R6 reversal criteria documented in [`REVERSAL_CRITERIA.md`](REVERSAL_CRITERIA.md). The full audit is recorded in [`ADVERSARIAL_RESULTS.md`](ADVERSARIAL_RESULTS.md).
+The new symbolic certificate and 48-case quadrature/shape-domain check verify
+identities within the prescribed family and test numerical consistency. The
+volume integral reuses the analytic NEC profile; it is not an independent
+stress-energy derivation. This **narrows an implementation uncertainty only**.
+It does not provide a physical source or satisfy any of the R1–R6 reversal
+criteria documented in [`REVERSAL_CRITERIA.md`](REVERSAL_CRITERIA.md). The full
+audit is recorded in [`ADVERSARIAL_RESULTS.md`](ADVERSARIAL_RESULTS.md).
 
 ## Language allowed by this release
 

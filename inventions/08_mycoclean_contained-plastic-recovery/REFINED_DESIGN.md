@@ -71,7 +71,7 @@ These are **functional categories**, not a list of genes to assemble:
 | Autophagy and turnover | Can damaged proteins and organelles be cleared without releasing unwanted material? |
 | Genetic stability and containment dependency | Is growth dependent on a supplied factor or other independently audited barrier? |
 
-No living chassis is authorized by this document. NIH/IBC review and applicable local requirements would be a precondition for any recombinant or synthetic-nucleic-acid work [6].
+No living chassis is authorized by this document. Where NIH Guidelines apply, covered work requires the specified institutional review; all future work would also need the applicable funder, institutional, and jurisdictional review. The NIH framework is not presented as universal global law [6].
 
 ### Conceptual RNA product cards
 

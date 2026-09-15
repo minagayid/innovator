@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Independent numerical audit of the selected Morris–Thorne toy family.
+"""Quadrature and shape-domain checks for the selected Morris–Thorne toy family.
 
-The audit checks two derived properties with a route independent from model.py's
-finite-difference calculation: (1) b(r)/r is below one outside the throat, and
-(2) a volume-weighted radial NEC integral agrees with its analytic expression.
-It does not test quantum inequalities, a material source, dynamical stability,
-formation, or portal feasibility.
+The volume-integral check numerically integrates the already-derived analytic
+NEC profile and compares it with a closed-form integral. It tests quadrature
+consistency, not an independent stress-energy derivation. It does not test
+quantum inequalities, a material source, dynamical stability, formation, or
+portal feasibility.
 """
 from __future__ import annotations
 
@@ -19,13 +19,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
-
-plt.rcParams["font.family"] = "DejaVu Sans"
-plt.rcParams["axes.unicode_minus"] = True
 
 AUDIT_GRID_SIZES = (501, 1001, 2001, 4001)
 AUDIT_X_MAX = 30.0
@@ -73,6 +67,11 @@ def run_case(r0: float, alpha: float, n_grid: int) -> dict:
 
 
 def plot_debt(output_dir: Path) -> None:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.rcParams["font.family"] = "DejaVu Sans"
+    plt.rcParams["axes.unicode_minus"] = True
     figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
     x = np.linspace(1.0, AUDIT_X_MAX, 1000)
     for alpha in (0.25, 0.5, 1.0, 2.0):
@@ -97,6 +96,14 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def optional_matplotlib_version() -> str | None:
+    try:
+        import matplotlib
+    except ModuleNotFoundError:
+        return None
+    return matplotlib.__version__
+
+
 def run(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     cases = [
@@ -110,9 +117,11 @@ def run(output_dir: Path) -> dict:
         writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(cases)
-    plot_debt(output_dir)
+    matplotlib_version = optional_matplotlib_version()
+    if matplotlib_version is not None:
+        plot_debt(output_dir)
     report = {
-        "study": "independent_shape_and_integrated_nec_audit",
+        "study": "shape_domain_and_nec_quadrature_check",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "units": "geometrized G=c=1",
         "scope": (
@@ -131,7 +140,8 @@ def run(output_dir: Path) -> dict:
             "python": sys.version,
             "platform": platform.platform(),
             "numpy": np.__version__,
-            "matplotlib": matplotlib.__version__,
+            "matplotlib": matplotlib_version,
+            "plot_generated": matplotlib_version is not None,
         },
         "source_sha256": {
             path.name: sha256(path)
@@ -166,7 +176,7 @@ def main() -> int:
         print(f"FAIL: {len(failures)} audit cases failed; inspect {args.output_dir}.")
         return 1
     print(
-        f"PASS: {report['case_count']} independent finite audit cases matched the declared "
+        f"PASS: {report['case_count']} finite quadrature and shape-domain cases matched the declared "
         "negative integrated NEC diagnostic and exterior shape-domain check. "
         "This does not resolve physical portal proof gaps."
     )

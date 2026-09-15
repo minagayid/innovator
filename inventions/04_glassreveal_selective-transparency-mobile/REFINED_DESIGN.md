@@ -13,7 +13,7 @@ GlassReveal is **not a fully transparent phone**. Batteries, silicon, cameras, s
 | Subsystem | Proposed Rev-A configuration | Explicit non-claim |
 |---|---|---|
 | Front interaction surface | Conventional opaque OLED, touch stack and chemically strengthened cover glass. | No transparent primary display. |
-| Rear reveal surface | Strengthened rear glass, patterned transparent electrode edge bus, normally scattering PDLC/PSLC reveal film, optical adhesive and a protected cassette view zone. | No claim that the active film is a structural element. |
+| Rear reveal surface | Strengthened rear glass, patterned transparent electrode edge bus, one specified normally scattering, powered-clear PDLC reveal film, optical adhesive and a protected cassette view zone. | No claim that the active film is a structural element; Rev-A must name the film formulation and drive polarity. |
 | Clear perimeter | Bare or minimally coated cover-glass windows outside RF-sensitive and high-stress zones. | No claim of transparent main antenna or transparent frame. |
 | Service cassette | Opaque battery, logic, camera and thermal modules arranged behind a printed/shielded visual grammar; mechanically removable after rear-glass service. | No transparent battery, SoC, camera or spreader. |
 | Structural/RF/thermal spine | Conventional narrow metal/composite spine, dedicated antenna apertures, graphite/vapour-chamber class thermal hardware. | No claim that glass replaces the structural or thermal path. |

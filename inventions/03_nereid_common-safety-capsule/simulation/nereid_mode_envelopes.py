@@ -16,7 +16,6 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Dict
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 G = 9.80665
@@ -146,20 +145,41 @@ def submersion_recovery(config: NereidConfig, volume_m3: float, time_step_s: flo
     }
 
 
-def supervisor_state(mode: str, signals: Dict[str, bool], unsafe_ignore_secondary_lock: bool = False) -> str:
-    """Fail-closed supervisor. It is an abstract interface-state checker only."""
+def supervisor_state(
+    mode: str,
+    signals: Dict[str, bool],
+    unsafe_ignore_secondary_lock: bool = False,
+    phase: str = "pre_entry",
+) -> str:
+    """Abstractly separate pre-entry denial from active-mode fault reporting.
+
+    RECOVERY_REQUIRED_NO_ACTION_VALIDATED is a review state, not an actuator
+    command or evidence that any physical recovery is achievable.
+    """
+    if phase not in {"pre_entry", "active"}:
+        raise ValueError("phase must be 'pre_entry' or 'active'")
     common = signals["lock_primary"] and signals["mode_controller"] and signals["reserve_low_voltage"]
     secondary = True if unsafe_ignore_secondary_lock else signals["lock_secondary"]
     if not common or not secondary:
+        if phase == "active":
+            return "RECOVERY_REQUIRED_NO_ACTION_VALIDATED"
         return "DENY_LOCK_OR_CONTROLLER"
     if not signals["environment_permit"]:
+        if phase == "active":
+            return "RECOVERY_REQUIRED_NO_ACTION_VALIDATED"
         return "DENY_ENVIRONMENT"
     if not signals["energy_margin"]:
+        if phase == "active":
+            return "RECOVERY_REQUIRED_NO_ACTION_VALIDATED"
         return "DENY_ENERGY"
     if mode in {"surface", "submersion"} and not signals["leak_monitor"]:
-        return "RECOVERY_WATER_INTEGRITY"
+        if phase == "active":
+            return "RECOVERY_REQUIRED_NO_ACTION_VALIDATED"
+        return "DENY_WATER_INTEGRITY"
     if mode == "submersion" and not signals["positive_ascent_reserve"]:
-        return "RECOVERY_ASCENT"
+        if phase == "active":
+            return "RECOVERY_REQUIRED_NO_ACTION_VALIDATED"
+        return "DENY_ASCENT_RESERVE"
     return "ADMIT_MODE"
 
 
@@ -199,6 +219,11 @@ def fault_matrix(unsafe_ignore_secondary_lock: bool = False) -> Dict[str, object
 
 
 def plot_envelopes(output_dir: Path, results: Dict[str, object], sub_nominal: Dict[str, object], sub_negative: Dict[str, object]) -> None:
+    try:
+        import matplotlib.pyplot as plt
+    except ModuleNotFoundError:
+        # Numerical summaries and tests remain usable without optional plotting.
+        return
     plt.style.use("seaborn-v0_8-whitegrid")
     figure, axes = plt.subplots(1, 2, figsize=(13.5, 4.8))
 

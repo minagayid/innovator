@@ -24,7 +24,7 @@ TransistorMesh does **not** claim a new semiconductor device, a transparent proc
 For a matched workload, precision, throughput target, memory capacity and implementation flow:
 
 \[
-E_{\mathrm{useful}} = E_{\mathrm{logic}} + E_{\mathrm{local\ wire}} + E_{\mathrm{memory}} + E_{\mathrm{clock}} + E_{\mathrm{leakage}} + E_{\mathrm{PDN}} + E_{\mathrm{control}}.
+E_{\mathrm{useful}} = E_{\mathrm{logic}} + E_{\mathrm{local\ wire}} + E_{\mathrm{on-chip\ memory}} + E_{\mathrm{off-chip\ memory/I/O}} + E_{\mathrm{clock}} + E_{\mathrm{leakage}} + E_{\mathrm{PDN}} + E_{\mathrm{control}}.
 \]
 
 The candidate is accepted only when:
@@ -33,7 +33,7 @@ The candidate is accepted only when:
 E_{\mathrm{useful,candidate}} < E_{\mathrm{useful,baseline}}
 \]
 
-at matched functional output and declared timing/yield assumptions. A wire-only estimate, device-only comparison, or synthetic operation count cannot establish this result. The selected baseline is a same-function tile with local buses or a conventional systolic/routed data path under the same PDK, constraints and workload trace.
+at matched functional output and declared timing/PVT/SRAM constraints. Yield is not implied unless a target and statistical yield analysis are reported. A wire-only estimate, device-only comparison, or synthetic operation count cannot establish this result. The selected baseline is a same-function tile with local buses or a conventional systolic/routed data path under the same PDK, constraints and workload trace.
 
 | Case | Intended condition | Discriminating outcome |
 |---|---|---|

@@ -1,4 +1,4 @@
-"""Illustrative MYCO-CLEAN mass-balance screen.
+"""Illustrative MYCO-CLEAN stream-allocation screen.
 
 This is an accounting model, not a biological or deployment model. Parameters
 are placeholders and must not be interpreted as field-ready values.
@@ -50,24 +50,35 @@ def calculate(p: dict[str, float]) -> dict[str, float]:
     if p["input_kg_day"] < 0 or p["energy_kwh_per_kg_accepted"] < 0:
         raise ValueError("mass and energy parameters must be non-negative")
 
-    captured = p["input_kg_day"] * p["capture_fraction"]
+    input_mass = p["input_kg_day"]
+    captured = input_mass * p["capture_fraction"]
+    uncaptured = input_mass - captured
     accepted = captured * p["sort_fraction"]
-    product = accepted * p["conversion_fraction"] * p["product_recovery_fraction"]
-    residue = p["input_kg_day"] - product
+    sorting_rejects = captured - accepted
+    converted = accepted * p["conversion_fraction"]
+    unconverted = accepted - converted
+    product = converted * p["product_recovery_fraction"]
+    product_recovery_losses = converted - product
+    unrecovered = uncaptured + sorting_rejects + unconverted + product_recovery_losses
     return {
-        "input_kg_day": p["input_kg_day"],
+        "accounting_basis": "illustrative_stream_allocation_from_input_fractions; not measured closure",
+        "input_kg_day": input_mass,
         "captured_kg_day": captured,
+        "uncaptured_kg_day": uncaptured,
         "accepted_kg_day": accepted,
+        "sorting_rejects_kg_day": sorting_rejects,
+        "converted_kg_day": converted,
+        "unconverted_kg_day": unconverted,
         "product_kg_day": product,
-        "residue_kg_day": residue,
+        "product_recovery_losses_kg_day": product_recovery_losses,
+        "unrecovered_kg_day": unrecovered,
         "energy_kwh_day": accepted * p["energy_kwh_per_kg_accepted"],
-        "mass_balance_error_kg_day": p["input_kg_day"] - product - residue,
     }
 
 
 def build_summary() -> dict[str, object]:
     return {
-        "model": "mycoclean_illustrative_mass_balance",
+        "model": "mycoclean_illustrative_stream_allocation",
         "parameter_status": "illustrative placeholders; not field-ready values",
         "scenarios": {name: calculate(params) for name, params in SCENARIOS.items()},
     }

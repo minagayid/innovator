@@ -57,7 +57,7 @@ RNA-MEL-CONTAINMENT
   → no release and no persistence claim
 ```
 
-The design deliberately separates **biology used to make material** from the **nonliving deployed material**. A viable engineered fungus is not part of the first article. Any future recombinant or synthetic-nucleic-acid work would require institutional risk assessment, IBC approval and applicable local oversight [5].
+The design deliberately separates **biology used to make material** from the **nonliving deployed material**. A viable engineered fungus is not part of the first article. Any future recombinant or synthetic-nucleic-acid work would need applicable institutional, funder, and jurisdictional review; where the NIH Guidelines apply, their institutional requirements must be followed [5].
 
 ## Multilayer device architecture
 

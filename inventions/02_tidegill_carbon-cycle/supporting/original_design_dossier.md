@@ -89,10 +89,12 @@ The key physical contradiction is that thinner and denser channels increase inte
 where \(K_G\) is an overall gas-side mass-transfer coefficient, \(a\) is effective wetted / reactive area per volume, \(V\) is contactor volume, and \(\Delta p_{\mathrm{lm}}\) is the log-mean CO₂ partial-pressure driving force. Fan power rises with flow and pressure drop, approximately \(P_{\mathrm{fan}}=\Delta p\,\dot V/\eta_f\). The proposed optimization is
 
 \[
-\max_{g,\,u,\,\sigma}\quad \frac{\dot n_{\mathrm{CO_2}}}{P_{\mathrm{fan}}+P_{\mathrm{regen}}}
+\max_{g,\,u,\,\sigma}\quad \frac{\dot n_{\mathrm{CO_2}}}{P_{\mathrm{electric,total}}}
+\qquad\text{and separately minimize}\qquad
+\frac{Q_{\mathrm{regen}}}{\dot n_{\mathrm{CO_2}}}
 \]
 
-subject to a maximum pressure drop, outlet CO₂ target, capture-medium water balance, maximum temperature, and a verified containment condition. Here \(g\) is channel gap, \(u\) is gas velocity, and \(\sigma\) is regeneration duty cycle. This is a **design optimization statement**, not a validated performance equation for a chosen sorbent.
+subject to a maximum pressure drop, outlet CO₂ target, capture-medium water balance, maximum temperature, and a verified containment condition. Here \(g\) is channel gap, \(u\) is gas velocity, and \(\sigma\) is regeneration duty cycle. \(P_{\mathrm{electric,total}}\) includes fans, conditioning, controls, compression, and CO₂ handling; \(Q_{\mathrm{regen}}\) is reported as thermal input. Do not combine them without a disclosed primary-energy or exergy conversion. This is a **design optimization statement**, not a validated performance equation for a chosen sorbent.
 
 ## 4. Downstream chemical trains
 
@@ -113,10 +115,10 @@ This branch is the **earliest credible hardware path** because it separates the 
 An experimental high-temperature electrochemical train, such as a molten-carbonate family of processes, is proposed to target
 
 \[
-\mathrm{CO_2+4e^-\rightarrow C+O^{2-}},\qquad \mathrm{2O^{2-}\rightarrow O_2+4e^-}.
+\mathrm{CO_2+4e^-\rightarrow C+2O^{2-}},\qquad \mathrm{2O^{2-}\rightarrow O_2+4e^-}.
 \]
 
-The net reaction is the stated \(\mathrm{CO_2\rightarrow C+O_2}\). The critical question is not whether charge can be balanced; it is whether solid carbon can be continuously formed, collected, purified, and qualified with an energy and maintenance burden that makes sense. The starting readiness is **laboratory research only**. It requires a separate high-temperature safety envelope and does not share a process volume with the air-contacting capture unit.
+The net reaction is the stated \(\mathrm{CO_2\rightarrow C+O_2}\). This oxide-ion bookkeeping pair is balanced, but it is not asserted as the universal mechanism for any particular molten-carbonate cell; use reactions specific to the selected electrolyte and electrode process. The critical question is not whether charge can be balanced; it is whether solid carbon can be continuously formed, collected, purified, and qualified with an energy and maintenance burden that makes sense. The starting readiness is **laboratory research only**. It requires a separate high-temperature safety envelope and does not share a process volume with the air-contacting capture unit.
 
 | Decision | Train A: CO + O₂ | Train B: C + O₂ |
 |---|---|---|

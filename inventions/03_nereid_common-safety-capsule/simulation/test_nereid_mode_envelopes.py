@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from nereid_mode_envelopes import supervisor_state
 
 ROOT = Path(__file__).resolve().parent
 
@@ -41,6 +42,34 @@ class NereidModeEnvelopeTests(unittest.TestCase):
         self.assertTrue(all(summary["overall"].values()))
         self.assertGreater(summary["fault_matrix_negative_control"]["unsafe_admissions"], 0)
         self.assertEqual(summary["fault_matrix_safeguarded"]["unsafe_admissions"], 0)
+
+    def test_active_interlock_failure_is_separate_from_pre_entry_denial(self) -> None:
+        signals = {
+            "lock_primary": False,
+            "lock_secondary": True,
+            "mode_controller": True,
+            "reserve_low_voltage": True,
+            "leak_monitor": True,
+            "energy_margin": True,
+            "environment_permit": True,
+            "positive_ascent_reserve": True,
+        }
+        self.assertEqual(supervisor_state("submersion", signals, phase="pre_entry"), "DENY_LOCK_OR_CONTROLLER")
+        self.assertEqual(supervisor_state("submersion", signals, phase="active"), "RECOVERY_REQUIRED_NO_ACTION_VALIDATED")
+
+    def test_ascent_reserve_failure_denies_entry_and_does_not_claim_recovery(self) -> None:
+        signals = {
+            "lock_primary": True,
+            "lock_secondary": True,
+            "mode_controller": True,
+            "reserve_low_voltage": True,
+            "leak_monitor": True,
+            "energy_margin": True,
+            "environment_permit": True,
+            "positive_ascent_reserve": False,
+        }
+        self.assertEqual(supervisor_state("submersion", signals, phase="pre_entry"), "DENY_ASCENT_RESERVE")
+        self.assertEqual(supervisor_state("submersion", signals, phase="active"), "RECOVERY_REQUIRED_NO_ACTION_VALIDATED")
 
 
 if __name__ == "__main__":

@@ -24,6 +24,24 @@ PET biodegradation by *Ideonella sakaiensis*, engineered PET depolymerases, fung
 
 **Continue as a bounded PET research platform; keep polyolefin work exploratory; prohibit environmental release.**
 
+## Scientific review additions
+
+The reported *Parengyodontium album* result of 0.044% PE mineralized per day
+followed UV pretreatment and a short laboratory assay; it is not a cleanup or
+feedstock-recovery throughput estimate ([Vaksmaa et al.](https://pubmed.ncbi.nlm.nih.gov/38679106/)).
+The finite model previously reported a zero mass-balance error because it
+defined residue as input minus product. That identity is not independent stream
+closure. The revised model lists illustrative uncaptured, sorting-reject,
+unconverted, product-loss, and product streams and explicitly marks them as
+fraction-derived rather than measured. Experimental closure still needs
+independent measurements of solid, soluble, gas, filter, and wastewater
+streams, particle counts, product identity, and enzyme retention/removal.
+
+NIH recombinant/synthetic nucleic-acid requirements apply within their stated
+funding and institutional scope, not as a universal global rule. Any future
+living chassis remains outside this package's authorization by default; local
+institutional, funder, and jurisdictional review would have to be established.
+
 ## References
 
 [1] [Yoshida et al., *Science* (2016).](https://pubmed.ncbi.nlm.nih.gov/26965627/)

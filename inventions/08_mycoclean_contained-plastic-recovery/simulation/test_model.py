@@ -5,7 +5,7 @@ from model import calculate
 
 
 class MycoCleanModelTests(unittest.TestCase):
-    def test_mass_balance(self):
+    def test_modeled_streams_partition_input_without_claiming_measured_closure(self):
         result = calculate(
             {
                 "input_kg_day": 100.0,
@@ -16,8 +16,13 @@ class MycoCleanModelTests(unittest.TestCase):
                 "energy_kwh_per_kg_accepted": 2.0,
             }
         )
-        self.assertTrue(math.isclose(result["mass_balance_error_kg_day"], 0.0))
         self.assertLessEqual(result["product_kg_day"], result["input_kg_day"])
+        self.assertTrue(math.isclose(
+            result["product_kg_day"] + result["unrecovered_kg_day"],
+            result["input_kg_day"],
+        ))
+        self.assertEqual(result["accounting_basis"], "illustrative_stream_allocation_from_input_fractions; not measured closure")
+        self.assertNotIn("mass_balance_error_kg_day", result)
 
     def test_zero_capture_is_zero_product(self):
         result = calculate(

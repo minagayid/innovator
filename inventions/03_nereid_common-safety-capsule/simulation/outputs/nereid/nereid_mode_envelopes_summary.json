@@ -207,7 +207,7 @@
       {
         "mode": "surface",
         "fault": "leak_monitor",
-        "state": "RECOVERY_WATER_INTEGRITY",
+        "state": "DENY_WATER_INTEGRITY",
         "unsafe_admission": false,
         "fail_closed": true
       },
@@ -256,7 +256,7 @@
       {
         "mode": "submersion",
         "fault": "leak_monitor",
-        "state": "RECOVERY_WATER_INTEGRITY",
+        "state": "DENY_WATER_INTEGRITY",
         "unsafe_admission": false,
         "fail_closed": true
       },
@@ -277,7 +277,7 @@
       {
         "mode": "submersion",
         "fault": "positive_ascent_reserve",
-        "state": "RECOVERY_ASCENT",
+        "state": "DENY_ASCENT_RESERVE",
         "unsafe_admission": false,
         "fail_closed": true
       }
@@ -402,7 +402,7 @@
       {
         "mode": "surface",
         "fault": "leak_monitor",
-        "state": "RECOVERY_WATER_INTEGRITY",
+        "state": "DENY_WATER_INTEGRITY",
         "unsafe_admission": false,
         "fail_closed": true
       },
@@ -451,7 +451,7 @@
       {
         "mode": "submersion",
         "fault": "leak_monitor",
-        "state": "RECOVERY_WATER_INTEGRITY",
+        "state": "DENY_WATER_INTEGRITY",
         "unsafe_admission": false,
         "fail_closed": true
       },
@@ -472,7 +472,7 @@
       {
         "mode": "submersion",
         "fault": "positive_ascent_reserve",
-        "state": "RECOVERY_ASCENT",
+        "state": "DENY_ASCENT_RESERVE",
         "unsafe_admission": false,
         "fail_closed": true
       }

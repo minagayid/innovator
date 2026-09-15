@@ -1,6 +1,6 @@
 # Refined Invention Programmes
 
-This directory contains nine **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Each programme has been re-audited against mechanism, energy / mass / momentum conservation, nearest-known technologies, certification or safety boundaries, and a defined test that could disprove its central hypothesis.
+This directory contains eleven **research design packages**, not commercially ready products and not claims of legal novelty, patentability, safety certification, or build readiness. Inventions 01–09 are refined research packages; 10 is a symbolic teaching sandbox reconstructed from the handoff description because its supplied archive contained NeuroForge files; 11 is the separate NeuroForge Parkinson research twin. Each programme states its evidence limits and next falsification gate.
 
 | Folder | Programme | Refined contribution | First decisive experiment |
 |---|---|---|---|
@@ -13,8 +13,10 @@ This directory contains nine **research design packages**, not commercially read
 | [`07_horizon-weave_portal-topology-lab`](07_horizon-weave_portal-topology-lab/) | **Horizon-Weave** | A non-operational general-relativity toy-metric and evidence-audit package; it rejects claims of a maintainable wormhole, black/white-hole portal, or transport device. | Analytic-identity and finite-grid verification of a prescribed Morris–Thorne NEC diagnostic with flat-space and horizon-lapse controls. |
 | [`08_mycoclean_contained-plastic-recovery`](08_mycoclean_contained-plastic-recovery/) | **MYCO-CLEAN** | A contained, polymer-specific recovery platform using enzyme modules, optical sorting, pretreatment, product recovery and fail-closed effluent monitoring; open-ocean biological release is excluded. | Finite mass-balance and recovery-envelope check followed by a closed-reactor PET benchmark against mechanical recycling. |
 | [`09_melshield_bioinspired-radiation-management`](09_melshield_bioinspired-radiation-management/) | **MEL-SHIELD** | A bio-inspired melanin composite integrated with conventional hydrogen-rich and neutron-management layers; radiation destruction and human deployment are not claimed. | Areal-mass accounting followed by calibrated spectrum-specific attenuation and aging tests against matched conventional stacks. |
+| [`10_geno-aquatic-symbolic-teaching-sandbox`](10_geno-aquatic-symbolic-teaching-sandbox/) | **GENO-AQUATIC** | A symbolic, synthetic-only teaching sandbox for aquatic trait hypotheses; it contains no biological sequence design or organism-specific engineering. | Validate that synthetic records remain in scope and reject sequence or wet-lab fields. |
+| [`11_neuroforge-neuroregenerative-research-twin`](11_neuroforge-neuroregenerative-research-twin/) | **NeuroForge** | A research-only evidence twin for Parkinson dopaminergic cell-replacement literature, separate from GENO-AQUATIC; no clinical decision or production function. | Offline schema, provenance, scope-lock, and red-line validation. |
 
-> The name of a concept, a diagram, or a rendered image is never evidence that it works. The `RE_AUDIT.md` file in each package records what was changed, what remains unresolved, and what result would falsify the proposal.
+> The name of a concept, a diagram, or a rendered image is never evidence that it works. Each package's `RE_AUDIT.md` records what was changed, what remains unresolved, and what result would falsify the proposal. [`PORTFOLIO_SCIENTIFIC_REVIEW.md`](PORTFOLIO_SCIENTIFIC_REVIEW.md) records the consolidated review across all eleven packages.
 
 ## Evidence labels
 

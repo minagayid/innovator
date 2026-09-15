@@ -1,0 +1,17 @@
+{
+  "experiment_id": "NF-EXP-001",
+  "candidate_id": "NF-CAND-001",
+  "model_system_id": "NF-MODEL-001",
+  "research_question": "Does the defined research model support the stated mechanism hypothesis?",
+  "hypothesis": "The model may produce a disease-relevant readout that is consistent with the mechanism hypothesis.",
+  "endpoint_category": "neural_function",
+  "evidence_refs": ["NF-EVID-001"],
+  "safety_classification": "research_metadata_only",
+  "human_review_status": "not_reviewed",
+  "source_provenance": {
+    "source_url": "https://example.org/neuroforge/synthetic-experiment-001",
+    "retrieved_on": "2026-09-15",
+    "license_or_consent_basis": "synthetic_example",
+    "dataset_or_model_version": "synthetic-0.1"
+  }
+}

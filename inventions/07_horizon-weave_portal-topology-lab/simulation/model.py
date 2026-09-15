@@ -17,13 +17,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
-
-plt.rcParams["font.family"] = "DejaVu Sans"
-plt.rcParams["axes.unicode_minus"] = True
 
 ALPHAS = (0.25, 0.5, 1.0, 2.0)
 THROAT_RADII = (0.5, 1.0, 2.0)
@@ -60,6 +54,14 @@ def numeric_stress_energy(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Return b, finite-difference b', rho, and radial NEC diagnostic."""
     b = shape_function(r, r0, alpha)
+    b, b_prime_fd, rho_fd, nec_fd = numeric_stress_energy_from_shape(r, b)
+    return b, b_prime_fd, rho_fd, nec_fd
+
+
+def numeric_stress_energy_from_shape(
+    r: np.ndarray, b: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Compute radial stress-energy proxies from a supplied shape profile."""
     b_prime_fd = np.gradient(b, r, edge_order=2)
     rho_fd = b_prime_fd / (8.0 * math.pi * r**2)
     p_radial = -b / (8.0 * math.pi * r**3)
@@ -72,9 +74,10 @@ def relative_error(actual: np.ndarray, expected: np.ndarray) -> np.ndarray:
 
 
 def flat_control(r: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Return rho, p_r, and NEC for b=0, Phi=0 exactly in this implementation."""
-    zero = np.zeros_like(r)
-    return zero, zero, zero
+    """Evaluate the b=0 control through the same numerical formula pipeline."""
+    b, _, rho, nec = numeric_stress_energy_from_shape(r, np.zeros_like(r))
+    pressure = -b / (8.0 * math.pi * r**3)
+    return rho, pressure, nec
 
 
 def schwarzschild_lapse(x: np.ndarray) -> np.ndarray:
@@ -160,6 +163,11 @@ def write_summary_csv(path: Path, summaries: list[dict]) -> None:
 
 
 def plot_nec_profiles(output_dir: Path, selected: dict[float, dict[str, np.ndarray]]) -> None:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.rcParams["font.family"] = "DejaVu Sans"
+    plt.rcParams["axes.unicode_minus"] = True
     figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
     for alpha, profiles in sorted(selected.items()):
         axis.plot(
@@ -180,6 +188,11 @@ def plot_nec_profiles(output_dir: Path, selected: dict[float, dict[str, np.ndarr
 
 
 def plot_refinement(output_dir: Path, summaries: list[dict]) -> None:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.rcParams["font.family"] = "DejaVu Sans"
+    plt.rcParams["axes.unicode_minus"] = True
     figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
     for alpha in ALPHAS:
         items = [item for item in summaries if item["alpha"] == alpha and item["r0"] == 1.0]
@@ -207,6 +220,14 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def optional_matplotlib_version() -> str | None:
+    try:
+        import matplotlib
+    except ModuleNotFoundError:
+        return None
+    return matplotlib.__version__
+
+
 def run(output_dir: Path) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     summaries: list[dict] = []
@@ -221,8 +242,10 @@ def run(output_dir: Path) -> dict:
                     write_selected_profile(output_dir / f"profile_alpha_{alpha:g}.csv", profiles)
 
     write_summary_csv(output_dir / "summary.csv", summaries)
-    plot_nec_profiles(output_dir, selected)
-    plot_refinement(output_dir, summaries)
+    matplotlib_version = optional_matplotlib_version()
+    if matplotlib_version is not None:
+        plot_nec_profiles(output_dir, selected)
+        plot_refinement(output_dir, summaries)
     manifest = {
         "study": "static_morris_thorne_energy_condition_toy",
         "created_utc": datetime.now(timezone.utc).isoformat(),
@@ -239,7 +262,8 @@ def run(output_dir: Path) -> dict:
             "python": sys.version,
             "platform": platform.platform(),
             "numpy": np.__version__,
-            "matplotlib": matplotlib.__version__,
+            "matplotlib": matplotlib_version,
+            "plots_generated": matplotlib_version is not None,
         },
         "conclusion_boundary": (
             "Computed finite verification of a prescribed metric-family implementation only; "

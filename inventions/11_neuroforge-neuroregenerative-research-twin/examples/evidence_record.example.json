@@ -1,0 +1,21 @@
+{
+  "evidence_id": "NF-EVID-001",
+  "study_type": "in_vitro",
+  "source_kind": "synthetic_example",
+  "publication_date": null,
+  "reviewer": "synthetic_fixture",
+  "evidence_level": "in_vitro",
+  "source_provenance": {
+    "source_url": "https://example.org/neuroforge/synthetic-evidence-001",
+    "retrieved_on": "2026-09-15",
+    "license_or_consent_basis": "synthetic_example",
+    "dataset_or_model_version": "synthetic-0.1"
+  },
+  "disease_context": "parkinson_disease",
+  "endpoint": "Cell identity and disease-relevant neural-function readout in a defined research model",
+  "model_limitations": ["Synthetic example; no clinical inference permitted."],
+  "uncertainty": ["No independent replication in this fixture."],
+  "negative_or_conflicting_evidence": ["Synthetic example: unresolved null result in a comparator model."],
+  "transferability_limits": ["Model result cannot be interpreted as patient efficacy."],
+  "conflict_of_interest": "synthetic_example"
+}

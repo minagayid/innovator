@@ -16,7 +16,7 @@ The kit split follows the refined NEREID architecture: road, restricted flight, 
 | Restricted-flight static hover screen | Determine whether a declared distributed-lift total has \(T/(mg)\) above an explicitly chosen finite surrogate threshold. | A single-unit loss must fail the threshold. | Nominal kit clears 1.30 thrust-to-weight; single-unit-loss case fails, proving the model exposes loss of margin. |
 | Surface-water reserve-buoyancy screen | Compute \(\rho Vg-W\) and a declared freeboard proxy for a protected-water static case. | Reduced displaced volume must fail the reserve threshold. | Nominal state has positive declared reserve and the negative control fails. |
 | Shallow-submersion recovery screen | Under a simplified vertical response, verify the normal propulsion-loss condition \(F_{\mathrm{buoyancy}}-W-F_{\mathrm{drag,down}}>F_{\mathrm{reserve}}\). | Reduced reserve-volume fault must fail. | Nominal uncrewed basin case clears the declared upward reserve; no depth or pressure rating is inferred. |
-| Independent mode-supervisor matrix | Exhaustively inject one defined interface fault per domain kit and verify hazardous-mode admission is denied and a recoverable state is selected. | Disable one independent-lock check; at least one unsafe admission must occur. | Every defined single fault in the safeguarded design is denied; negative control is distinguishable. |
+| Pre-entry mode-supervisor matrix | Inject one defined interface fault per domain kit and verify hazardous-mode admission is denied. Active-mode physical recovery is outside this model. | Disable one independent-lock check; at least one unsafe admission must occur. | Every defined pre-entry fault in the safeguarded design is denied; negative control is distinguishable. |
 
 ## 3. Shared model assumptions
 
@@ -51,4 +51,4 @@ The suite must run nominal cases, one meaningful negative control per envelope, 
 
 ## Rendered-schematic validation
 
-The rendered capsule architecture and mode-supervisor diagrams were visually checked. Both are legible at report scale, show the common capsule and individual kits separately, and identify deny / recovery paths. The diagrams are system schematics only; they do not provide dimensions, loads, wiring specifications, fabrication drawings or certification evidence.
+The rendered capsule architecture and mode-supervisor diagrams were visually checked. Both are legible at report scale and show the common capsule and individual kits separately. Any recovery path in a schematic is a proposed concept, not a validated state transition or actuator response. The diagrams are system schematics only; they do not provide dimensions, loads, wiring specifications, fabrication drawings or certification evidence.
