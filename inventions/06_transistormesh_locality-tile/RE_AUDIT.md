@@ -24,3 +24,19 @@ If a matched post-layout candidate consumes no less total workload energy than c
 ## Unresolved
 
 Workload transferability, PDK availability, SRAM minimum-voltage behavior, detailed PDN/thermal extraction, silicon yield, reliability, GAA/BSPDN process access and commercial value remain unresolved.
+
+## Scientific review additions
+
+Eyeriss already demonstrates local reuse and direct processing-element
+communication as accelerator mechanisms
+([Chen, Emer & Sze, ISCA 2016](https://people.csail.mit.edu/emer/media/papers/2016.06.isca.eyeriss_architecture.pdf)).
+The remaining hypothesis must therefore name a distinct segmentation/gating
+policy and fixed mapping procedure before any comparison; this review is not a
+legal novelty or patent opinion.
+
+Include external-memory and I/O energy in the useful-work boundary, and match
+the bus and systolic baselines for workload, output, precision, throughput,
+capacity, PDK, and PVT/SRAM constraints. Report area, timing, and measured or
+modeled energy uncertainty. Remove yield claims unless a defined target and
+supporting yield/corner analysis are supplied; RTL or wire-only energy is not a
+full-workload result.

@@ -41,13 +41,20 @@ flowchart TB
 
 The cassette contains parallel gas, capture-medium and regeneration pathways. Gas and regeneration flows are arranged in counterflow. Each cassette is modular and instrumented for CO₂, humidity, temperature, pressure drop, capture-medium condition, liquid conductivity where relevant, and leak / breakthrough detection. The geometry can change **which pressure-drop / mass-transfer trade-off is achievable**; it cannot manufacture a chemical driving force or replace sorbent selectivity.
 
-A general performance measure is
+A general performance report keeps unlike energy inputs separate:
 
 \[
-\Phi=\frac{\dot m_{\mathrm{CO_2,captured}}}{P_{\mathrm{fan}}+P_{\mathrm{regen}}}.
+e_{\mathrm{electric}}=\frac{E_{\mathrm{electric,total}}}{m_{\mathrm{CO_2,captured}}},\qquad
+q_{\mathrm{thermal}}=\frac{Q_{\mathrm{regeneration,total}}}{m_{\mathrm{CO_2,captured}}}.
 \]
 
-The test is meaningful only when both candidate and baseline share feed concentration, humidity, sorbent mass, contact time / outlet specification, pressure-drop cap, measurement uncertainty, and cycling protocol.
+The electric boundary includes fans, conditioning, controls, compression, and
+CO₂ handling. Report regeneration heat separately. Do not add thermal and
+electric joules into a single advantage score unless a disclosed site-specific
+primary-energy or exergy method converts them to a common basis. The test is
+meaningful only when both candidate and baseline share feed concentration,
+humidity, sorbent mass, contact time / outlet specification, pressure-drop cap,
+measurement uncertainty, and cycling protocol.
 
 | Component | Design function | Evidence needed before scale-up |
 |---|---|---|
@@ -59,7 +66,13 @@ The test is meaningful only when both candidate and baseline share feed concentr
 
 ### Decisive benchmark
 
-The initial 1–10 kg CO₂/day rig must run a lamellar cassette and a conventional monolith in parallel. It succeeds only if the pre-registered \(\Phi\) improvement remains after correcting for pressure drop, regeneration energy and degradation. A visually larger exchange area is not a success metric.
+The initial 1–10 kg CO₂/day rig must run a lamellar cassette and a conventional
+monolith in parallel. Pre-register separate limits for electrical energy per
+captured mass and regeneration heat per captured mass, including pressure
+drop, conditioning, CO₂ handling, cycling degradation, and uncertainty. Report
+both outcomes separately; do not use one combined \(\Phi\) unless a disclosed
+primary-energy or exergy method converts them to a common basis. A visually
+larger exchange area is not a success metric.
 
 ## Oxygen Recovery
 

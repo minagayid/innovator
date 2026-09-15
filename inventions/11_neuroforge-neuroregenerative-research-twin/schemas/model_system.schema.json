@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/neuroforge/model_system.schema.json",
+  "title": "NeuroForge research model system",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["model_id", "disease_context", "model_category", "task_validated_for", "known_limitations", "out_of_domain_status", "source_provenance"],
+  "properties": {
+    "model_id": {"type": "string", "pattern": "^NF-MODEL-[0-9]{3}$"},
+    "disease_context": {"const": "parkinson_disease"},
+    "model_category": {"enum": ["human_ipsc_derived_neuron", "organoid_assembloid", "bbb_or_organ_on_chip", "animal_metadata", "clinical_metadata", "computational"]},
+    "task_validated_for": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "known_limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "out_of_domain_status": {"enum": ["in_domain_for_defined_task", "partially_in_domain", "out_of_domain", "unknown"]},
+    "source_provenance": {"$ref": "evidence_record.schema.json#/$defs/provenance"}
+  }
+}

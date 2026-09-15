@@ -4,10 +4,10 @@
 |---|---|---|---|
 | C1 | *I. sakaiensis* was reported to use PET as a major energy and carbon source through a two-enzyme pathway. [1] | PET is a reasonable first benchmark, but the organism is not the deployed reactor. | [S] |
 | C2 | An engineered PET depolymerase was reported to depolymerize PET in a bottle-recycling context. [2] | Closed PET enzymatic processing is a credible comparator, not proof of MYCO-CLEAN scale. | [S] |
-| C3 | Marine *P. album* PE mineralization was measured after UV pretreatment at 0.044%/day under the reported laboratory conditions. [3] | PE is a slow, pretreatment-dependent discovery branch; no open-ocean claim follows. | [S] |
+| C3 | Marine *P. album* PE mineralization was measured after UV pretreatment at 0.044%/day under the reported laboratory conditions; the result is not recovered-feed throughput. [3] | PE is a slow, pretreatment-dependent discovery branch; no cleanup-rate or open-ocean claim follows. | [S] |
 | C4 | Fungal enzyme reviews report different enzyme families for PET/PUR versus PE/PVC. [4] | One universal cocktail is not a justified architecture. | [S] |
 | C5 | EPA distinguishes mechanical recycling from advanced chemical/thermal recycling and notes variability limits. [5] | The biological lane must be compared to existing recovery routes and must preserve product identity. | [S] |
-| C6 | NIH guidance requires institutional risk assessment and IBC oversight for covered recombinant/synthetic-nucleic-acid work. [6] | Any living engineered chassis is outside this package's authorization boundary. | [S] |
+| C6 | NIH guidance requires institutional risk assessment and IBC oversight for covered work within the Guidelines' scope. [6] | This package authorizes no living engineered chassis; separate funder, institutional, and jurisdictional review may apply. | [S] |
 
 ## Search limits
 

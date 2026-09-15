@@ -1,33 +1,48 @@
 {
-  "model": "mycoclean_illustrative_mass_balance",
+  "model": "mycoclean_illustrative_stream_allocation",
   "parameter_status": "illustrative placeholders; not field-ready values",
   "scenarios": {
     "nominal": {
+      "accounting_basis": "illustrative_stream_allocation_from_input_fractions; not measured closure",
       "input_kg_day": 1000.0,
       "captured_kg_day": 900.0,
+      "uncaptured_kg_day": 100.0,
       "accepted_kg_day": 765.0,
+      "sorting_rejects_kg_day": 135.0,
+      "converted_kg_day": 573.75,
+      "unconverted_kg_day": 191.25,
       "product_kg_day": 516.375,
-      "residue_kg_day": 483.625,
-      "energy_kwh_day": 1147.5,
-      "mass_balance_error_kg_day": 0.0
+      "product_recovery_losses_kg_day": 57.375,
+      "unrecovered_kg_day": 483.625,
+      "energy_kwh_day": 1147.5
     },
     "lower_recovery": {
+      "accounting_basis": "illustrative_stream_allocation_from_input_fractions; not measured closure",
       "input_kg_day": 1000.0,
       "captured_kg_day": 750.0,
+      "uncaptured_kg_day": 250.0,
       "accepted_kg_day": 525.0,
+      "sorting_rejects_kg_day": 225.0,
+      "converted_kg_day": 236.25,
+      "unconverted_kg_day": 288.75,
       "product_kg_day": 177.1875,
-      "residue_kg_day": 822.8125,
-      "energy_kwh_day": 1155.0,
-      "mass_balance_error_kg_day": 0.0
+      "product_recovery_losses_kg_day": 59.0625,
+      "unrecovered_kg_day": 822.8125,
+      "energy_kwh_day": 1155.0
     },
     "upper_recovery": {
+      "accounting_basis": "illustrative_stream_allocation_from_input_fractions; not measured closure",
       "input_kg_day": 1000.0,
       "captured_kg_day": 950.0,
+      "uncaptured_kg_day": 50.0,
       "accepted_kg_day": 874.0,
+      "sorting_rejects_kg_day": 76.0,
+      "converted_kg_day": 742.9,
+      "unconverted_kg_day": 131.10000000000002,
       "product_kg_day": 698.3259999999999,
-      "residue_kg_day": 301.6740000000001,
-      "energy_kwh_day": 1048.8,
-      "mass_balance_error_kg_day": 0.0
+      "product_recovery_losses_kg_day": 44.57400000000007,
+      "unrecovered_kg_day": 301.6740000000001,
+      "energy_kwh_day": 1048.8
     }
   }
 }

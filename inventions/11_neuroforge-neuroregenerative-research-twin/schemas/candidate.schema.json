@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/neuroforge/candidate.schema.json",
+  "title": "NeuroForge research candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "disease_context", "modality", "mechanism_hypothesis", "model_systems", "evidence_refs", "evidence_axes", "known_risks", "unknowns", "transferability_limits", "negative_or_conflicting_evidence", "source_provenance", "research_only", "review_status", "blocked_action_types"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "candidate_id": {"type": "string", "pattern": "^NF-CAND-[0-9]{3}$"},
+    "disease_context": {"type": "array", "const": ["parkinson_disease"]},
+    "modality": {"const": "dopaminergic_cell_replacement_research"},
+    "mechanism_hypothesis": {"type": "string", "minLength": 20},
+    "model_systems": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "evidence_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^NF-EVID-[0-9]{3}$"}},
+    "evidence_axes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mechanism", "safety", "efficacy"],
+      "properties": {
+        "mechanism": {"enum": ["unsupported", "hypothesis", "model_supported", "replicated"]},
+        "safety": {"enum": ["unknown", "partially_characterized", "model_characterized", "independently_reviewed"]},
+        "efficacy": {"enum": ["none", "exploratory_model_signal", "preclinical_signal", "investigational_human_signal", "replicated_clinical_evidence"]}
+      }
+    },
+    "known_risks": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "unknowns": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "transferability_limits": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "negative_or_conflicting_evidence": {"type": "array", "items": {"type": "string"}},
+    "source_provenance": {"$ref": "evidence_record.schema.json#/$defs/provenance"},
+    "research_only": {"const": true},
+    "review_status": {"enum": ["hypothesis", "research_priority_pending_review", "research_priority_reviewed", "quarantined"]},
+    "blocked_action_types": {"type": "array", "minItems": 4, "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1",
+  "candidate_id": "NF-CAND-001",
+  "disease_context": ["parkinson_disease"],
+  "modality": "dopaminergic_cell_replacement_research",
+  "mechanism_hypothesis": "Investigate whether a defined dopaminergic neuronal population can restore a disease-relevant motor-circuit signal in a bounded research model.",
+  "model_systems": ["NF-MODEL-001"],
+  "evidence_refs": ["NF-EVID-001"],
+  "evidence_axes": {
+    "mechanism": "hypothesis",
+    "safety": "unknown",
+    "efficacy": "exploratory_model_signal"
+  },
+  "known_risks": ["tumorigenicity", "immune_response", "ectopic_cell_fate", "incomplete_functional_integration"],
+  "unknowns": ["long_term_durability", "disease_progression_effect", "generalizability"],
+  "transferability_limits": ["A human-cell model does not establish patient benefit or clinical safety."],
+  "negative_or_conflicting_evidence": ["Synthetic example: no negative study has been adjudicated yet."],
+  "source_provenance": {
+    "source_url": "https://example.org/neuroforge/synthetic-candidate-001",
+    "retrieved_on": "2026-09-15",
+    "license_or_consent_basis": "synthetic_example",
+    "dataset_or_model_version": "synthetic-0.1"
+  },
+  "research_only": true,
+  "review_status": "hypothesis",
+  "blocked_action_types": ["patient_specific_recommendation", "dose_generation", "gene_edit_design", "cell_manufacturing_protocol", "transplantation_decision"]
+}

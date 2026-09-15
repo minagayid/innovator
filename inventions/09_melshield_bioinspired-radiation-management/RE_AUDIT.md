@@ -24,6 +24,28 @@ Melanized-fungi radiation studies, NASA space-biology research and hydrogen-rich
 
 **Continue with material coupons and spectrum-specific measurement. Stop before human, spacecraft or nuclear-facility deployment until independent radiation, materials, thermal, mechanical and regulatory evidence exists.**
 
+## Scientific review additions
+
+The evidence includes an important negative result: tested melanin did not
+improve β-radiation shielding relative to cellulose. A 2025 PNAS study provides
+a narrow positive result for particular fungal-melanin/PLA material coupons
+after roughly six months in LEO, including reduced darkening of a PVC backing.
+Neither result supports dose-equivalent protection of people, cosmic-ray
+qualification, or universal material performance. Add matched areal-mass
+controls, declared spectrum and geometry, calibrated dose and secondary-
+particle measurements, and aging to the first coupon gate.
+
+If fungal melanin is produced from *Cryptococcus neoformans*, source-material
+and worker-containment review is a separate upstream concern; CDC describes
+infection risk from inhaled spores. This does not imply purified melanin is
+infectious. The first deployed test article remains nonliving. NIH Guidelines
+apply only to covered work within their funding/institutional scope; determine
+applicable local oversight separately.
+
+Sources: [2020 β-shielding comparison](https://doi.org/10.1371/journal.pone.0229921),
+[2025 LEO PLA-composite study](https://doi.org/10.1073/pnas.2427118122), and
+[CDC cryptococcosis cause/risk information](https://www.cdc.gov/cryptococcosis/causes/index.html).
+
 ## References
 
 [1] [Dadachova et al., *PLOS ONE* (2007).](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0000457)

@@ -41,7 +41,7 @@ The capsule carries occupants only in a later, separately approved phase. Early 
 | Interface frame | Defines standard load paths and locking geometry. | Static, fatigue, vibration and corrupted-sensor lock-state evidence. |
 | Electrical spine | Segregates traction / lift power from control and recovery reserve. | Dielectric monitoring, immersion-fault isolation, contactor and manual-service-disconnect tests. |
 | Leak boundary | Protects instrumentation and energy system in water operations. | Vacuum / pressure cycle, ingress sensing, dewatering and post-test inspection. |
-| Mode controller | Rejects unsafe configuration changes independently of high-level autonomy. | Hardware fault-injection matrix showing fail-closed transitions and recoverable states. |
+| Mode controller | Screens pre-entry configuration and interlock evidence. | Test pre-entry denial separately from active-mode response; this package does not establish a physical recovery action. |
 | Recovery hardware | Supports manual recovery, towing, and positive ascent in submersion tests. | Propulsion-loss ascent / recovery demonstration with relevant mass distribution. |
 
 ## Domain kits
@@ -61,7 +61,11 @@ A mode is admitted only if independent evidence verifies hardware configuration,
 q_m=\bigwedge_{j=1}^{n}(s_j\in\mathcal S_{j,\mathrm{valid}})\wedge R_E\ge R_{m,\min}\wedge M_{m}\ge M_{m,\min}.
 \]
 
-Loss of information must deny entry to the more hazardous mode and activate its defined recovery state. For shallow submersion, the emergency upward-force condition is
+Loss of information before entry must deny the more hazardous mode. In an active
+mode, this finite model only returns `RECOVERY_REQUIRED_NO_ACTION_VALIDATED`;
+it does not select or command a physical recovery. For shallow submersion, the
+upward-force balance below is a screening proxy, not an emergency recovery
+demonstration:
 
 \[
 F_{\mathrm{buoyancy}}-W-F_{\mathrm{drag,down}}>F_{\mathrm{reserve}}>0
@@ -82,7 +86,12 @@ for a normal-propulsion-loss case. It is a vehicle-specific physical test, not a
 
 ## Decisive test
 
-The highest-value test is a traceable **single-fault injection matrix** on the capsule-interface rig. It must simulate each lock disagreement, sensor disagreement, leak indication, energy isolation fault, commanded transition fault and loss-of-propulsion scenario. The system succeeds only if each row ends in a controlled, recoverable state. A single unsafe transition falsifies the present mode-supervisor architecture.
+The highest-value test is a traceable **single-fault injection matrix** on the
+capsule-interface rig. Pre-entry interlock faults must deny admission. Any
+active-mode response requires a separate, timed hardware-in-the-loop test;
+`RECOVERY_REQUIRED_NO_ACTION_VALIDATED` is only a screening label and does not
+show that a physical recovery action is available. A single unsafe admission
+falsifies the present pre-entry supervisor model.
 
 ## Prior-art and product boundary
 

@@ -1,6 +1,6 @@
 {
-  "study": "independent_shape_and_integrated_nec_audit",
-  "created_utc": "2026-08-25T19:28:52.719962+00:00",
+  "study": "shape_domain_and_nec_quadrature_check",
+  "created_utc": "2026-09-15T11:22:02.018426+00:00",
   "units": "geometrized G=c=1",
   "scope": "Checks a prescribed metric's shape-domain and integrated radial NEC identity only; not a source, stability, QEI, formation, causality, or portal-feasibility calculation.",
   "parameters": {
@@ -87,7 +87,7 @@
       "volume_nec_debt_rel_error": 0.0002570317740352662,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
-      "max_ratio_interior": 0.9189068700171732,
+      "max_ratio_interior": 0.9189068700171733,
       "all_interior_strictly_below_one": true
     },
     {
@@ -121,9 +121,9 @@
       "alpha": 0.5,
       "n_grid": 4001,
       "x_max": 30.0,
-      "volume_nec_debt_numeric": -0.6130718239721896,
+      "volume_nec_debt_numeric": -0.6130718239721895,
       "volume_nec_debt_analytic": -0.6130693606237085,
-      "volume_nec_debt_rel_error": 4.018058378548438e-06,
+      "volume_nec_debt_rel_error": 4.018058378367345e-06,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
       "max_ratio_interior": 0.9892227278244197,
@@ -147,9 +147,9 @@
       "alpha": 1.0,
       "n_grid": 1001,
       "x_max": 30.0,
-      "volume_nec_debt_numeric": -0.48340340229004447,
+      "volume_nec_debt_numeric": -0.4834034022900444,
       "volume_nec_debt_analytic": -0.48333333333333334,
-      "volume_nec_debt_rel_error": 0.00014497025526441403,
+      "volume_nec_debt_rel_error": 0.00014497025526429916,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
       "max_ratio_interior": 0.944428861368232,
@@ -295,7 +295,7 @@
       "volume_nec_debt_rel_error": 0.000257031774034904,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
-      "max_ratio_interior": 0.9189068700171732,
+      "max_ratio_interior": 0.9189068700171733,
       "all_interior_strictly_below_one": true
     },
     {
@@ -355,9 +355,9 @@
       "alpha": 1.0,
       "n_grid": 1001,
       "x_max": 30.0,
-      "volume_nec_debt_numeric": -0.9668068045800889,
+      "volume_nec_debt_numeric": -0.9668068045800888,
       "volume_nec_debt_analytic": -0.9666666666666667,
-      "volume_nec_debt_rel_error": 0.00014497025526441403,
+      "volume_nec_debt_rel_error": 0.00014497025526429916,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
       "max_ratio_interior": 0.944428861368232,
@@ -503,7 +503,7 @@
       "volume_nec_debt_rel_error": 0.0002570317740352662,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
-      "max_ratio_interior": 0.9189068700171732,
+      "max_ratio_interior": 0.9189068700171733,
       "all_interior_strictly_below_one": true
     },
     {
@@ -537,9 +537,9 @@
       "alpha": 0.5,
       "n_grid": 4001,
       "x_max": 30.0,
-      "volume_nec_debt_numeric": -2.4522872958887585,
+      "volume_nec_debt_numeric": -2.452287295888758,
       "volume_nec_debt_analytic": -2.452277442494834,
-      "volume_nec_debt_rel_error": 4.018058378548438e-06,
+      "volume_nec_debt_rel_error": 4.018058378367345e-06,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
       "max_ratio_interior": 0.9892227278244197,
@@ -563,9 +563,9 @@
       "alpha": 1.0,
       "n_grid": 1001,
       "x_max": 30.0,
-      "volume_nec_debt_numeric": -1.9336136091601779,
+      "volume_nec_debt_numeric": -1.9336136091601777,
       "volume_nec_debt_analytic": -1.9333333333333333,
-      "volume_nec_debt_rel_error": 0.00014497025526441403,
+      "volume_nec_debt_rel_error": 0.00014497025526429916,
       "volume_nec_debt_negative": true,
       "ratio_at_throat": 1.0,
       "max_ratio_interior": 0.944428861368232,
@@ -651,15 +651,16 @@
     }
   ],
   "environment": {
-    "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
-    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
-    "numpy": "2.5.1",
-    "matplotlib": "3.11.1"
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.3.5",
+    "matplotlib": null,
+    "plot_generated": false
   },
   "source_sha256": {
-    "adversarial_audit.py": "acb6a64e49296de8c02a35993b0fc0a9e5a5146de8649b38473bbc54dfeaa5af",
-    "test_adversarial_audit.py": "4416390485b1f54c802adf891a679fd8ebfd03f3f31e8fe13099ac25ebb9747c",
-    "MODEL_SPEC.md": "a0b133850678dfb31cdadb657570d7be9d48f824326e4911c2cd01cbd1030af3",
-    "FORMAL_CLAIM.md": "de390e4cb3bfd2a876dd5656b00ddc2fd41280d5b28516b4687dc4e4c5164138"
+    "adversarial_audit.py": "b760475d36bc6f6005134009461faa876f16f24f3ae921250e88cff47318c5bd",
+    "test_adversarial_audit.py": "5142f5dc2781b32fdb1a628db4b95a5a1346dbf70e02579c9f173ff3af7325d0",
+    "MODEL_SPEC.md": "88f16d34260a7b76883288cd2917323561395a188ce41c6fb95a45ef77efbda3",
+    "FORMAL_CLAIM.md": "986356aba3fb9abe8e11061dc8a2f78dee3c36102aa8ed3890fe2cf8718613c2"
   }
 }

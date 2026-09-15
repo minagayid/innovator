@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1",
+  "candidate_id": "GA-CAND-001",
+  "model_context": "synthetic_aquatic_analogue",
+  "trait_hypothesis": "Fictional symbol pattern A may correlate with a simulated salinity-response category.",
+  "symbolic_features": ["SYMBOL_A", "SYMBOL_B"],
+  "evidence_status": "synthetic_example",
+  "limitations": [
+    "All labels are invented and do not represent a real species or sequence.",
+    "A simulated category is not a measured phenotype or ecological outcome."
+  ],
+  "research_only": true
+}

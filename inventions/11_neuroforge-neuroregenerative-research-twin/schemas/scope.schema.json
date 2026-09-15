@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/neuroforge/scope.schema.json",
+  "title": "NeuroForge Parkinson V1 scope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scope_id", "active_disease", "active_modality", "research_only", "human_review_required", "clinical_decision_support", "patient_specific_outputs", "operational_protocols"],
+  "properties": {
+    "scope_id": {"const": "neuroforge-parkinson-v1"},
+    "active_disease": {"const": "parkinson_disease"},
+    "active_modality": {"const": "dopaminergic_cell_replacement_research"},
+    "research_only": {"const": true},
+    "human_review_required": {"const": true},
+    "clinical_decision_support": {"const": false},
+    "patient_specific_outputs": {"const": false},
+    "operational_protocols": {"const": false}
+  }
+}

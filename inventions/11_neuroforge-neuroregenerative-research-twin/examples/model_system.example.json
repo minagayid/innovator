@@ -1,0 +1,14 @@
+{
+  "model_id": "NF-MODEL-001",
+  "disease_context": "parkinson_disease",
+  "model_category": "human_ipsc_derived_neuron",
+  "task_validated_for": ["cell_identity_comparison", "neural_function_readout_mapping"],
+  "known_limitations": ["Does not reproduce whole-brain circuitry, aging, immune context, or clinical outcomes."],
+  "out_of_domain_status": "in_domain_for_defined_task",
+  "source_provenance": {
+    "source_url": "https://example.org/neuroforge/synthetic-model-001",
+    "retrieved_on": "2026-09-15",
+    "license_or_consent_basis": "synthetic_example",
+    "dataset_or_model_version": "synthetic-0.1"
+  }
+}

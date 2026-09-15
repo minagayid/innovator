@@ -34,6 +34,11 @@ class MorrisThorneToyTests(unittest.TestCase):
         self.assertEqual(float(np.max(np.abs(rho))), 0.0)
         self.assertEqual(float(np.max(np.abs(p_radial))), 0.0)
         self.assertEqual(float(np.max(np.abs(nec))), 0.0)
+        b, b_prime, rho_fd, nec_fd = model.numeric_stress_energy_from_shape(r, np.zeros_like(r))
+        np.testing.assert_array_equal(b, np.zeros_like(r))
+        np.testing.assert_array_equal(b_prime, np.zeros_like(r))
+        np.testing.assert_array_equal(rho_fd, np.zeros_like(r))
+        np.testing.assert_array_equal(nec_fd, np.zeros_like(r))
 
     def test_schwarzschild_lapse_increases_outside_normalized_horizon(self) -> None:
         x = np.array([1.001, 1.01, 1.1, 2.0, 10.0])

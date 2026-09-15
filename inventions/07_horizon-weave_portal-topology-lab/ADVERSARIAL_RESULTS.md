@@ -2,14 +2,14 @@
 
 ## Tests performed
 
-This release added two checks that do not rely on the original finite-difference derivative route.
+This release added a symbolic simplification check and a quadrature/shape-domain check. The latter does not derive stress-energy independently of the analytic NEC expression.
 
 | Audit | Finite coverage | Result | What it verifies |
 |---|---:|---|---|
 | Symbolic audit | Five identities under \(r>0\), \(r_0>0\), \(R>0\), \(\alpha>0\) | All identities simplified to zero. | The declared derivative, throat, flare-out, radial NEC, and integrated-NEC formulas are algebraically consistent within the ansatz. |
-| Independent numerical audit | 48 cases over the original \(\alpha\), \(r_0\), and resolution sets | All cases had negative integrated radial NEC and \(b/r<1\) outside the throat; quadrature refined toward the independent analytic integral. | The separate quadrature/shape calculations agree with the selected metric’s algebraic requirement. |
+| Numerical quadrature and shape-domain check | 48 cases over the original \(\alpha\), \(r_0\), and resolution sets | All cases had negative integrated radial NEC and \(b/r<1\) outside the throat; quadrature refined toward the closed-form integral of the analytic NEC profile. | It checks quadrature and shape-domain calculations, not an independent stress-energy derivation. |
 
-The independent integral is
+The analytic profile's volume integral is
 
 \[
 \int_{r_0}^{R}4\pi r^2(\rho+p_r)\,dr
@@ -31,7 +31,7 @@ for the stated parameter domain. The plot [`integrated_nec_debt.png`](simulation
 
 ## Final audit conclusion
 
-The added computation **strengthens the negative conclusion for this toy family**: the required NEC violation is not a numerical-derivative artifact and remains present when inspected through symbolic algebra and an independent volume-weighted integral. That is evidence against interpreting the original pass as a maintenance solution, not evidence that the physical obstacle has been solved.
+The added computation **strengthens the negative conclusion for this toy family**: the required NEC violation appears in the prescribed analytic profile and its symbolic identities, while finite-difference and quadrature checks test implementation consistency. It does not independently derive the stress-energy tensor. This is evidence against interpreting the original pass as a maintenance solution, not evidence that the physical obstacle has been solved.
 
 The search found exact specialized theoretical wormhole solutions, including a 2022 model that introduces a phantom scalar in its general-relativistic formulation or changes the gravity theory in its alternative formulation [2]. This is a relevant theoretical lead, but it does not satisfy the linked source, semiclassical, stability, causal, and engineering criteria. The no-build decision therefore remains the only evidence-supported result.
 
