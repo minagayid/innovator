@@ -1,0 +1,6 @@
+interface:
+  display_name: "Repository Hardening Loop"
+  short_description: "Apply, test, and re-review repository fixes"
+  default_prompt: "Use $repository-hardening-loop to implement and verify this approved correction plan."
+policy:
+  allow_implicit_invocation: true

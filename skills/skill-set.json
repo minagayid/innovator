@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "name": "innovator-codex-skillset",
-  "version": "2026.09.14",
-  "purpose": "A reusable bundle for safe tool creation, ethical website optimization, verified publication, and the imported Claude/Manus/Codex skill set.",
+  "version": "2026.09.15",
+  "purpose": "A reusable bundle for safe tool creation, ethical website optimization, verified publication, repository security and hardening, and the imported Claude/Manus/Codex skill set.",
   "imported_skill_count": 232,
   "imported_skill_manifest": "bundle-manifest.json",
   "imported_sources": [
@@ -30,12 +30,40 @@
     "privacy_boundary": "Sensitive personal-health conversations were not used as skill-training material."
   },
   "skills": [
-    {"name": "tool-creator", "path": "tool-creator", "role": "Design, scaffold, validate, and dry-run callable tool contracts."},
-    {"name": "seo-optimizer", "path": "seo-optimizer", "role": "Audit and prioritize ethical SEO improvements with explicit evidence limits."},
-    {"name": "innovator-repo-publisher", "path": "innovator-repo-publisher", "role": "Review and publish skill/tool bundles to an authorized repository."}
+    {
+      "name": "tool-creator",
+      "path": "tool-creator",
+      "role": "Design, scaffold, validate, and dry-run callable tool contracts."
+    },
+    {
+      "name": "seo-optimizer",
+      "path": "seo-optimizer",
+      "role": "Audit and prioritize ethical SEO improvements with explicit evidence limits."
+    },
+    {
+      "name": "innovator-repo-publisher",
+      "path": "innovator-repo-publisher",
+      "role": "Review and publish skill/tool bundles to an authorized repository."
+    },
+    {
+      "name": "repository-security-audit",
+      "role": "Audit repository security and release readiness with evidence-backed local review.",
+      "path": "repository-security-audit"
+    },
+    {
+      "name": "repository-hardening-loop",
+      "role": "Implement approved repository fixes in isolated branches and verify them through bounded critique and tests.",
+      "path": "repository-hardening-loop"
+    }
   ],
   "tools": [
-    {"name": "text_echo", "path": "tools/text-echo/tool.json", "kind": "function", "external_side_effects": false, "approval_required": false}
+    {
+      "name": "text_echo",
+      "path": "tools/text-echo/tool.json",
+      "kind": "function",
+      "external_side_effects": false,
+      "approval_required": false
+    }
   ],
   "validation": {
     "skill_validator": "skill-creator/scripts/quick_validate.py (resolve from the local skill installation)",
