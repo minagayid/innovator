@@ -1,4 +1,6 @@
 import { env } from "cloudflare:workers";
+import { insertProjectWithCompensation } from "./project-persistence.ts";
+import { buildProjectListQuery, makeProjectPage, type ProjectCursor, type ProjectPage } from "./project-pagination.ts";
 
 export type StoredUser = { id: string; email: string; displayName: string; createdAt: string; updatedAt: string };
 export type ProjectRecord = {
@@ -66,16 +68,15 @@ export async function upsertUser(email: string, displayName: string): Promise<St
   return user;
 }
 
-export async function listProjects(viewerId?: string): Promise<ProjectRecord[]> {
+export async function listProjects(
+  viewerId: string | undefined,
+  options: { limit: number; cursor: ProjectCursor | null },
+): Promise<ProjectPage<ProjectRecord>> {
   await ensureDataSchema();
   const db = getDatabase();
-  const base = `SELECT p.id, p.slug, p.owner_id AS ownerId, u.display_name AS ownerName, p.title, p.summary, p.category,
-    p.status, p.readiness_stage AS readinessStage, p.visibility, p.document_key AS documentKey,
-    p.created_at AS createdAt, p.updated_at AS updatedAt FROM projects p JOIN users u ON u.id = p.owner_id`;
-  const query = viewerId
-    ? db.prepare(`${base} WHERE p.visibility = 'public' OR p.owner_id = ? ORDER BY p.updated_at DESC`).bind(viewerId)
-    : db.prepare(`${base} WHERE p.visibility = 'public' ORDER BY p.updated_at DESC`);
-  return (await query.all<ProjectRecord>()).results;
+  const query = buildProjectListQuery(viewerId, options);
+  const rows = (await db.prepare(query.sql).bind(...query.values).all<ProjectRecord>()).results;
+  return makeProjectPage(rows, options.limit);
 }
 
 export async function createProject(owner: StoredUser, input: { title: string; summary: string; category: string; visibility?: string; document: Record<string, unknown> }): Promise<ProjectRecord> {
@@ -88,12 +89,29 @@ export async function createProject(owner: StoredUser, input: { title: string; s
   const slug = `${slugBase}-${id.slice(0, 8)}`;
   const documentKey = `projects/${id}.json`;
   const visibility = input.visibility === "public" ? "public" : "private";
+  const record: ProjectRecord = {
+    id, slug, ownerId: owner.id, ownerName: owner.displayName, title: input.title, summary: input.summary,
+    category: input.category, status: "draft", readinessStage: "Structured concept", visibility,
+    documentKey, createdAt: now, updatedAt: now,
+  };
   await store.put(documentKey, JSON.stringify({
+    ...input.document,
     version: 1, projectId: id, ownerId: owner.id, title: input.title, summary: input.summary, category: input.category,
-    createdAt: now, updatedAt: now, ...input.document,
+    createdAt: now, updatedAt: now,
   }), { httpMetadata: { contentType: "application/json" }, customMetadata: { ownerId: owner.id, projectId: id } });
-  await db.prepare(`INSERT INTO projects (id, slug, owner_id, title, summary, category, status, readiness_stage, visibility, document_key, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, 'draft', 'Structured concept', ?, ?, ?, ?)`)
-    .bind(id, slug, owner.id, input.title, input.summary, input.category, visibility, documentKey, now, now).run();
-  return { id, slug, ownerId: owner.id, ownerName: owner.displayName, title: input.title, summary: input.summary, category: input.category, status: "draft", readinessStage: "Structured concept", visibility, documentKey, createdAt: now, updatedAt: now };
+  await insertProjectWithCompensation({
+    insert: () => db.prepare(`INSERT INTO projects (id, slug, owner_id, title, summary, category, status, readiness_stage, visibility, document_key, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'draft', 'Structured concept', ?, ?, ?, ?)`)
+      .bind(id, slug, owner.id, input.title, input.summary, input.category, visibility, documentKey, now, now).run(),
+    rowExists: async () => Boolean(await db.prepare("SELECT id FROM projects WHERE id = ?").bind(id).first<{ id: string }>()),
+    removeDocument: () => store.delete(documentKey),
+    reportIssue: (issue) => {
+      if (issue === "commit-status-unknown") {
+        console.error("Could not confirm project persistence; retained its document because commit state is unknown.");
+      } else {
+        console.error("Could not remove an unreferenced project document after database failure.");
+      }
+    },
+  });
+  return record;
 }
