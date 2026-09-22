@@ -40,6 +40,8 @@ pnpm dev
 
 Open the local URL printed by the development server. The app remains an experimental vertical slice: its deterministic demo path runs without external credentials, while the optional disclosure endpoint can use an API key when configured.
 
+To preview the production build locally, run `pnpm build` followed by `pnpm start`. This uses the Cloudflare Vite preview runtime so the app's `cloudflare:workers` bindings are resolved by Workerd rather than Node's ESM loader.
+
 The product direction and research method are recorded in [`docs/ADR-001-research-studio.md`](docs/ADR-001-research-studio.md). The Studio is deliberately a hypothesis-navigation tool: a bridge is not a discovery, and a candidate route is not a validated invention.
 
 ## Optional OpenAI configuration
