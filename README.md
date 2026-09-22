@@ -1,13 +1,14 @@
 # Innovator
 
-**Innovator** is a repository for an experimental invention-workspace application, documented invention research packages, and a versioned collection of reusable advanced-mathematics and innovation skills. The repository retains earlier application material while its reusable-methods surface is now the canonical [`skills.md/eureka_skill/`](skills.md/eureka_skill/) collection.
+**Innovator** is a research studio for turning problems into bounded invention candidates. It combines a cross-domain reasoning loop, documented invention research packages, a persistence-backed workspace, and a versioned collection of reusable advanced-mathematics and innovation skills. The repository retains earlier application material while its reusable-methods surface is now the canonical [`skills.md/eureka_skill/`](skills.md/eureka_skill/) collection.
 
 > **Evidence boundary.** Repository materials can document hypotheses, simulations, finite checks, design studies, and research workflows. They do **not** by themselves establish a theorem, safe physical design, patentability, freedom to operate, certification, manufacturing readiness, or commercial viability.
 
 | Repository area | What it contains | Primary entry point |
 |---|---|---|
-| Application | A Vinext/Vite, React, and Cloudflare Worker-compatible vertical-slice invention workspace with deterministic demo behavior and an optional OpenAI disclosure route. | [`app/`](app/) and [`package.json`](package.json) |
+| Application | A Vinext/Vite, React, and Cloudflare Worker-compatible invention workspace. The default Research Studio makes Frame → Bridge → Challenge → Test visible, with deterministic demo behavior and an optional OpenAI disclosure route. | [`app/`](app/) and [`package.json`](package.json) |
 | Invention archive | Bounded research packages, supporting visual material, models, and explicit limitations from prior work. | [`inventions/`](inventions/) |
+| Concept assets | Eleven repository-ready concept images from the shared invention-image set, with a reproducible generator and a public mirror for the app. | [`assets/pictures/`](assets/pictures/) and [`scripts/generate_innovator_assets.py`](scripts/generate_innovator_assets.py) |
 | Reusable methods | The **eureka_skill** collection: 17 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, formal-claim auditing, and adversarial peer review. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
 | Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
@@ -38,6 +39,8 @@ pnpm dev
 ```
 
 Open the local URL printed by the development server. The app remains an experimental vertical slice: its deterministic demo path runs without external credentials, while the optional disclosure endpoint can use an API key when configured.
+
+The product direction and research method are recorded in [`docs/ADR-001-research-studio.md`](docs/ADR-001-research-studio.md). The Studio is deliberately a hypothesis-navigation tool: a bridge is not a discovery, and a candidate route is not a validated invention.
 
 ## Optional OpenAI configuration
 

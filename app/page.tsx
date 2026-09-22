@@ -2,8 +2,9 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { inventions, priorArt, type Invention } from "./seed-data";
+import { archiveImages, candidateRoutes, domainOptions, evidenceLedger, knowledgeBridges, studioTemplates } from "./studio-data";
 
-type View = "gallery" | "workspace" | "create" | "sources" | "manufacturing";
+type View = "studio" | "gallery" | "workspace" | "create" | "sources" | "manufacturing";
 type Tab = "Overview" | "Prior Art" | "Files" | "BOM" | "Prototype Plan" | "Collaborators" | "Manufacturing" | "License & Terms";
 type SessionUser = { id: string; email: string; displayName: string };
 type StoredProject = { id: string; title: string; summary: string; category: string; readinessStage: string; ownerName: string; updatedAt: string; visibility: string };
@@ -114,14 +115,84 @@ function InventionCard({ invention, onOpen }: { invention: Invention; onOpen: ()
   );
 }
 
+function EvidencePill({ label }: { label: "Sourced" | "Computed" | "Inferred" | "Proposed" | "Unresolved" }) {
+  return <span className={`evidence-pill evidence-${label.toLowerCase()}`}><i />{label}</span>;
+}
+
+function Studio({ setView }: { setView: (view: View) => void }) {
+  const [problem, setProblem] = useState(studioTemplates[0].prompt);
+  const [domainA, setDomainA] = useState(studioTemplates[0].domains[0]);
+  const [domainB, setDomainB] = useState(studioTemplates[0].domains[1]);
+  const [generated, setGenerated] = useState(true);
+  const [expandedBridge, setExpandedBridge] = useState<string | null>(knowledgeBridges[0].id);
+  const [reviewQuestion, setReviewQuestion] = useState("");
+  const [reviewQuestions, setReviewQuestions] = useState(["What must be true for the analogy to transfer?"]);
+
+  function loadTemplate(template: typeof studioTemplates[number]) {
+    setProblem(template.prompt);
+    setDomainA(template.domains[0]);
+    setDomainB(template.domains[1]);
+  }
+
+  function addReviewQuestion() {
+    const question = reviewQuestion.trim();
+    if (!question) return;
+    setReviewQuestions((current) => [...current, question]);
+    setReviewQuestion("");
+  }
+
+  return <main className="studio-page">
+    <section className="studio-hero">
+      <div className="studio-hero-copy">
+        <p className="studio-overline">INNOVATOR / RESEARCH STUDIO</p>
+        <h1>Make the connection<br /><em>testable.</em></h1>
+        <p>Link ideas across disciplines, surface the hidden assumption, and leave with a next experiment—not a louder claim.</p>
+        <div className="studio-method-line"><span>01 Frame</span><span>02 Bridge</span><span>03 Challenge</span><span>04 Test</span></div>
+      </div>
+      <div className="studio-hero-orbit" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit-core"><b>↗</b><span>useful<br />unknowns</span></div><i className="orbit-dot dot-one" /><i className="orbit-dot dot-two" /><i className="orbit-dot dot-three" /></div>
+    </section>
+
+    <section className="studio-layout">
+      <div className="studio-main-column">
+        <section className="studio-panel studio-brief-panel">
+          <div className="studio-panel-heading"><div><p className="studio-kicker">START WITH A TENSION</p><h2>What needs to work better?</h2><p>Write the problem in plain language. The studio will keep your wording visible as the search expands.</p></div><span className="studio-step">01</span></div>
+          <textarea aria-label="Problem or design tension" value={problem} onChange={(event) => setProblem(event.target.value)} rows={4} />
+          <div className="template-row"><span>Try a starting point</span>{studioTemplates.map((template) => <button key={template.label} onClick={() => loadTemplate(template)} className={problem === template.prompt ? "active" : ""}>{template.label}</button>)}</div>
+          <div className="domain-pair"><label><span>Source field</span><select value={domainA} onChange={(event) => setDomainA(event.target.value)}>{domainOptions.map((domain) => <option key={domain}>{domain}</option>)}</select></label><span className="bridge-arrow" aria-hidden="true">→</span><label><span>Target field</span><select value={domainB} onChange={(event) => setDomainB(event.target.value)}>{domainOptions.map((domain) => <option key={domain}>{domain}</option>)}</select></label><button className="studio-generate" onClick={() => setGenerated(true)}>{generated ? "Refresh route map" : "Map the connection"}<span>↗</span></button></div>
+        </section>
+
+        {generated && <>
+          <section className="studio-panel bridge-panel">
+            <div className="studio-panel-heading compact"><div><p className="studio-kicker">THE BRIDGEBOARD</p><h2>Three ways the fields might connect</h2><p>These are search directions, not discoveries. Open each bridge to inspect the mechanism and its limits.</p></div><span className="studio-step">02</span></div>
+            <div className="bridge-list">{knowledgeBridges.map((bridge) => <article className={`bridge-card ${expandedBridge === bridge.id ? "expanded" : ""}`} key={bridge.id}><button className="bridge-summary" onClick={() => setExpandedBridge(expandedBridge === bridge.id ? null : bridge.id)}><span className="bridge-index">{String(knowledgeBridges.indexOf(bridge) + 1).padStart(2, "0")}</span><span className="bridge-path"><b>{bridge.from}</b><i>→</i><b>{bridge.to}</b><small>{bridge.bridge}</small></span><span className="bridge-confidence">{bridge.confidence}%<small>fit</small></span><span className="bridge-chevron">{expandedBridge === bridge.id ? "−" : "+"}</span></button>{expandedBridge === bridge.id && <div className="bridge-detail"><p>{bridge.mechanism}</p><div><EvidencePill label={bridge.evidence} /><span>{bridge.source}</span><a href={bridge.sourceUrl} target="_blank" rel="noreferrer">Inspect source ↗</a></div></div>}</article>)}</div>
+          </section>
+
+          <section className="studio-panel route-panel">
+            <div className="studio-panel-heading compact"><div><p className="studio-kicker">CANDIDATE ROUTES</p><h2>What could we actually test?</h2><p>Converge on mechanisms that are useful, bounded, and falsifiable.</p></div><span className="studio-step">03</span></div>
+            <div className="candidate-grid">{candidateRoutes.map((candidate) => <article className="candidate-card" key={candidate.id}><div className="candidate-topline"><EvidencePill label={candidate.status} /><strong>{candidate.fit}<small>/100 fit</small></strong></div><h3>{candidate.title}</h3><p>{candidate.summary}</p><div className="candidate-mechanism"><span>MECHANISM</span>{candidate.mechanism}</div><div className="candidate-next"><span>NEXT DECISIVE TEST</span>{candidate.nextTest}</div><details><summary>Stress-test the trade-off</summary><p>{candidate.tradeoff}</p></details></article>)}</div>
+          </section>
+        </>}
+      </div>
+
+      <aside className="studio-rail">
+        <section className="studio-panel gate-panel"><div className="gate-orbit"><span>2</span><small>/ 4</small></div><p className="studio-kicker">CURRENT GATE</p><h2>Convergent selection</h2><p>Keep candidates that explain a mechanism and name the observation that could rule them out.</p><div className="gate-track"><i /><i className="active" /><i /><i /></div><div className="gate-labels"><span>Frame</span><span>Bridge</span><span>Challenge</span><span>Test</span></div><button onClick={() => setView("create")} className="text-button">Open a saved workspace <span>↗</span></button></section>
+        <section className="studio-panel ledger-panel"><div className="studio-panel-heading mini"><div><p className="studio-kicker">EVIDENCE LEDGER</p><h2>Make uncertainty useful</h2></div><span>14 items</span></div>{evidenceLedger.map((item) => <div className="ledger-row" key={item.label}><span className={`ledger-dot ${item.tone}`} /><div><b>{item.label}</b><small>{item.copy}</small></div><strong>{item.count}</strong></div>)}<p className="ledger-note">A missing citation is a prompt to research, not permission to promote a hypothesis.</p></section>
+        <section className="studio-panel review-panel"><p className="studio-kicker">RED-TEAM PROMPT</p><h2>What would change your mind?</h2><p>Capture the objection before the idea becomes precious.</p><div className="review-list">{reviewQuestions.map((question, index) => <div key={`${question}-${index}`}><span>{String(index + 1).padStart(2, "0")}</span>{question}</div>)}</div><div className="review-input"><input aria-label="Add a red-team question" value={reviewQuestion} onChange={(event) => setReviewQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addReviewQuestion(); }} placeholder="Add a challenge…" /><button aria-label="Add challenge" onClick={addReviewQuestion}>+</button></div></section>
+      </aside>
+    </section>
+
+    <section className="archive-strip"><div className="archive-intro"><p className="studio-kicker">RESEARCH ARCHIVE / 11 PACKAGES</p><h2>Ideas stay inspectable.</h2><p>Browse the repository’s bounded programmes, evidence ledgers, and claim boundaries.</p><button className="text-button" onClick={() => setView("gallery")}>Browse the invention library <span>↗</span></button></div><div className="archive-images">{archiveImages.map(([image, title, subtitle]) => <button key={image} onClick={() => setView("gallery")}><img src={`/pictures/${image}`} alt={`${title} ${subtitle}`} /><span><b>{title}</b><small>{subtitle}</small></span></button>)}</div></section>
+  </main>;
+}
+
 function Sidebar({ view, setView }: { view: View; setView: (v: View) => void }) {
   const nav: [View, string, string][] = [
-    ["gallery", "Gallery", "▦"], ["create", "New invention", "+"], ["workspace", "My workspaces", "⌂"],
+    ["studio", "Research studio", "✦"], ["gallery", "Invention library", "▦"], ["create", "New invention", "+"], ["workspace", "My workspaces", "⌂"],
     ["sources", "Patent sources", "⌕"], ["manufacturing", "Manufacturing", "⚙"],
   ];
   return (
     <aside className="sidebar">
-      <button className="brand" onClick={() => setView("gallery")}><span className="brand-mark">IH</span><span>Invention<b>Hub</b></span></button>
+      <button className="brand" onClick={() => setView("studio")}><span className="brand-mark">IN</span><span>Innov<b>ator</b></span></button>
       <nav>
         <p className="nav-label">WORKSPACE</p>
         {nav.map(([key, label, icon]) => <button key={key} className={view === key ? "active" : ""} onClick={() => setView(key)}><span className="nav-icon">{icon}</span>{label}{key === "workspace" && <em>3</em>}</button>)}
@@ -130,7 +201,7 @@ function Sidebar({ view, setView }: { view: View; setView: (v: View) => void }) 
         <button><span className="nav-icon">♢</span>Open challenges</button>
       </nav>
       <div className="sidebar-bottom">
-        <div className="progress-card"><div><span>Build Week demo</span><b>82%</b></div><div className="progress"><i /></div><small>Vertical slice ready</small></div>
+        <div className="progress-card"><div><span>Research archive</span><b>11 packages</b></div><div className="progress"><i /></div><small>Evidence boundaries visible</small></div>
         <button className="help"><span>?</span>Documentation</button>
       </div>
     </aside>
@@ -155,11 +226,11 @@ function Gallery({ open, setView, items, hasMoreProjects, loadingMoreProjects, p
   const [sort, setSort] = useState("Recently updated");
   const shown = useMemo(() => filter === "All inventions" ? items : items.filter(i => i.category.includes(filter.replace(" & ", " and "))), [filter, items]);
   return <main className="page gallery-page">
-    <section className="page-heading"><div><p className="eyebrow">OPEN INVENTION NETWORK</p><h1>Ideas worth building,<br /><em>together.</em></h1><p>Discover open physical inventions, contribute your expertise, and help move useful ideas from sketch to production.</p></div><div className="heading-metrics"><div><b>248</b><span>Open inventions</span></div><div><b>1,492</b><span>Contributors</span></div><div><b>37</b><span>In production</span></div></div></section>
+    <section className="page-heading"><div><p className="eyebrow">INNOVATOR / RESEARCH ARCHIVE</p><h1>Ideas worth testing,<br /><em>together.</em></h1><p>Explore bounded invention programmes, inspect their evidence, and help move useful ideas from a clear problem to a decisive next test.</p></div><div className="heading-metrics"><div><b>11</b><span>Research packages</span></div><div><b>5</b><span>Evidence labels</span></div><div><b>0</b><span>Claims treated as proof</span></div></div></section>
     <section className="filter-row"><div className="filters">{["All inventions", "Health & accessibility", "Climate & energy", "Agriculture", "Education hardware"].map(x => <button key={x} className={filter === x ? "selected" : ""} onClick={() => setFilter(x)}>{x}</button>)}</div><label className="sort">Sort by <select value={sort} onChange={e => setSort(e.target.value)}><option>Recently updated</option><option>Lowest risk</option><option>Most interest</option></select></label></section>
     <section className="gallery-grid">{shown.map(i => <InventionCard key={i.id} invention={i} onOpen={() => open(i)} />)}<button className="start-card" onClick={() => setView("create")}><span>＋</span><h3>Start a new invention</h3><p>Turn rough notes into a structured, shareable workspace.</p><b>Open the invention assistant →</b></button>{hasMoreProjects && <button className="start-card" type="button" onClick={onLoadMoreProjects} disabled={loadingMoreProjects}><span>＋</span><h3>{loadingMoreProjects ? "Loading workspaces…" : "Load more workspaces"}</h3><p>Project results are paginated to keep each response small.</p><b>{loadingMoreProjects ? "Please wait" : "Show the next page →"}</b></button>}</section>
-    {projectListError && <p className="form-error" role="alert">{projectListError}</p>}
-    <div className="gallery-note"><span>✦</span><p><b>Built for useful, open hardware.</b> Every invention includes transparent licensing, attribution, and prior-art context.</p><button>How InventionHub works →</button></div>
+     {projectListError && <p className="form-error" role="alert">{projectListError}</p>}
+     <div className="gallery-note"><span>✦</span><p><b>Built for inspectable invention work.</b> Every package keeps scope, evidence, uncertainty, and next tests visible.</p><button onClick={() => setView("studio")}>How Innovator works →</button></div>
   </main>;
 }
 
@@ -244,7 +315,7 @@ function Sources() { return <main className="page directory-page"><div className
 function ManufacturingDirectory({ open }: { open: (i:Invention)=>void }) { return <main className="page directory-page"><div className="create-heading"><p className="eyebrow">PRODUCTION PIPELINE</p><h1>Open inventions looking for makers.</h1><p>Review manufacturability, safety needs, estimated cost, and transparent commercial terms before expressing interest.</p></div><div className="partner-table content-card"><div className="partner-row head"><span>Invention</span><span>Stage</span><span>Est. unit cost</span><span>Interest</span><span /></div>{inventions.slice(0,4).map((i,n)=><div className="partner-row" key={i.id}><span><b>{i.title}</b><small>{i.category}</small></span><StageBadge stage={i.stage} /><b>{["$31–42","$18–25","$12–19","$7–11"][n]}</b><span>{i.interest} partners</span><button onClick={()=>open(i)}>Review →</button></div>)}</div></main> }
 
 export default function Home() {
-  const [view, setView] = useState<View>("gallery");
+  const [view, setView] = useState<View>("studio");
   const [selected, setSelected] = useState(inventions[0]);
   const [items, setItems] = useState<Invention[]>(inventions);
   const [user, setUser] = useState<SessionUser | null>(null);
@@ -284,5 +355,5 @@ export default function Home() {
     }
   }
   function open(i: Invention) { setSelected(i); setItems(current => current.some(item => item.id === i.id) ? current : [i, ...current]); setView("workspace"); window.scrollTo({top:0, behavior:"smooth"}); }
-  return <div className="app-shell"><Sidebar view={view} setView={setView} /><div className="app-body"><Topbar setView={setView} user={user} sessionReady={sessionReady} />{view === "gallery" && <Gallery open={open} setView={setView} items={items} hasMoreProjects={nextProjectCursor !== null} loadingMoreProjects={loadingMoreProjects} projectListError={projectListError} onLoadMoreProjects={loadMoreProjects} />}{view === "workspace" && <Workspace invention={selected} />}{view === "create" && <CreateInvention onCreated={open} />}{view === "sources" && <Sources />}{view === "manufacturing" && <ManufacturingDirectory open={open} />}<footer><span>InventionHub · Open physical innovation</span><span>Prior-art results are informational and not legal advice.</span></footer></div></div>;
+  return <div className="app-shell"><Sidebar view={view} setView={setView} /><div className="app-body"><Topbar setView={setView} user={user} sessionReady={sessionReady} />{view === "studio" && <Studio setView={setView} />}{view === "gallery" && <Gallery open={open} setView={setView} items={items} hasMoreProjects={nextProjectCursor !== null} loadingMoreProjects={loadingMoreProjects} projectListError={projectListError} onLoadMoreProjects={loadMoreProjects} />}{view === "workspace" && <Workspace invention={selected} />}{view === "create" && <CreateInvention onCreated={open} />}{view === "sources" && <Sources />}{view === "manufacturing" && <ManufacturingDirectory open={open} />}<footer><span>Innovator · InventionHub research archive</span><span>Evidence is inspectable; hypotheses are not guarantees.</span></footer></div></div>;
 }
