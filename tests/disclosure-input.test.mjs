@@ -4,6 +4,7 @@ import {
   MAX_BODY_BYTES,
   MAX_NOTES_CHARS,
   MAX_PROVIDER_RESPONSE_BYTES,
+  buildFallbackDisclosure,
   parseDisclosureBody,
   parseStructuredDisclosure,
   readBoundedBody,
@@ -39,6 +40,18 @@ test("provider output must match the bounded disclosure shape", () => {
   assert.equal(parseStructuredDisclosure("[]"), null);
   assert.equal(parseStructuredDisclosure(JSON.stringify({ ...disclosure, components: [1] })), null);
   assert.equal(parseStructuredDisclosure(JSON.stringify({ ...disclosure, title: "" })), null);
+});
+
+test("deterministic fallback stays tied to the request and makes no invention-validation claim", () => {
+  const draft = buildFallbackDisclosure("A reusable water filter for remote clinics.", "Climate and energy");
+  assert.equal(draft.mode, "demo-fallback");
+  assert.equal(draft.provenance.kind, "deterministic-fallback");
+  assert.equal(draft.provenance.provider, null);
+  assert.match(draft.abstract, /43-character note/);
+  assert.equal(draft.technicalField, "Climate and energy");
+  assert.deepEqual(draft.components, []);
+  assert.match(draft.noveltyHypothesis, /No prior-art search or novelty assessment/);
+  assert.match(draft.publicSummary, /does not assess scientific validity, engineering feasibility, novelty, or safety/);
 });
 
 test("streaming body reader stops when the actual request exceeds its byte limit", async () => {
