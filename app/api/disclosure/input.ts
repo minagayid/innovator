@@ -10,6 +10,48 @@ export type DisclosureInputResult =
   | { ok: true; value: DisclosureInput }
   | { ok: false; status: 400 | 413; error: string };
 
+export type DisclosureProvenance = {
+  kind: "model-assisted-draft" | "deterministic-fallback";
+  provider: "OpenAI" | "Gemini" | null;
+  model: string | null;
+};
+
+export type StructuredDisclosure = {
+  title: string;
+  abstract: string;
+  problem: string;
+  solution: string;
+  technicalField: string;
+  noveltyHypothesis: string;
+  components: string[];
+  keywords: string[];
+  missingQuestions: string[];
+  publicSummary: string;
+  mode: "live" | "gemini-live" | "demo-fallback";
+  provenance: DisclosureProvenance;
+};
+
+export function buildFallbackDisclosure(notes: string, category: string): StructuredDisclosure {
+  return {
+    title: "Unstructured invention draft",
+    abstract: `No model analysis ran. Your ${notes.length}-character note is preserved in the source notes.`,
+    problem: "Unassessed. Use the source notes to define the specific problem, affected users, and baseline.",
+    solution: "Unassessed. Describe the proposed mechanism and its operating conditions before evaluating it.",
+    technicalField: category || "Unspecified",
+    noveltyHypothesis: "Unknown. No prior-art search or novelty assessment was performed.",
+    components: [],
+    keywords: [],
+    missingQuestions: [
+      "What measurable problem does the design address, and against what baseline?",
+      "What mechanism is proposed, and under which operating conditions?",
+      "What observation would support or falsify the claimed benefit?",
+    ],
+    publicSummary: "Local fallback only. This draft does not assess scientific validity, engineering feasibility, novelty, or safety.",
+    mode: "demo-fallback",
+    provenance: { kind: "deterministic-fallback", provider: null, model: null },
+  };
+}
+
 export function parseStructuredDisclosure(text: string): Record<string, unknown> | null {
   if (new TextEncoder().encode(text).byteLength > MAX_PROVIDER_RESPONSE_BYTES) return null;
   let value: unknown;
@@ -27,12 +69,12 @@ export function parseStructuredDisclosure(text: string): Record<string, unknown>
   for (const field of stringFields) {
     const fieldValue = input[field];
     if (typeof fieldValue !== "string" || !fieldValue.trim()) return null;
-    result[field] = fieldValue.trim().slice(0, 2_000);
+    result[field] = fieldValue.trim().slice(0, field === "title" ? 200 : 1_000);
   }
   for (const field of listFields) {
     const items = input[field];
     if (!Array.isArray(items) || items.length > 30 || items.some((item) => typeof item !== "string")) return null;
-    result[field] = items.map((item) => (item as string).trim().slice(0, 300)).filter(Boolean);
+    result[field] = items.map((item) => (item as string).trim().slice(0, 200)).filter(Boolean);
   }
   return result;
 }

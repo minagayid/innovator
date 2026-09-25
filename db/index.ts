@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { insertProjectWithCompensation } from "./project-persistence.ts";
 import { buildProjectListQuery, makeProjectPage, type ProjectCursor, type ProjectPage } from "./project-pagination.ts";
+import { buildVisibleProjectQuery } from "./project-access.ts";
 
 export type StoredUser = { id: string; email: string; displayName: string; createdAt: string; updatedAt: string };
 export type ProjectRecord = {
@@ -77,6 +78,13 @@ export async function listProjects(
   const query = buildProjectListQuery(viewerId, options);
   const rows = (await db.prepare(query.sql).bind(...query.values).all<ProjectRecord>()).results;
   return makeProjectPage(rows, options.limit);
+}
+
+export async function getProjectVisibleToUser(viewerId: string | undefined, projectId: string): Promise<ProjectRecord | null> {
+  await ensureDataSchema();
+  const db = getDatabase();
+  const query = buildVisibleProjectQuery(viewerId, projectId);
+  return db.prepare(query.sql).bind(...query.values).first<ProjectRecord>();
 }
 
 export async function createProject(owner: StoredUser, input: { title: string; summary: string; category: string; visibility?: string; document: Record<string, unknown> }): Promise<ProjectRecord> {

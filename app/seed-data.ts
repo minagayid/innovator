@@ -1,6 +1,10 @@
+import type { StructuredDisclosure } from "./api/disclosure/input";
+
 export type Invention = {
   id: string; title: string; summary: string; category: string; stage: string; risk: "Low" | "Medium" | "High";
   license: string; interest: number; owner: { name: string; initials: string }; updated: string; tags: string[]; art: string; symbol: string;
+  isSavedProject?: boolean;
+  savedDocument?: { rawNotes?: string; disclosure?: StructuredDisclosure };
 };
 
 export const inventions: Invention[] = [
