@@ -94,3 +94,7 @@ Application code is available under the [MIT License](LICENSE). Individual inven
 A disclosure request uses at most one configured paid provider. Gemini takes precedence when configured; provider errors do not trigger a second paid-provider request. The route requires the configured trusted-edge identity and shared D1 quota controls before paid inference. See [`docs/paid-inference-boundary.md`](docs/paid-inference-boundary.md) before enabling paid providers in a public deployment.
 
 Project creation uses shared D1 quotas (3 per user per UTC hour, 10 per user per UTC day, 25 per deployment per UTC hour, and 100 per deployment per UTC day) and fails closed if the quota store is unavailable. Project listing is cursor-paginated (20 by default, maximum 50). These limits control request and page volume; they do not define a lifetime storage or retention policy. Set a deletion policy and monitor storage before broad production use.
+
+## Consolidated project materials
+
+The related Innovart project and its additional source branch are preserved under [`related-projects/`](related-projects/). See the [consolidation index](CONSOLIDATED_PROJECTS.md).
