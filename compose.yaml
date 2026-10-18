@@ -1,0 +1,46 @@
+services:
+  innovator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: innovator:local
+    restart: unless-stopped
+    init: true
+    ports:
+      # PORT controls the host-side port. The app listens on 3000 in-container.
+      - "${PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      HOST: "0.0.0.0"
+      PORT: "3000"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      OPENAI_MODEL: "${OPENAI_MODEL:-gpt-5.6}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      GEMINI_MODEL: "${GEMINI_MODEL:-gemini-2.5-flash}"
+      # These paths persist the local Wrangler/Miniflare D1 and R2 emulation.
+      WRANGLER_WRITE_LOGS: "false"
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_LOG_PATH: /app/.wrangler/logs
+      MINIFLARE_REGISTRY_PATH: /app/.wrangler/registry
+    volumes:
+      - innovator_state:/app/.wrangler/state
+      - innovator_registry:/app/.wrangler/registry
+      - innovator_logs:/app/.wrangler/logs
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+    stop_grace_period: 20s
+
+volumes:
+  innovator_state:
+  innovator_registry:
+  innovator_logs:
