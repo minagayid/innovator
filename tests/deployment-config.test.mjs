@@ -13,6 +13,9 @@ test("Docker uses the runtime-provided port and probes that port", async () => {
   const providerRoute = await readFile(resolve(root, "app/api/disclosure/route.ts"), "utf8");
   assert.match(providerRoute, /gpt-6\.1-sol/);
   assert.match(providerRoute, /gemini-3\.8-flash/);
+  assert.doesNotMatch(providerRoute, /temperature\s*:/);
+  assert.doesNotMatch(providerRoute, /candidateCount\s*:/);
+  assert.match(providerRoute, /thinkingConfig:\s*\{\s*thinkingLevel:\s*"low"/);
   assert.match(dockerfile, /EXPOSE 8080/);
   assert.match(dockerfile, /process\.env\.PORT/);
   assert.doesNotMatch(dockerfile, /127\.0\.0\.1:3000/);
