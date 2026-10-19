@@ -122,6 +122,25 @@ export async function runDisclosureProviderIfQuotaAllows<T>(
   return { allowed: true, value: await provider() };
 }
 
+/** Hash a verified application identity for paid-inference quotas without storing the raw identity. */
+export async function authenticatedDisclosureCallerHash(
+  email: string | undefined,
+  hmacSecret: string | undefined,
+): Promise<string | null> {
+  const normalizedEmail = email?.trim().toLowerCase();
+  if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+    || !hmacSecret || hmacSecret.length < 32) return null;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(hmacSecret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const digest = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode("disclosure:user:v1:" + normalizedEmail)));
+  return Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 /** Build an HMAC key from the Cloudflare edge IP only after deployment opts into that trust boundary. */
 export async function trustedDisclosureCallerHash(
   request: Request,
