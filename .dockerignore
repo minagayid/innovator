@@ -15,3 +15,15 @@ outputs
 work
 *.log
 .DS_Store
+
+# Preserve research in Git; do not bundle old inventions or demo data into the deployed image.
+archive/
+inventions/
+related-projects/
+assets/pictures/
+public/pictures/
+public/engineering/
+skills/
+skills.md/
+tests/
+deployment-templates/
