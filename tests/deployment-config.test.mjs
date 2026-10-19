@@ -47,12 +47,14 @@ test("Google identity headers are not trusted unless explicitly configured", asy
 });
 
 
-test("Vercel container image listens on its configured HTTP port", async () => {
+test("Vercel image uses an unprivileged user and configurable HTTP port", async () => {
   const dockerfile = await readFile(resolve(root, "Dockerfile.vercel"), "utf8");
-  assert.match(dockerfile, /PORT="80"/);
-  assert.match(dockerfile, /EXPOSE 80/);
+  assert.match(dockerfile, /PORT="8080"/);
+  assert.match(dockerfile, /EXPOSE 8080/);
+  assert.match(dockerfile, /USER node/);
   assert.match(dockerfile, /process\.env\.PORT/);
   assert.match(dockerfile, /pnpm", "start/);
+  assert.match(dockerfile, /chown -R node:node \/app/);
 });
 
 test("Cloud Run deployment documentation leaves the reserved PORT variable to the platform", async () => {
