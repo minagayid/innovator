@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { chatGPTSignInPath, getChatGPTUser } from "../../chatgpt-auth";
 import { createProject, getDatabase, listProjects, upsertUser } from "../../../db";
 import { parseProjectBody } from "./input";
 import { readBoundedBody, RequestBodyTooLargeError } from "../disclosure/input";
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const identity = await getChatGPTUser();
-  if (!identity) return NextResponse.json({ error: "Sign in to create a project.", signIn: "/signin-with-chatgpt?return_to=%2F" }, { status: 401 });
+  if (!identity) return NextResponse.json({ error: "Sign in to create a project.", signIn: chatGPTSignInPath("/") }, { status: 401 });
   let bodyText: string;
   try {
     bodyText = await readBoundedBody(request);

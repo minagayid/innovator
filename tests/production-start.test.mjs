@@ -14,9 +14,7 @@ async function stopProcessTree(child) {
   if (process.platform === "win32") {
     try {
       execFileSync("taskkill", ["/pid", String(child.pid), "/t", "/f"], { stdio: "ignore" });
-    } catch {
-      // The process may already have exited between the request and cleanup.
-    }
+    } catch {}
   } else {
     child.kill("SIGTERM");
   }
@@ -26,23 +24,18 @@ async function stopProcessTree(child) {
 async function waitForHttp(url, child, output) {
   const deadline = Date.now() + 20_000;
   while (Date.now() < deadline) {
-    if (child.exitCode !== null) {
-      throw new Error(`Production preview exited early.\n${output.join("")}`);
-    }
+    if (child.exitCode !== null) throw new Error(`Production preview exited early.\n${output.join("")}`);
     try {
       const response = await fetch(url);
       if (response.ok) return response;
-    } catch {
-      // The preview may still be starting.
-    }
+    } catch {}
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   throw new Error(`Timed out waiting for ${url}.\n${output.join("")}`);
 }
 
-test("production start serves the Cloudflare build through the configured launcher", async () => {
+test("production start serves the generator and anonymous session endpoint", async () => {
   assert.ok(existsSync(resolve(root, "dist/server/wrangler.json")), "run the production build before this smoke test");
-
   const output = [];
   const child = spawn(process.execPath, [startScript, "--host", "127.0.0.1", "--port", port], {
     cwd: root,
@@ -52,15 +45,13 @@ test("production start serves the Cloudflare build through the configured launch
   });
   child.stdout.on("data", (chunk) => output.push(String(chunk)));
   child.stderr.on("data", (chunk) => output.push(String(chunk)));
-
   try {
     const page = await waitForHttp(`http://127.0.0.1:${port}/`, child, output);
     const html = await page.text();
-    assert.match(html, /Innovator|Research Studio|invention/i);
-
-    const image = await fetch(`http://127.0.0.1:${port}/pictures/11_neuroforge-neuroregenerative-research-twin.png`);
-    assert.equal(image.status, 200);
-    assert.match(image.headers.get("content-type") || "", /^image\/png/);
+    assert.match(html, /Innovator|Invention Generation Studio|invention/i);
+    const session = await fetch(`http://127.0.0.1:${port}/api/session`);
+    assert.equal(session.status, 200);
+    assert.deepEqual(await session.json(), { user: null });
   } finally {
     await stopProcessTree(child);
   }

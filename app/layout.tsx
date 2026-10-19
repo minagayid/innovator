@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Innovator — Research studio for useful invention",
-  description: "Link knowledge across disciplines, challenge invention candidates, and move useful ideas toward decisive tests.",
+  title: "Innovator — Invention Generation Studio",
+  description: "Generate and structure invention candidates from your own problem specification, with explicit evidence gaps and validation questions.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

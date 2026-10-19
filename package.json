@@ -10,8 +10,8 @@
     "build": "vinext build",
     "pages:build": "node scripts/build-github-pages.mjs",
     "start": "node scripts/start.mjs",
-    "test": "pnpm run build && node --test tests/rendered-html.test.mjs && node --experimental-strip-types --test tests/disclosure-input.test.mjs tests/disclosure-quota.test.mjs tests/projects-input.test.mjs tests/project-persistence.test.mjs tests/project-quota.test.mjs tests/projects-pagination.test.mjs && node --test tests/production-start.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "test": "pnpm run build && node --test tests/rendered-html.test.mjs && node --experimental-strip-types --test tests/disclosure-input.test.mjs tests/disclosure-quota.test.mjs tests/projects-input.test.mjs tests/project-persistence.test.mjs tests/project-quota.test.mjs tests/projects-pagination.test.mjs tests/google-auth.test.mjs && node --test tests/deployment-config.test.mjs tests/production-start.test.mjs",
+    "lint": "eslint app db worker scripts tests --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

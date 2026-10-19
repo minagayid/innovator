@@ -1,61 +1,50 @@
 # Docker deployment for Innovator
 
-This package runs the Innovator Vinext application in its Cloudflare-compatible Workerd preview runtime inside a Docker container.
+Innovator builds a generator-first web application and runs its production bundle through the Cloudflare-compatible Workerd preview runtime. The image defaults to Google Cloud Run's port contract (`8080`); Docker Compose overrides the internal port to `3000` for local development.
 
-## Quick start
+## Local Docker Compose
 
 Requirements: Docker Engine and Docker Compose v2.
 
-```bash
+```sh
 cp .env.example .env
-# Edit .env only if you want optional model-backed disclosure generation.
+# Configure Google OAuth and, optionally, a model provider in .env.
 docker compose -f compose.yaml up --build -d
 docker compose -f compose.yaml ps
 docker compose -f compose.yaml logs -f innovator
 ```
 
-Open `http://localhost:3000`. To use another host port, set `PORT=8080` in `.env`; then open `http://localhost:8080`. The application still listens on port 3000 inside the container.
+Open `http://localhost:3000`. To expose another host port, set `PORT=8080` in `.env`; the application still listens on `3000` inside Compose.
 
-To stop the app without deleting persisted state:
+To stop without removing saved local state, run `docker compose -f compose.yaml down`. Do not use `down -v` unless you intend to remove the named state volumes.
 
-```bash
-docker compose -f compose.yaml down
+## Build and run a container
+
+```sh
+docker build -t innovator:local .
+docker run --rm -p 8080:8080 --env PORT=8080 innovator:local
 ```
 
-To delete the app and all local persisted data (destructive):
+The server binds to `0.0.0.0` and respects the `PORT` environment variable. The Docker health check probes that same port, rather than hard-coding `3000`.
 
-```bash
-docker compose -f compose.yaml down -v
-```
+## Google OAuth and provider settings
 
-## Configure provider keys
+Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, and `AUTH_SESSION_SECRET` (at least 32 characters). The redirect URI must exactly match the callback registered in Google Cloud Console: `/api/auth/google/callback`. Set `GOOGLE_ALLOWED_EMAILS` to a comma-separated allowlist for a restricted/private deployment; an empty allowlist permits any Google account with a verified email.
 
-`OPENAI_API_KEY` and `GEMINI_API_KEY` are optional. Without a provider key, the app uses its deterministic fallback path. If both keys are configured, the current app prefers Gemini. Keep real credentials in a local ignored `.env` file or in your cloud provider's secret/environment-variable store; never commit them.
+Set `DISCLOSURE_RATE_LIMIT_HMAC_SECRET` to a random secret of at least 32 characters. Authenticated Google users are hashed before their per-user quota is recorded. `AUTH_TRUST_CHATGPT_HEADERS` is `false` by default; enable it only behind an ingress that authenticates the user and strips caller-supplied copies of ChatGPT identity headers.
 
-The current paid-inference quota gate explicitly requires a trusted Cloudflare edge IP (`CF-Connecting-IP`) and an HMAC secret. A non-Cloudflare hosting setup should not set `DISCLOSURE_TRUST_CF_EDGE=true` unless traffic is guaranteed to pass through a trusted Cloudflare proxy and direct access to the container is blocked. Do not fabricate the header in a public request path. Until an appropriate trusted caller-identity adapter is implemented, paid provider calls may safely fall back rather than run.
+`OPENAI_API_KEY` and `GEMINI_API_KEY` are optional. Gemini takes precedence when configured; the application makes at most one paid-provider request per generation and returns an explicitly labeled deterministic scaffold when a provider key, trusted identity, or quota is unavailable. Put secrets in environment variables or Secret Manager, never in the image or source control.
 
-## Important storage and multi-cloud boundary
+## Keep the invention archive out of the image
 
-The app imports `cloudflare:workers` and its data layer requires Cloudflare-compatible `DB` (D1) and `PROJECTS` (R2) bindings. This Compose setup uses the local Wrangler/Miniflare emulation of those bindings and persists its state in named Docker volumes under `/app/.wrangler/`.
+Existing research packages and example UI source remain tracked in `archive/`, `inventions/`, `related-projects/`, and the repository's asset folders. `.dockerignore` excludes these paths from the Docker build context. The production page has no preloaded invention gallery or bundled prior-art examples: each candidate starts from the current user's specification. The source archive is not deleted.
 
-This makes the same container deployable on a Docker-compatible VM or container service **for a single instance with durable storage**. It does **not** convert D1/R2 into provider-neutral managed database and object storage services. Before running multiple replicas, using ephemeral-disk serverless containers, or treating this as a high-availability production deployment, replace or abstract those bindings behind provider-neutral adapters (for example, a managed SQL database and S3-compatible object storage), then run the app's full test suite against those adapters. Do not mount the same local Wrangler state to multiple replicas as a substitute for a distributed database.
+## Storage boundary: do not confuse startup with durable persistence
 
-For the current storage model:
+The application uses Cloudflare-compatible D1 and R2 interfaces through local Wrangler/Miniflare emulation. Named Compose volumes keep that state across container recreation on the same Docker host. They do not create provider-neutral managed storage.
 
-- Keep the named volumes `innovator_state`, `innovator_registry`, and `innovator_logs` on persistent disk.
-- Confirm that the target platform preserves those volumes across restarts and redeployments.
-- Run one application replica per independent local state volume.
-- Back up persistent state and test restore before handling important user data.
+Google Cloud Run's writable container filesystem is ephemeral and is lost when an instance stops. Do not use local D1/R2 emulation as durable workspace storage on Cloud Run. Do not mount Miniflare/SQLite state onto Cloud Storage FUSE as a substitute for a transactional disk. Use the deployment guide's single-VM Compute Engine path with a persistent disk for saved workspaces, or migrate the storage layer to managed GCP database/object-storage adapters before scaling on Cloud Run.
 
-For a native Cloudflare deployment, continue using the repository's Worker-compatible deployment approach with real D1/R2 bindings instead of this local-container persistence model.
+## What is verified
 
-## Operations
-
-- The image runs `pnpm build` during image creation and starts using the repository's `pnpm start` script, which launches Vite preview through Workerd.
-- The container exposes port `3000`; TLS termination and public-domain routing should be configured in the cloud load balancer or ingress.
-- A built-in health check sends an HTTP request to `/`.
-- Build in CI and deploy an immutable image digest for repeatability. Keep secrets in the runtime environment, not in image layers or Compose source.
-
-## What has and has not been verified
-
-This configuration is based on the repository's existing `package.json`, `vite.config.ts`, `scripts/start.mjs`, and Cloudflare D1/R2 binding design. The Compose configuration has not been tested by a local Docker engine in this workflow. Run a Docker build, Workerd startup, persistent-data restart test, and target cloud-provider smoke test before treating the deployment as validated.
+Repository tests include source-level checks for the Docker port contract, archive exclusions, OAuth session signing, and redirect-path safety. A Docker engine and Google Cloud project are not available in this editing workflow, so an actual image build, live OAuth round-trip, and cloud smoke test still need to be run in your environment.

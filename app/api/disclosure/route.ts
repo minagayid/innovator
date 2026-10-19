@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildFallbackDisclosure, parseDisclosureBody, parseStructuredDisclosure, readBoundedBody, readBoundedProviderResponse, RequestBodyTooLargeError } from "./input";
-import { runDisclosureProviderIfQuotaAllows, trustedDisclosureCallerHash } from "../../../db/disclosure-quota.ts";
+import { authenticatedDisclosureCallerHash, runDisclosureProviderIfQuotaAllows, trustedDisclosureCallerHash } from "../../../db/disclosure-quota.ts";
 import { getDatabase } from "../../../db/index.ts";
+import { getChatGPTUser } from "../../chatgpt-auth";
 
 const PROVIDER_TIMEOUT_MS = 15_000;
-const MAX_PROVIDER_OUTPUT_TOKENS = 512;
-const DISCLOSURE_SYSTEM_PROMPT = "You draft an unvalidated physical-invention disclosure from user notes. Do not invent facts, measurements, materials, equations, citations, prior-art results, performance, novelty, safety, manufacturability, or feasibility. Separate user-supplied statements from open questions. When the input does not support a field, say it is unknown or unassessed. noveltyHypothesis must remain a hypothesis, never a novelty determination. Never claim patentability. Return concise JSON only with title, abstract, problem, solution, technicalField, noveltyHypothesis, components, keywords, missingQuestions, and publicSummary.";
+const MAX_PROVIDER_OUTPUT_TOKENS = 1200;
+const DISCLOSURE_SYSTEM_PROMPT = "You draft one tailored, unvalidated invention candidate from the user's specification. The idea may be physical, digital, or process-based as appropriate. Do not invent facts, measurements, materials, equations, citations, prior-art results, performance, novelty, safety, manufacturability, or feasibility. Separate user-supplied statements from open questions. When the input does not support a field, say it is unknown or unassessed. noveltyHypothesis must remain a hypothesis, never a novelty determination. Never claim patentability. Return concise JSON only with title, abstract, problem, solution, technicalField, noveltyHypothesis, components, keywords, missingQuestions, and publicSummary.";
 
 function providerFetch(url: string, init: RequestInit): Promise<Response> {
   return fetch(url, { ...init, signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS) });
@@ -14,8 +15,8 @@ function providerFetch(url: string, init: RequestInit): Promise<Response> {
 async function callPaidProvider(hasGemini: boolean, notes: string, category: string): Promise<NextResponse> {
   // Use one paid provider per request. A failed Gemini call does not fall through to OpenAI.
   if (hasGemini) {
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    const safeModel = /^[a-zA-Z0-9._-]{1,100}$/.test(model) ? model : "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+    const safeModel = /^[a-zA-Z0-9._-]{1,100}$/.test(model) ? model : "gemini-3.8-flash";
     try {
       const response = await providerFetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:generateContent`,
@@ -25,7 +26,7 @@ async function callPaidProvider(hasGemini: boolean, notes: string, category: str
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: DISCLOSURE_SYSTEM_PROMPT }] },
             contents: [{ role: "user", parts: [{ text: `Category: ${category || "unspecified"}\nNotes: ${notes}` }] }],
-            generationConfig: { responseMimeType: "application/json", temperature: 0.2, candidateCount: 1, maxOutputTokens: MAX_PROVIDER_OUTPUT_TOKENS },
+            generationConfig: { responseMimeType: "application/json", maxOutputTokens: MAX_PROVIDER_OUTPUT_TOKENS, thinkingConfig: { thinkingLevel: "low" } },
           }),
         },
       );
@@ -45,8 +46,8 @@ async function callPaidProvider(hasGemini: boolean, notes: string, category: str
   }
 
   try {
-    const model = process.env.OPENAI_MODEL || "gpt-5.6";
-    const safeModel = /^[a-zA-Z0-9._-]{1,100}$/.test(model) ? model : "gpt-5.6";
+    const model = process.env.OPENAI_MODEL || "gpt-6.1-sol";
+    const safeModel = /^[a-zA-Z0-9._-]{1,100}$/.test(model) ? model : "gpt-6.1-sol";
     const response = await providerFetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
@@ -91,12 +92,11 @@ export async function POST(request: NextRequest) {
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   if (!hasGemini && !hasOpenAI) return NextResponse.json(buildFallbackDisclosure(notes, category));
 
-  // Paid work is guarded by trusted edge identity and the shared D1 quota.
-  const callerHash = await trustedDisclosureCallerHash(
-    request,
-    process.env.DISCLOSURE_TRUST_CF_EDGE,
-    process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET,
-  );
+  // Paid work requires an authenticated app identity (or an explicitly trusted edge) and the shared quota.
+  const identity = await getChatGPTUser();
+  const callerHash = identity
+    ? await authenticatedDisclosureCallerHash(identity.email, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET)
+    : await trustedDisclosureCallerHash(request, process.env.DISCLOSURE_TRUST_CF_EDGE, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET);
   const gated = await runDisclosureProviderIfQuotaAllows(
     callerHash,
     getDatabase,

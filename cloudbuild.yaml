@@ -1,0 +1,21 @@
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: innovator
+  _IMAGE: innovator
+steps:
+  - id: Build container
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:${BUILD_ID}
+      - .
+  - id: Push immutable build image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:${BUILD_ID}
+images:
+  - ${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_IMAGE}:${BUILD_ID}
+options:
+  logging: CLOUD_LOGGING_ONLY
