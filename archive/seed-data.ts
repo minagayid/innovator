@@ -1,4 +1,4 @@
-import type { StructuredDisclosure } from "./api/disclosure/input";
+import type { StructuredDisclosure } from "../app/api/disclosure/input";
 
 export type Invention = {
   id: string; title: string; summary: string; category: string; stage: string; risk: "Low" | "Medium" | "High";
