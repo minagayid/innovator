@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     init: true
     ports:
-      # PORT controls the host-side port. The app listens on 3000 in-container.
+      # PORT controls the host-side port; Compose keeps the app on 3000 internally.
       - "${PORT:-3000}:3000"
     environment:
       NODE_ENV: production
@@ -17,7 +17,14 @@ services:
       OPENAI_MODEL: "${OPENAI_MODEL:-gpt-5.6}"
       GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
       GEMINI_MODEL: "${GEMINI_MODEL:-gemini-2.5-flash}"
-      # These paths persist the local Wrangler/Miniflare D1 and R2 emulation.
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+      GOOGLE_REDIRECT_URI: "${GOOGLE_REDIRECT_URI:-}"
+      GOOGLE_ALLOWED_EMAILS: "${GOOGLE_ALLOWED_EMAILS:-}"
+      AUTH_SESSION_SECRET: "${AUTH_SESSION_SECRET:-}"
+      AUTH_TRUST_CHATGPT_HEADERS: "${AUTH_TRUST_CHATGPT_HEADERS:-false}"
+      DISCLOSURE_RATE_LIMIT_HMAC_SECRET: "${DISCLOSURE_RATE_LIMIT_HMAC_SECRET:-}"
+      DISCLOSURE_TRUST_CF_EDGE: "${DISCLOSURE_TRUST_CF_EDGE:-false}"
       WRANGLER_WRITE_LOGS: "false"
       WRANGLER_SEND_METRICS: "false"
       WRANGLER_LOG_PATH: /app/.wrangler/logs
