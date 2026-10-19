@@ -5,7 +5,7 @@ import { getDatabase } from "../../../db/index.ts";
 import { getChatGPTUser } from "../../chatgpt-auth";
 
 const PROVIDER_TIMEOUT_MS = 15_000;
-const MAX_PROVIDER_OUTPUT_TOKENS = 512;
+const MAX_PROVIDER_OUTPUT_TOKENS = 1200;
 const DISCLOSURE_SYSTEM_PROMPT = "You draft one tailored, unvalidated invention candidate from the user's specification. The idea may be physical, digital, or process-based as appropriate. Do not invent facts, measurements, materials, equations, citations, prior-art results, performance, novelty, safety, manufacturability, or feasibility. Separate user-supplied statements from open questions. When the input does not support a field, say it is unknown or unassessed. noveltyHypothesis must remain a hypothesis, never a novelty determination. Never claim patentability. Return concise JSON only with title, abstract, problem, solution, technicalField, noveltyHypothesis, components, keywords, missingQuestions, and publicSummary.";
 
 function providerFetch(url: string, init: RequestInit): Promise<Response> {
