@@ -1,4 +1,5 @@
-# Workerd preview requires the Vite/Cloudflare dependencies at runtime.
+# Portable OCI image for Cloud Run, AWS container services, Oracle OCI, OVHcloud and Docker hosts.
+# Vercel uses Dockerfile.vercel because its container port defaults differ.
 FROM node:22-bookworm-slim
 
 WORKDIR /app
@@ -8,11 +9,13 @@ RUN npm install --global pnpm@10.8.1 \
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod=false
 
-# .dockerignore excludes the old invention archive and non-runtime research assets.
+# The production preview uses the Workerd-compatible Vite runtime. Research/archive
+# content is intentionally excluded by .dockerignore; runtime code must not import it.
 COPY . .
-RUN pnpm build
+RUN pnpm build \
+    && mkdir -p /app/.wrangler/logs /app/.wrangler/registry /app/.wrangler/state \
+    && chown -R node:node /app
 
-# Cloud Run sets PORT (8080 by default); Compose overrides it to 3000 locally.
 ENV NODE_ENV="production" \
     HOST="0.0.0.0" \
     PORT="8080" \
@@ -21,6 +24,7 @@ ENV NODE_ENV="production" \
     WRANGLER_LOG_PATH="/app/.wrangler/logs" \
     MINIFLARE_REGISTRY_PATH="/app/.wrangler/registry"
 
+USER node
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
