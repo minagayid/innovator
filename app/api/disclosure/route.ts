@@ -26,7 +26,7 @@ async function callPaidProvider(hasGemini: boolean, notes: string, category: str
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: DISCLOSURE_SYSTEM_PROMPT }] },
             contents: [{ role: "user", parts: [{ text: `Category: ${category || "unspecified"}\nNotes: ${notes}` }] }],
-            generationConfig: { responseMimeType: "application/json", temperature: 0.2, candidateCount: 1, maxOutputTokens: MAX_PROVIDER_OUTPUT_TOKENS },
+            generationConfig: { responseMimeType: "application/json", maxOutputTokens: MAX_PROVIDER_OUTPUT_TOKENS, thinkingConfig: { thinkingLevel: "low" } },
           }),
         },
       );
