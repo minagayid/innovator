@@ -57,7 +57,7 @@ jobs:
           grep -Eiq 'Innovator|Invention Generation Studio|invention' /tmp/innovator-home.html
           curl -fsS http://127.0.0.1:18080/api/session >/tmp/innovator-session.json
           node -e 'const fs=require("node:fs");const assert=require("node:assert/strict");assert.deepEqual(JSON.parse(fs.readFileSync("/tmp/innovator-session.json","utf8")),{user:null})'
-          docker run -d --name innovator-vercel-smoke -p 127.0.0.1:18081:80 innovator:vercel-ci
+          docker run -d --name innovator-vercel-smoke -p 127.0.0.1:18081:8080 -e PORT=8080 innovator:vercel-ci
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:18081/ >/tmp/innovator-vercel-home.html; then break; fi
             if [ "$(docker inspect -f '{{.State.Running}}' innovator-vercel-smoke)" != "true" ]; then
