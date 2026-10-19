@@ -1,6 +1,6 @@
 # Multi-cloud container deployment for Innovator
 
-Innovator's root Dockerfile builds the portable OCI image for Docker-compatible services. Dockerfile.vercel is the Vercel container entrypoint and defaults to HTTP port 80. Both images use the same app start script and honor the runtime-provided PORT.
+Innovator's root Dockerfile builds the portable OCI image for Docker-compatible services. Dockerfile.vercel is the Vercel container entrypoint and defaults to port 8080 so the process can run as the non-root `node` user. Vercel container functions default to port 80 unless overridden; set `PORT=8080` in the Vercel project's environment settings for the container function. Both images use the same app start script and honor the runtime-provided `PORT`.
 
 ## Build and smoke-test locally
 
@@ -22,7 +22,7 @@ Set environment secrets outside the image. For a minimal HTTP test without provi
 | AWS ECS/Fargate or App Runner | Root Dockerfile | Publish the image to a reachable registry, set PORT=8080 if the platform does not supply it, and configure secrets/health checks in the service definition. |
 | Oracle Cloud Container Instances | Root Dockerfile | Push an OCI image to OCIR or another reachable registry and configure the container's listener port and environment. |
 | OVHcloud VM / Managed Kubernetes | Root Dockerfile | Use Docker Compose on a VM, or deploy the image through Kubernetes manifests with the needed persistent storage. |
-| Vercel Container Functions | Dockerfile.vercel | Vercel recognizes this filename and runs the HTTP server as a container function. Functions are stateless; do not rely on local container state for saved workspaces. |
+| Vercel Container Functions | Dockerfile.vercel | Set `PORT=8080` in Vercel project settings; the image runs non-root. Functions are stateless, so do not rely on local container state for saved workspaces. |
 
 Build a portable image once and push it to a registry the target platform can read, then configure environment variables, secret bindings, ingress, TLS and health probes in that platform. The same Dockerfile does not automatically provision a managed database, bucket, IAM permissions, network or DNS.
 
@@ -56,6 +56,6 @@ Configure Google OAuth callback URLs and secrets using Secret Manager; see googl
 
 ## Vercel
 
-Connect the repository to Vercel and let it detect Dockerfile.vercel, or run vercel deploy with the Vercel CLI. Configure the required environment variables in the Vercel project settings. Vercel container functions do not provide Docker Compose named volumes, so use this target for preview/generation-only unless the storage layer has been moved to durable managed services.
+Connect the repository to Vercel and let it detect `Dockerfile.vercel`, or deploy with the Vercel CLI. Set `PORT=8080` in the Vercel project environment settings; the Dockerfile runs as the non-root `node` user and cannot bind to port 80. Configure Google OAuth and provider secrets in project settings. Vercel container functions do not provide Docker Compose named volumes, so use this target for preview/generation-only unless the storage layer has been moved to durable managed services.
 
-Official references: [Cloud Run container contract](https://docs.cloud.google.com/run/docs/container-contract), [AWS App Runner image deployments](https://docs.aws.amazon.com/apprunner/latest/dg/service-source-image.html), [Oracle Container Instances](https://docs.oracle.com/en-us/iaas/Content/container-instances/overview-of-container-instances.htm), [OVHcloud Managed Kubernetes](https://docs.ovhcloud.com/en/guides/public-cloud/containers-orchestration/managed-kubernetes/understanding-mks-architecture), [Vercel container images](https://vercel.com/kb/guide/docker).
+Official references: [Vercel container images](https://vercel.com/kb/guide/docker) (container functions default to port 80 unless overridden); [Cloud Run container contract](https://docs.cloud.google.com/run/docs/container-contract), [AWS App Runner image deployments](https://docs.aws.amazon.com/apprunner/latest/dg/service-source-image.html), [Oracle Container Instances](https://docs.oracle.com/en-us/iaas/Content/container-instances/overview-of-container-instances.htm), [OVHcloud Managed Kubernetes](https://docs.ovhcloud.com/en/guides/public-cloud/containers-orchestration/managed-kubernetes/understanding-mks-architecture), [Vercel container images](https://vercel.com/kb/guide/docker).
