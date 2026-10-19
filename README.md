@@ -7,8 +7,8 @@
 | Repository area | What it contains | Primary entry point |
 |---|---|---|
 | Application | A generator-first invention studio. Users specify a problem, target users, existing approaches, constraints, and success criteria; the app returns a structured candidate, explicit unknowns, and a first validation path. | [`app/page.tsx`](app/page.tsx) and [`package.json`](package.json) |
-| Invention archive | Bounded research packages, supporting visual material, models, and explicit limitations from prior work. | [`inventions/`](inventions/) |
-| Concept assets | Eleven repository-ready concept images from the shared invention-image set, with a reproducible generator and a public mirror for the app. | [`assets/pictures/`](assets/pictures/) and [`scripts/generate_innovator_assets.py`](scripts/generate_innovator_assets.py) |
+| Invention archive | Existing research packages and prior work are retained for reference and explicitly excluded from the production Docker build context. | [`inventions/`](inventions/) and [`archive/`](archive/) |
+| Concept assets | Historical invention imagery is preserved in source control but excluded from the generator-first production container. | [`assets/pictures/`](assets/pictures/) and [`scripts/generate_innovator_assets.py`](scripts/generate_innovator_assets.py) |
 | Reusable methods | The **eureka_skill** collection: 17 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, formal-claim auditing, and adversarial peer review. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
 | Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
