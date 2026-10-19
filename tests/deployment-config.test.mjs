@@ -10,6 +10,9 @@ test("Docker uses the runtime-provided port and probes that port", async () => {
   assert.match(dockerfile, /PORT="8080"/);
   assert.match(dockerfile, /npm install --global pnpm@10\.8\.1/);
   assert.doesNotMatch(dockerfile, /corepack prepare/);
+  const providerRoute = await readFile(resolve(root, "app/api/disclosure/route.ts"), "utf8");
+  assert.match(providerRoute, /gpt-6\.1-sol/);
+  assert.match(providerRoute, /gemini-3\.8-flash/);
   assert.match(dockerfile, /EXPOSE 8080/);
   assert.match(dockerfile, /process\.env\.PORT/);
   assert.doesNotMatch(dockerfile, /127\.0\.0\.1:3000/);
