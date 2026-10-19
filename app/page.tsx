@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import type { StructuredDisclosure } from "./api/disclosure/input";
 
@@ -100,6 +101,7 @@ export default function Home() {
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
         if (isRecord(parsed)) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- Restore user-entered work after OAuth navigation/hydration.
           setDraft({
             problem: typeof parsed.problem === "string" ? parsed.problem : "",
             targetUsers: typeof parsed.targetUsers === "string" ? parsed.targetUsers : "",
@@ -214,7 +216,7 @@ export default function Home() {
   return <div className="generator-app">
     <style>{CSS}</style>
     <header className="generator-header">
-      <a className="generator-brand" href="/">INNOVATOR<small>INVENTION GENERATION STUDIO</small></a>
+      <Link className="generator-brand" href="/">INNOVATOR<small>INVENTION GENERATION STUDIO</small></Link>
       <div className="generator-auth">
         {sessionReady && user
           ? <><span>Signed in as <b>{user.displayName}</b></span><a href="/api/auth/logout?return_to=%2F">Sign out</a></>
