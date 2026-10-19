@@ -68,7 +68,7 @@ Example after creating Secret Manager entries named `google-client-id`, `google-
 gcloud run deploy innovator \
   --image=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/innovator/innovator:BUILD_ID \
   --region=us-central1 --port=8080 --cpu=2 --memory=2Gi \
-  --set-env-vars=NODE_ENV=production,HOST=0.0.0.0,PORT=8080,AUTH_TRUST_CHATGPT_HEADERS=false \
+  --set-env-vars=NODE_ENV=production,HOST=0.0.0.0,AUTH_TRUST_CHATGPT_HEADERS=false \
   --set-secrets=GOOGLE_CLIENT_ID=google-client-id:latest,GOOGLE_CLIENT_SECRET=google-client-secret:latest,AUTH_SESSION_SECRET=innovator-session-secret:latest,DISCLOSURE_RATE_LIMIT_HMAC_SECRET=innovator-rate-secret:latest \
   --allow-unauthenticated
 ```
@@ -82,6 +82,9 @@ gcloud run services update innovator --region=us-central1 --update-env-vars=GOOG
 `--allow-unauthenticated` lets Cloud Run receive public HTTP traffic; it does not bypass app sign-in checks for creating or reading private workspaces. Restrict accounts with `GOOGLE_ALLOWED_EMAILS` when appropriate.
 
 **Do not treat this Cloud Run configuration as durable storage.** User/project tables, quotas, and project documents still use local Wrangler/Miniflare state. Use the Compute Engine path above for persistent data, or complete a managed database/object-storage adapter migration before public production use.
+
+
+> Cloud Run injects PORT into the ingress container. Do not pass PORT through --set-env-vars; this reserved variable is owned by the platform.
 
 ## 6. Smoke-check and rollback
 

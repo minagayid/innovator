@@ -45,3 +45,18 @@ test("Google identity headers are not trusted unless explicitly configured", asy
   assert.match(auth, /verifySignedPayload/);
   assert.match(auth, /isGoogleEmailAllowed/);
 });
+
+
+test("Vercel container image listens on its configured HTTP port", async () => {
+  const dockerfile = await readFile(resolve(root, "Dockerfile.vercel"), "utf8");
+  assert.match(dockerfile, /PORT="80"/);
+  assert.match(dockerfile, /EXPOSE 80/);
+  assert.match(dockerfile, /process\.env\.PORT/);
+  assert.match(dockerfile, /pnpm", "start/);
+});
+
+test("Cloud Run deployment documentation leaves the reserved PORT variable to the platform", async () => {
+  const deployGuide = await readFile(resolve(root, "docs/google-cloud-deployment.md"), "utf8");
+  assert.doesNotMatch(deployGuide, /--set-env-vars=[^\n]*\bPORT\s*=/);
+  assert.match(deployGuide, /Cloud Run injects PORT/);
+});

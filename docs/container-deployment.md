@@ -48,3 +48,10 @@ Google Cloud Run's writable container filesystem is ephemeral and is lost when a
 ## What is verified
 
 Repository tests include source-level checks for the Docker port contract, archive exclusions, OAuth session signing, and redirect-path safety. A Docker engine and Google Cloud project are not available in this editing workflow, so an actual image build, live OAuth round-trip, and cloud smoke test still need to be run in your environment.
+
+
+## Deployment outside Google Cloud
+
+The root Dockerfile builds the portable OCI container used by Cloud Run and other container services. For Vercel's container runtime, use the root Dockerfile.vercel (Vercel detects this filename). See the Multi-cloud deployment guide (docs/multi-cloud-deployment.md) for commands and provider boundaries.
+
+The app's current persistence layer uses Cloudflare D1/R2 interfaces through local Wrangler/Miniflare emulation. This is not durable shared storage on stateless services such as Cloud Run or Vercel Functions. A long-lived VM with the provided Compose volumes can preserve a single instance's state; scalable/serverless production needs a managed database/object-storage adapter migration.
