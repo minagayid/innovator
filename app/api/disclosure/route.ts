@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
   if (!hasGemini && !hasOpenAI) return NextResponse.json(buildFallbackDisclosure(notes, category));
 
-  // Paid work is guarded by trusted edge identity and the shared D1 quota.
+  // Paid work requires an authenticated app identity (or an explicitly trusted edge) and the shared quota.
   const identity = await getChatGPTUser();
   const callerHash = identity
     ? await authenticatedDisclosureCallerHash(identity.email, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET)
