@@ -25,10 +25,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.13.1"
-      - name: Enable pinned pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.8.1 --activate
+      - name: Install pinned pnpm without Corepack signature drift
+        run: npm install --global pnpm@10.8.1
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
       - name: Run build and tests
