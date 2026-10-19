@@ -8,6 +8,8 @@ const root = resolve(import.meta.dirname, "..");
 test("Docker uses the runtime-provided port and probes that port", async () => {
   const dockerfile = await readFile(resolve(root, "Dockerfile"), "utf8");
   assert.match(dockerfile, /PORT="8080"/);
+  assert.match(dockerfile, /npm install --global pnpm@10\.8\.1/);
+  assert.doesNotMatch(dockerfile, /corepack prepare/);
   assert.match(dockerfile, /EXPOSE 8080/);
   assert.match(dockerfile, /process\.env\.PORT/);
   assert.doesNotMatch(dockerfile, /127\.0\.0\.1:3000/);
