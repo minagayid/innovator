@@ -24,7 +24,11 @@ gcloud builds submit --region=us-central1 --config=cloudbuild.yaml .
 
 The build pushes an immutable image tagged with the Cloud Build ID to `us-central1-docker.pkg.dev/PROJECT_ID/innovator/innovator:BUILD_ID`. It does not silently deploy or make the service public.
 
-## 2. Configure Google sign-in
+## 2. Model provider configuration
+
+Defaults are set to model IDs listed in the current official provider catalogues: OpenAI `gpt-6.1-sol` and Gemini `gemini-3.8-flash`. API/account access still depends on the provider account, available quota, and endpoint region. Override with `OPENAI_MODEL` or `GEMINI_MODEL` when necessary. References: [OpenAI model pricing/catalogue](https://platform.openai.com/pricing) and [Gemini API models](https://ai.google.dev/gemini-api/docs/models).
+
+## 3. Configure Google sign-in
 
 In Google Cloud Console, create an OAuth client for a Web application. Add the exact redirect URI `https://YOUR_PUBLIC_HOST/api/auth/google/callback` (or the Cloud Run URL after the first bootstrap deploy). Store the client ID and client secret in Secret Manager. Also create `AUTH_SESSION_SECRET` and `DISCLOSURE_RATE_LIMIT_HMAC_SECRET` values with at least 32 random characters each. Never put these values in Dockerfile `ENV`, the image, or source control.
 
@@ -32,7 +36,7 @@ Optional: set `GOOGLE_ALLOWED_EMAILS` to a comma-separated list of permitted add
 
 ChatGPT identity headers are not assumed to exist. `AUTH_TRUST_CHATGPT_HEADERS` defaults to `false`; only enable it if a separately authenticated ingress prevents clients forging those headers.
 
-## 3. Recommended durable path: Compute Engine + Docker Compose
+## 4. Recommended durable path: Compute Engine + Docker Compose
 
 Create a Debian or Ubuntu Compute Engine VM with a persistent boot disk (or attach a separate persistent disk), then install Docker Engine and the Docker Compose plugin. Configure firewall rules to allow only intended public ingress; HTTPS through a load balancer or reverse proxy is recommended.
 
@@ -54,7 +58,7 @@ docker compose -f compose.yaml logs --tail=200 innovator
 
 The named Docker volumes are stored on the VM's Docker data disk. Verify that the disk survives VM restart and replacement, configure backups, and rehearse a restore before saving valuable work. Keep a single app instance with the current local D1/R2 emulation.
 
-## 4. Optional Cloud Run preview
+## 5. Optional Cloud Run preview
 
 Cloud Run uses port 8080 by default; this image and launcher honor its injected `PORT`. First deploy the built image, then copy its HTTPS service URL and register that URL as the OAuth callback origin. Re-deploy/update with the final callback URI.
 
@@ -79,7 +83,7 @@ gcloud run services update innovator --region=us-central1 --update-env-vars=GOOG
 
 **Do not treat this Cloud Run configuration as durable storage.** User/project tables, quotas, and project documents still use local Wrangler/Miniflare state. Use the Compute Engine path above for persistent data, or complete a managed database/object-storage adapter migration before public production use.
 
-## 5. Smoke-check and rollback
+## 6. Smoke-check and rollback
 
 Before launch, run `pnpm install --frozen-lockfile`, `pnpm test`, and `pnpm lint`; build the container; open `/`; verify Google OAuth round-trip and allowlist rejection; generate a candidate with a test provider key; save a private workspace; restart the VM; confirm the workspace still exists; and test restore from backup. Record the image tag and previous tag so rollback is a one-command image redeploy.
 
