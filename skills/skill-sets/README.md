@@ -12,6 +12,10 @@ A reusable skill set distilled from four preferred upstream reference repositori
 | [Evidence-driven reverse engineering](../evidence-driven-reverse-engineering/SKILL.md) | Authorized behavior investigation, static/runtime evidence, binary and package analysis | [morluto/rea](https://github.com/morluto/rea) |
 | [Reverse-engineering tool selection](../reverse-engineering-tool-selection/SKILL.md) | Choosing an appropriate debugger, disassembler, tracing, or inspection utility | [morluto/awesome-reverse-engineering](https://github.com/morluto/awesome-reverse-engineering) |
 
+## Expanded technical reference coverage
+
+The [Technical Reference Skill Set](../technical-reference-skill-set.md) adds a broad router and specialist procedures for backend/cloud reference selection, authorized reverse engineering, OWASP-based security assessment, authorized red-team emulation, and defensive threat research/detection engineering. It preserves this set's ArtCraft, Everything, and REA/awesome-reverse-engineering guidance and links to the existing full-stack implementation skills rather than duplicating them.
+
 ## Shared method
 
 1. Inspect the target repository's current state, instructions, architecture, manifests, scripts, and tests.
