@@ -4,14 +4,14 @@ A reusable set of five agent skills for substantial development and delivery wor
 
 ## Entry point
 
-Start with SKILL.md. It routes the task to the supporting skills:
+Start with [SKILL.md](./SKILL.md). It routes the task to the supporting skills:
 
-- unlazy-depth-tree/SKILL.md — contracts, decomposition, ownership, dependencies, and integration.
-- unlazy-acceptance-gates/SKILL.md — observable gates and safe command inspection.
-- unlazy-verification/SKILL.md — implementation, review, defect hunt, polish, and re-verification.
-- unlazy-final-audit/SKILL.md — requirement reconciliation and evidence-backed reports.
+- [unlazy-depth-tree](../unlazy-depth-tree/SKILL.md) — contracts, decomposition, ownership, dependencies, and integration.
+- [unlazy-acceptance-gates](../unlazy-acceptance-gates/SKILL.md) — observable gates and safe command inspection.
+- [unlazy-verification](../unlazy-verification/SKILL.md) — implementation, review, defect hunt, polish, and re-verification.
+- [unlazy-final-audit](../unlazy-final-audit/SKILL.md) — requirement reconciliation and evidence-backed reports.
 
-Templates are in templates/. They are lightweight Markdown aids, not a substitute for executable validation tooling.
+Templates are in [templates/](./templates/). They are lightweight Markdown aids, not a substitute for executable validation tooling.
 
 ## Use and limitations
 
@@ -21,7 +21,7 @@ Use formal gates for substantial work; do not burden trivial tasks with unnecess
 
 ## Source and license
 
-Inspired by Leonxlnx/unlazy (https://github.com/Leonxlnx/unlazy), especially its SKILL.md, Depth Tree method, gate contract, four-pass workflow, verification hierarchy, and final claim audit. Original source is MIT-licensed. The following license notice is retained to comply with attribution requirements for adapted material.
+Inspired by [Leonxlnx/unlazy](https://github.com/Leonxlnx/unlazy), especially its SKILL.md, Depth Tree method, gate contract, four-pass workflow, verification hierarchy, and final claim audit. Original source is MIT-licensed. The following license notice is retained to comply with attribution requirements for adapted material.
 
 MIT License
 
