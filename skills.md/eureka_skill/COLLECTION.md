@@ -1,6 +1,6 @@
 # `eureka_skill` Collection Charter
 
-**Collection version:** `2026.09.03-v2`
+**Collection version:** `2026.09.03-v2` (Unlazy workflow skill additions proposed on a feature branch)
 **Repository path:** [`skills.md/eureka_skill/`](./)
 **Installable package path:** [`skills.md/eureka_skill/skills/`](./skills/)
 
@@ -15,21 +15,26 @@ The collection operationalizes a deliberately strict distinction: **verification
 | Formalization and invention validation | `conjecture-formalization-lab`, `invention-validation-lab`, `bounded-invention-engineering` | Turn claims into bounded models and kill/continue/reframe decisions. |
 | Mathematics and high-integrity computation | `advanced-mathematics-computation`, `math-research-orchestrator`, `eureka-computational-lab`, `eureka-design-space-lab`, `eureka-formal-logic-lab` | Route theorem-aware computation, VVUQ studies, constrained trade-offs, finite/exhaustive evidence, and proof-gap reporting. |
 | Debate and adversarial review | `adversarial-peer-review` | Apply evidence-based attacks, concrete repairs, bounded re-review, residual-risk tracking, and reversal criteria. |
+| Agent workflow discipline | `unlazy-workflow`, `unlazy-task-contract`, `unlazy-acceptance-gates`, `unlazy-depth-tree-orchestration`, `unlazy-completion-audit` | Define acceptance contracts, author meaningful gates, coordinate complex work, and independently audit completion. These adapt workflow principles from the public Unlazy project; they do not install or reproduce its CLI/hooks. |
 | Collection router | `eureka-skill` | Expose the user-facing **eureka_skill** route and select the minimum sufficient specialist workflow. |
 
 ## Non-negotiable evidence contract
 
 Every material result must state its evidence label: **sourced, computed, inferred, proposed, or unresolved**. Computational work must preserve a versioned specification, source/environment/input/seed/output provenance, meaningful baseline and negative control, sensitivity or refinement where applicable, machine-readable output, regression checks, and a decision stop or reversal condition. Formal and finite studies must state the exact domain, coverage argument, trusted base, counterexample strategy, and remaining proof obligations.
 
-| Validation performed for this release | Result |
+## Previously validated collection release
+
+The following results document the prior collection release; they do **not** validate the newly added Unlazy-inspired packages:
+
+| Validation performed for prior release | Reported result |
 |---|---|
-| Official structural validation | All **17** packages passed `quick_validate.py`. |
-| New computation validator | Accepted a complete 10-section sample and rejected a deliberately incomplete sample. |
-| New design-space validator | Accepted a complete 9-section sample after normalizing punctuation in headings. |
-| New formal-logic validator | Accepted a complete 9-section finite-claim sample. |
+| Official structural validation | All 17 then-existing packages passed `quick_validate.py`. |
+| Computation validator | Accepted a complete 10-section sample and rejected a deliberately incomplete sample. |
+| Design-space validator | Accepted a complete 9-section sample after normalizing punctuation in headings. |
+| Formal-logic validator | Accepted a complete 9-section finite-claim sample. |
 | Adversarial review validator | Accepted a complete review report and rejected a deliberately incomplete report. |
 
-The validators are **structural checks only**. They do not establish mathematical truth, domain coverage, a correct solver encoding, physical model validity, or engineering readiness.
+The validators are **structural checks only**. They do not establish mathematical truth, domain coverage, a correct solver encoding, physical model validity, or engineering readiness. The new Unlazy-inspired skill files have been authored and committed to the feature branch, but a local structural validator and full repository checks have not yet been run in this environment.
 
 ## Package layout
 
