@@ -1,6 +1,6 @@
 # Innovator
 
-**Innovator** is a research studio for turning problems into bounded invention candidates. It combines a cross-domain reasoning loop, documented invention research packages, a persistence-backed workspace, and a versioned collection of reusable advanced-mathematics and innovation skills. The repository retains earlier application material while its reusable-methods surface is now the canonical [`skills.md/eureka_skill/`](skills.md/eureka_skill/) collection.
+**Innovator** is a research studio for turning problems into bounded invention candidates. It combines a cross-domain reasoning loop, documented invention research packages, a persistence-backed workspace, and versioned collections of reusable engineering, advanced-mathematics, and innovation skills. The repository retains earlier application material while its reusable-methods surface is now the canonical [`skills.md/eureka_skill/`](skills.md/eureka_skill/) collection.
 
 > **Evidence boundary.** Repository materials can document hypotheses, simulations, finite checks, design studies, and research workflows. They do **not** by themselves establish a theorem, safe physical design, patentability, freedom to operate, certification, manufacturing readiness, or commercial viability.
 
@@ -9,6 +9,7 @@
 | Application | A generator-first invention studio. Users specify a problem, target users, existing approaches, constraints, and success criteria; the app returns a structured candidate, explicit unknowns, and a first validation path. | [`app/page.tsx`](app/page.tsx) and [`package.json`](package.json) |
 | Invention archive | Existing research packages and prior work are retained for reference and explicitly excluded from the production Docker build context. | [`inventions/`](inventions/) and [`archive/`](archive/) |
 | Concept assets | Historical invention imagery is preserved in source control but excluded from the generator-first production container. | [`assets/pictures/`](assets/pictures/) and [`scripts/generate_innovator_assets.py`](scripts/generate_innovator_assets.py) |
+| Full-stack delivery workflows | Seven installable skills for frontend UX, FastAPI authentication, database migrations, Docker/cloud deployment, CI, and production-readiness reviews. | [`skills/full-stack-engineering-suite.md`](skills/full-stack-engineering-suite.md) |
 | Reusable methods | The **eureka_skill** collection: 17 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, formal-claim auditing, and adversarial peer review. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
 | Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
