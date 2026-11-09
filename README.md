@@ -47,13 +47,18 @@ To preview the production build locally, run `pnpm build` followed by `pnpm star
 
 The product direction and research method are recorded in [`docs/ADR-001-research-studio.md`](docs/ADR-001-research-studio.md). The Studio is deliberately a hypothesis-navigation tool: a bridge is not a discovery, and a candidate route is not a validated invention.
 
-## Optional OpenAI configuration
+## Model provider configuration
 
 Copy `.env.example` to `.env.local` and supply values appropriate to your environment.
 
 ```text
+HF_TOKEN=your_fine_grained_hugging_face_token
+HF_MODEL=Qwen/Qwen3-4B-Instruct-2507:fastest
+# Optional existing providers:
 OPENAI_API_KEY=your_key_here
 OPENAI_MODEL=gpt-6.1-sol
+GEMINI_API_KEY=your_key_here
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 Do not treat generated disclosure text or prior-art-like similarity output as legal, scientific, or engineering validation. Human subject-matter review remains necessary.
@@ -98,7 +103,7 @@ Application code is available under the [MIT License](LICENSE). Individual inven
 
 ## Provider and project limits
 
-A disclosure request uses at most one configured paid provider. Gemini takes precedence when configured; provider errors do not trigger a second paid-provider request. The route requires the configured trusted-edge identity and shared D1 quota controls before paid inference. See [`docs/paid-inference-boundary.md`](docs/paid-inference-boundary.md) before enabling paid providers in a public deployment.
+A disclosure request uses at most one configured provider. Priority is Gemini, then Hugging Face Inference Providers, then OpenAI; provider errors do not trigger a second provider request. Hugging Face uses the OpenAI-compatible `https://router.huggingface.co/v1/chat/completions` endpoint and defaults to `Qwen/Qwen3-4B-Instruct-2507:fastest`. Create a fine-grained Hugging Face token with Inference Providers permission and store it as the server-side `HF_TOKEN`; never expose it to the browser or commit it. The route requires the configured trusted-edge identity and shared D1 quota controls before paid inference. See [`docs/paid-inference-boundary.md`](docs/paid-inference-boundary.md) before enabling paid providers in a public deployment.
 
 Project creation uses shared D1 quotas (3 per user per UTC hour, 10 per user per UTC day, 25 per deployment per UTC hour, and 100 per deployment per UTC day) and fails closed if the quota store is unavailable. Project listing is cursor-paginated (20 by default, maximum 50). These limits control request and page volume; they do not define a lifetime storage or retention policy. Set a deletion policy and monitor storage before broad production use.
 
