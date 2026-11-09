@@ -65,7 +65,7 @@ async function callPaidProvider(hasGemini: boolean, hasHuggingFace: boolean, not
           max_tokens: MAX_PROVIDER_OUTPUT_TOKENS,
           messages: [
             { role: "system", content: DISCLOSURE_SYSTEM_PROMPT },
-            { role: "user", content: `Category: ${category || "unspecified"}\\nNotes: ${notes}` },
+            { role: "user", content: `Category: ${category || "unspecified"}\nNotes: ${notes}` },
           ],
         }),
       });
