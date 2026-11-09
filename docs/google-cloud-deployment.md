@@ -26,7 +26,7 @@ The build pushes an immutable image tagged with the Cloud Build ID to `us-centra
 
 ## 2. Model provider configuration
 
-Defaults are set to model IDs listed in the current official provider catalogues: OpenAI `gpt-6.1-sol` and Gemini `gemini-3.8-flash`. API/account access still depends on the provider account, available quota, and endpoint region. Override with `OPENAI_MODEL` or `GEMINI_MODEL` when necessary. References: [OpenAI model pricing/catalogue](https://platform.openai.com/pricing) and [Gemini API models](https://ai.google.dev/gemini-api/docs/models).
+Defaults are set to model IDs listed in the current official provider catalogues: OpenAI `gpt-6.1-sol` and Gemini `gemini-3.8-flash`. API/account access still depends on the provider account, available quota, and endpoint region. The default Hugging Face route uses `Qwen/Qwen3-4B-Instruct-2507:fastest` through the OpenAI-compatible Inference Providers API. Create a fine-grained token with Inference Providers access and store it in Secret Manager as `hf-token`; configure `HF_TOKEN` and optionally `HF_MODEL` on the server. Provider priority is Gemini, Hugging Face, then OpenAI; only one provider is called per request. Override with `OPENAI_MODEL`, `GEMINI_MODEL`, or `HF_MODEL` when necessary. References: [OpenAI model pricing/catalogue](https://platform.openai.com/pricing) and [Gemini API models](https://ai.google.dev/gemini-api/docs/models).
 
 ## 3. Configure Google sign-in
 
@@ -46,7 +46,8 @@ On the VM, clone the repository, create `.env` from `.env.example`, and set:
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI=https://YOUR_PUBLIC_HOST/api/auth/google/callback`
 - `AUTH_SESSION_SECRET` and `DISCLOSURE_RATE_LIMIT_HMAC_SECRET`
 - `GOOGLE_ALLOWED_EMAILS` for a restricted deployment
-- `OPENAI_API_KEY` or `GEMINI_API_KEY` only when model-assisted generation is wanted
+- `HF_TOKEN` (fine-grained token with Inference Providers permission) and optionally `HF_MODEL=Qwen/Qwen3-4B-Instruct-2507:fastest`; keep the token in Secret Manager rather than a checked-in `.env`
+- `OPENAI_API_KEY` or `GEMINI_API_KEY` only when those alternative providers are wanted
 
 Then run:
 
@@ -62,7 +63,7 @@ The named Docker volumes are stored on the VM's Docker data disk. Verify that th
 
 Cloud Run uses port 8080 by default; this image and launcher honor its injected `PORT`. First deploy the built image, then copy its HTTPS service URL and register that URL as the OAuth callback origin. Re-deploy/update with the final callback URI.
 
-Example after creating Secret Manager entries named `google-client-id`, `google-client-secret`, `innovator-session-secret`, and `innovator-rate-secret`:
+Example after creating Secret Manager entries named `google-client-id`, `google-client-secret`, `innovator-session-secret`, `innovator-rate-secret`, and `hf-token` (the HF secret is required only when Hugging Face generation is enabled):
 
 ```sh
 gcloud run deploy innovator \
