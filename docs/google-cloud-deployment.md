@@ -70,7 +70,7 @@ gcloud run deploy innovator \
   --image=us-central1-docker.pkg.dev/YOUR_PROJECT_ID/innovator/innovator:BUILD_ID \
   --region=us-central1 --port=8080 --cpu=2 --memory=2Gi \
   --set-env-vars=NODE_ENV=production,HOST=0.0.0.0,AUTH_TRUST_CHATGPT_HEADERS=false \
-  --set-secrets=GOOGLE_CLIENT_ID=google-client-id:latest,GOOGLE_CLIENT_SECRET=google-client-secret:latest,AUTH_SESSION_SECRET=innovator-session-secret:latest,DISCLOSURE_RATE_LIMIT_HMAC_SECRET=innovator-rate-secret:latest \
+  --set-secrets=GOOGLE_CLIENT_ID=google-client-id:latest,GOOGLE_CLIENT_SECRET=google-client-secret:latest,AUTH_SESSION_SECRET=innovator-session-secret:latest,DISCLOSURE_RATE_LIMIT_HMAC_SECRET=innovator-rate-secret:latest,HF_TOKEN=hf-token:latest \
   --allow-unauthenticated
 ```
 
