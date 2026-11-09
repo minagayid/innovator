@@ -33,7 +33,7 @@ Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, and
 
 Set `DISCLOSURE_RATE_LIMIT_HMAC_SECRET` to a random secret of at least 32 characters. Authenticated Google users are hashed before their per-user quota is recorded. `AUTH_TRUST_CHATGPT_HEADERS` is `false` by default; enable it only behind an ingress that authenticates the user and strips caller-supplied copies of ChatGPT identity headers.
 
-`OPENAI_API_KEY` and `GEMINI_API_KEY` are optional. Gemini takes precedence when configured; the application makes at most one paid-provider request per generation and returns an explicitly labeled deterministic scaffold when a provider key, trusted identity, or quota is unavailable. Put secrets in environment variables or Secret Manager, never in the image or source control.
+`GEMINI_API_KEY`, `HF_TOKEN`, and `OPENAI_API_KEY` are optional. Provider priority is Gemini, then Hugging Face Inference Providers, then OpenAI. Hugging Face defaults to `Qwen/Qwen3-4B-Instruct-2507:fastest` through `https://router.huggingface.co/v1/chat/completions`. Create a fine-grained Hugging Face token with **Make calls to Inference Providers** permission and set it as `HF_TOKEN` only on the server (or in Secret Manager); never place it in client-side variables or source control. The application makes at most one provider request per generation and returns an explicitly labeled deterministic scaffold when the selected provider fails or a trusted identity/quota is unavailable. Put secrets in environment variables or Secret Manager, never in the image or source control.
 
 ## Keep the invention archive out of the image
 
