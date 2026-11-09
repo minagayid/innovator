@@ -60,3 +60,16 @@ test("Cloud Run deployment documentation leaves the reserved PORT variable to th
   assert.doesNotMatch(deployGuide, /--set-env-vars=[^\n]*\bPORT\s*=/);
   assert.match(deployGuide, /Cloud Run injects PORT/);
 });
+
+
+test("Hugging Face inference provider is configured server-side", async () => {
+  const providerRoute = await readFile(resolve(root, "app/api/disclosure/route.ts"), "utf8");
+  const envExample = await readFile(resolve(root, ".env.example"), "utf8");
+  const compose = await readFile(resolve(root, "compose.yaml"), "utf8");
+  assert.match(providerRoute, /router\.huggingface\.co\/v1\/chat\/completions/);
+  assert.match(providerRoute, /Qwen\/Qwen3-4B-Instruct-2507:fastest/);
+  assert.match(providerRoute, /process\.env\.HF_TOKEN/);
+  assert.match(envExample, /^HF_TOKEN=$/m);
+  assert.match(envExample, /^HF_MODEL=Qwen\/Qwen3-4B-Instruct-2507:fastest$/m);
+  assert.match(compose, /HF_TOKEN: "\$\{HF_TOKEN:-\}"/);
+});
