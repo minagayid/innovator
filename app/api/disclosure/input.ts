@@ -12,7 +12,7 @@ export type DisclosureInputResult =
 
 export type DisclosureProvenance = {
   kind: "model-assisted-draft" | "deterministic-fallback";
-  provider: "OpenAI" | "Gemini" | null;
+  provider: "OpenAI" | "Gemini" | "Hugging Face" | null;
   model: string | null;
 };
 
@@ -27,7 +27,7 @@ export type StructuredDisclosure = {
   keywords: string[];
   missingQuestions: string[];
   publicSummary: string;
-  mode: "live" | "gemini-live" | "demo-fallback";
+  mode: "live" | "gemini-live" | "huggingface-live" | "demo-fallback";
   provenance: DisclosureProvenance;
 };
 
@@ -77,6 +77,27 @@ export function parseStructuredDisclosure(text: string): Record<string, unknown>
     result[field] = items.map((item) => (item as string).trim().slice(0, 200)).filter(Boolean);
   }
   return result;
+}
+
+export function parseHuggingFaceChatCompletion(responseText: string): Record<string, unknown> | null {
+  if (new TextEncoder().encode(responseText).byteLength > MAX_PROVIDER_RESPONSE_BYTES) return null;
+
+  let payload: unknown;
+  try {
+    payload = JSON.parse(responseText);
+  } catch {
+    return null;
+  }
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
+  const choices = (payload as Record<string, unknown>).choices;
+  if (!Array.isArray(choices) || !choices.length) return null;
+  const first = choices[0];
+  if (!first || typeof first !== "object" || Array.isArray(first)) return null;
+  const message = (first as Record<string, unknown>).message;
+  if (!message || typeof message !== "object" || Array.isArray(message)) return null;
+  const content = (message as Record<string, unknown>).content;
+  if (typeof content !== "string") return null;
+  return parseStructuredDisclosure(content);
 }
 
 export async function readBoundedProviderResponse(response: Response): Promise<string> {

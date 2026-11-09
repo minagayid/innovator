@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { buildFallbackDisclosure, parseDisclosureBody, parseStructuredDisclosure, readBoundedBody, readBoundedProviderResponse, RequestBodyTooLargeError } from "./input";
+import { buildFallbackDisclosure, parseDisclosureBody, parseHuggingFaceChatCompletion, parseStructuredDisclosure, readBoundedBody, readBoundedProviderResponse, RequestBodyTooLargeError } from "./input";
 import { authenticatedDisclosureCallerHash, runDisclosureProviderIfQuotaAllows, trustedDisclosureCallerHash } from "../../../db/disclosure-quota.ts";
 import { getDatabase } from "../../../db/index.ts";
 import { getChatGPTUser } from "../../chatgpt-auth";
@@ -12,7 +12,7 @@ function providerFetch(url: string, init: RequestInit): Promise<Response> {
   return fetch(url, { ...init, signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS) });
 }
 
-async function callPaidProvider(hasGemini: boolean, notes: string, category: string): Promise<NextResponse> {
+async function callPaidProvider(hasGemini: boolean, hasHuggingFace: boolean, notes: string, category: string): Promise<NextResponse> {
   // Use one paid provider per request. A failed Gemini call does not fall through to OpenAI.
   if (hasGemini) {
     const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
@@ -42,6 +42,43 @@ async function callPaidProvider(hasGemini: boolean, notes: string, category: str
         });
       }
     } catch { /* Use the deterministic fallback; do not spend on a second provider. */ }
+    return NextResponse.json(buildFallbackDisclosure(notes, category));
+  }
+
+  if (hasHuggingFace) {
+    const token = process.env.HF_TOKEN;
+    const model = process.env.HF_MODEL || "Qwen/Qwen3-4B-Instruct-2507:fastest";
+    const safeModel = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}(?::[A-Za-z0-9._-]{1,80})?$/.test(model)
+      ? model
+      : "Qwen/Qwen3-4B-Instruct-2507:fastest";
+    if (!token) return NextResponse.json(buildFallbackDisclosure(notes, category));
+
+    try {
+      const response = await providerFetch("https://router.huggingface.co/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          model: safeModel,
+          max_tokens: MAX_PROVIDER_OUTPUT_TOKENS,
+          messages: [
+            { role: "system", content: DISCLOSURE_SYSTEM_PROMPT },
+            { role: "user", content: `Category: ${category || "unspecified"}\nNotes: ${notes}` },
+          ],
+        }),
+      });
+      if (response.ok) {
+        const responseText = await readBoundedProviderResponse(response);
+        const disclosure = parseHuggingFaceChatCompletion(responseText);
+        if (disclosure) return NextResponse.json({
+          ...disclosure,
+          mode: "huggingface-live",
+          provenance: { kind: "model-assisted-draft", provider: "Hugging Face", model: safeModel },
+        });
+      }
+    } catch { /* Return the deterministic fallback; do not spend on another provider. */ }
     return NextResponse.json(buildFallbackDisclosure(notes, category));
   }
 
@@ -89,8 +126,9 @@ export async function POST(request: NextRequest) {
   const { notes, category } = parsed.value;
 
   const hasGemini = Boolean(process.env.GEMINI_API_KEY);
+  const hasHuggingFace = Boolean(process.env.HF_TOKEN);
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
-  if (!hasGemini && !hasOpenAI) return NextResponse.json(buildFallbackDisclosure(notes, category));
+  if (!hasGemini && !hasHuggingFace && !hasOpenAI) return NextResponse.json(buildFallbackDisclosure(notes, category));
 
   // Paid work requires an authenticated app identity (or an explicitly trusted edge) and the shared quota.
   const identity = await getChatGPTUser();
@@ -100,7 +138,7 @@ export async function POST(request: NextRequest) {
   const gated = await runDisclosureProviderIfQuotaAllows(
     callerHash,
     getDatabase,
-    () => callPaidProvider(hasGemini, notes, category),
+    () => callPaidProvider(hasGemini, hasHuggingFace, notes, category),
   );
   // Missing identity, missing D1, quota denials, and quota errors fail closed.
   if (!gated.allowed) return NextResponse.json(buildFallbackDisclosure(notes, category));

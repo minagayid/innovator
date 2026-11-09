@@ -6,6 +6,7 @@ import {
   MAX_PROVIDER_RESPONSE_BYTES,
   buildFallbackDisclosure,
   parseDisclosureBody,
+  parseHuggingFaceChatCompletion,
   parseStructuredDisclosure,
   readBoundedBody,
   readBoundedProviderResponse,
@@ -66,4 +67,26 @@ test("provider output is rejected above the byte limit before JSON parsing", asy
   const response = new Response("x".repeat(MAX_PROVIDER_RESPONSE_BYTES + 1), { status: 200 });
   await assert.rejects(readBoundedProviderResponse(response), RequestBodyTooLargeError);
   assert.equal(parseStructuredDisclosure("x".repeat(MAX_PROVIDER_RESPONSE_BYTES + 1)), null);
+});
+
+
+test("Hugging Face chat-completion output is mapped into the bounded disclosure schema", () => {
+  const disclosure = {
+    title: "Adaptive desalination membrane", abstract: "A bounded concept.",
+    problem: "Membrane fouling.", solution: "A proposed backwash mechanism.",
+    technicalField: "Water treatment", noveltyHypothesis: "A hypothesis only.",
+    components: ["Membrane", "Pressure sensor"], keywords: ["water"], missingQuestions: ["What is the baseline?"],
+    publicSummary: "Unvalidated concept.",
+  };
+  const response = {
+    choices: [{ message: { role: "assistant", content: JSON.stringify(disclosure) } }],
+  };
+  assert.deepEqual(parseHuggingFaceChatCompletion(JSON.stringify(response)), disclosure);
+});
+
+test("Hugging Face chat-completion parser rejects malformed, missing, and oversized content", () => {
+  assert.equal(parseHuggingFaceChatCompletion("{"), null);
+  assert.equal(parseHuggingFaceChatCompletion(JSON.stringify({ choices: [] })), null);
+  assert.equal(parseHuggingFaceChatCompletion(JSON.stringify({ choices: [{ message: { content: "not-json" } }] })), null);
+  assert.equal(parseHuggingFaceChatCompletion("x".repeat(MAX_PROVIDER_RESPONSE_BYTES + 1)), null);
 });
