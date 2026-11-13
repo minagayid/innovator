@@ -7,6 +7,7 @@
 | Repository area | What it contains | Primary entry point |
 |---|---|---|
 | Application | A generator-first invention studio. Users specify a problem, target users, existing approaches, constraints, and success criteria; the app returns a structured candidate, explicit unknowns, and a first validation path. | [`app/page.tsx`](app/page.tsx) and [`package.json`](package.json) |
+| Multimodal invention handoffs | Each candidate also produces bounded directions for a concept image, prototype video, and validation diagram. These are generation briefs, not evidence that the invention works. | [`app/media-prompts.ts`](app/media-prompts.ts) |
 | Invention archive | Existing research packages and prior work are retained for reference and explicitly excluded from the production Docker build context. | [`inventions/`](inventions/) and [`archive/`](archive/) |
 | Concept assets | Historical invention imagery is preserved in source control but excluded from the generator-first production container. | [`assets/pictures/`](assets/pictures/) and [`scripts/generate_innovator_assets.py`](scripts/generate_innovator_assets.py) |
 | Full-stack delivery workflows | Seven installable skills for frontend UX, FastAPI authentication, database migrations, Docker/cloud deployment, CI, and production-readiness reviews. | [`skills/full-stack-engineering-suite.md`](skills/full-stack-engineering-suite.md) |
@@ -77,7 +78,7 @@ The `test` script runs a production build before its rendered-HTML test. The reu
 
 ## Google Cloud deployment
 
-The Docker image follows Cloud Run's `PORT` contract, uses Google OAuth for sign-in, and excludes the preserved invention archive and demo assets from the build context. See [`docs/google-cloud-deployment.md`](docs/google-cloud-deployment.md) for build commands and the critical storage boundary: local D1/R2 emulation is not durable storage on Cloud Run.
+The Docker image follows Cloud Run's `PORT` contract, exposes `/healthz`, uses Google OAuth for sign-in, and excludes the preserved invention archive and demo assets from the build context. Use the reproducible [`deploy/google-cloud/deploy-cloud-run.sh`](deploy/google-cloud/deploy-cloud-run.sh) script and its [`deploy/google-cloud/README.md`](deploy/google-cloud/README.md) requirements. The critical storage boundary remains: local D1/R2 emulation is not durable storage on Cloud Run.
 
 ## Static companion and deployment boundary
 

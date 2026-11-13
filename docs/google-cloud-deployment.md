@@ -1,5 +1,7 @@
 # Google Cloud deployment guide
 
+> **Preferred path:** use [`deploy/google-cloud/deploy-cloud-run.sh`](../deploy/google-cloud/deploy-cloud-run.sh) and its companion [`deploy/google-cloud/README.md`](../deploy/google-cloud/README.md). This guide retains the underlying architecture and storage boundary.
+
 ## Important architecture decision
 
 The current database layer uses Cloudflare D1/R2 interfaces backed by Wrangler/Miniflare local emulation. The container can build and start on Google Cloud, but this emulated storage is **not a durable Cloud Run database**. Cloud Run's writable filesystem disappears when an instance stops; a Cloud Storage FUSE mount does not supply ordinary file-locking semantics. Use Cloud Run only for an ephemeral preview of generation, or migrate D1/R2 to managed Google Cloud database/object-storage adapters before treating this as a durable multi-user SaaS.

@@ -48,7 +48,7 @@ The first release uses deterministic, inspectable studio data and links to the r
 
 - The product's primary value is now a repeatable reasoning loop, not a static idea feed.
 - Candidate routes can be stored later as structured records with evidence labels, source links, objections, and test gates.
-- Live literature and patent connectors remain future work; deterministic examples must never be described as a global systematic review.
+- Live patent retrieval remains bounded by the public PATENTSCOPE handoff and its evidence boundary; the application does not present generated text or a search link as a global systematic review. Candidate records also produce structured image, video, and validation-diagram briefs, which are creative/test-planning handoffs rather than scientific evidence.
 - The existing InventionHub label remains in compatibility tests and historical documentation, while the user-facing product is Innovator.
 
 ## Acceptance checks

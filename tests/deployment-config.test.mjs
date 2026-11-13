@@ -18,6 +18,7 @@ test("Docker uses the runtime-provided port and probes that port", async () => {
   assert.match(providerRoute, /thinkingConfig:\s*\{\s*thinkingLevel:\s*"low"/);
   assert.match(dockerfile, /EXPOSE 8080/);
   assert.match(dockerfile, /process\.env\.PORT/);
+  assert.match(dockerfile, /\/healthz/);
   assert.doesNotMatch(dockerfile, /127\.0\.0\.1:3000/);
 });
 
@@ -72,4 +73,16 @@ test("Hugging Face inference provider is configured server-side", async () => {
   assert.match(envExample, /^HF_TOKEN=$/m);
   assert.match(envExample, /^HF_MODEL=Qwen\/Qwen3-4B-Instruct-2507:fastest$/m);
   assert.match(compose, /HF_TOKEN: "\$\{HF_TOKEN:-\}"/);
+});
+
+test("Google Cloud deployment includes a health route, secret-aware script, and build context boundary", async () => {
+  const health = await readFile(resolve(root, "app/healthz/route.ts"), "utf8");
+  const script = await readFile(resolve(root, "deploy/google-cloud/deploy-cloud-run.sh"), "utf8");
+  const ignore = await readFile(resolve(root, ".gcloudignore"), "utf8");
+  assert.match(health, /service: "innovator"/);
+  assert.match(script, /secretmanager/);
+  assert.match(script, /--startup-probe=httpGet\.path=\/healthz/);
+  assert.match(script, /--update-secrets=/);
+  assert.match(ignore, /\.env/);
+  assert.match(ignore, /node_modules/);
 });

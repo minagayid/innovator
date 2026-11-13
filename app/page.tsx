@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import type { StructuredDisclosure } from "./api/disclosure/input";
+import { buildInventionMediaPrompts } from "./media-prompts";
 import { buildPatentscopeQuery, buildPatentscopeUrl } from "./patentscope";
 
 type SessionUser = { id: string; email: string; displayName: string };
@@ -61,6 +62,7 @@ const CSS = [
   ".generator-badges span{border-radius:999px;background:#edf4ef;padding:6px 10px;color:#2f5944;font-size:.8rem}",
   ".generator-notice{border-radius:10px;background:#f7f2e7;border:1px solid #eadfc5;padding:13px;color:#61502d;font-size:.86rem;line-height:1.55}",
   ".patentscope-card{border:1px solid #cfe0d3;background:#f4faf5;border-radius:12px;padding:15px}.patentscope-card h3{margin:0 0 7px;color:#286447;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}.patentscope-card p{margin:0;color:#50665a;line-height:1.55;font-size:.88rem}.patentscope-query{display:block;margin-top:10px;padding:9px 10px;border-radius:8px;background:#e8f1e9;color:#345447;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.patentscope-link{display:inline-block;margin-top:12px;color:#17634b;font-weight:800;text-decoration:none}",
+  ".media-briefs{display:grid;gap:10px}.media-brief{background:#f7f9f6;border:1px solid #e1e9e1;border-radius:9px;padding:12px}.media-brief strong{display:block;color:#376c53;font-size:.78rem;margin-bottom:5px}.media-brief p{font-size:.84rem;line-height:1.55}",
   ".generator-error{color:#9d2c24;background:#fff0ed;border:1px solid #f1c8c2;padding:12px;border-radius:10px}",
   ".generator-success{color:#1e6547;background:#edf8f0;border:1px solid #c9e6d1;padding:12px;border-radius:10px}",
   ".generator-footer{max-width:1240px;margin:0 auto;padding:0 26px 30px;font-size:.8rem;color:#738078}",
@@ -278,6 +280,7 @@ export default function Home() {
               <section><h3>Differentiating hypothesis—not a novelty decision</h3><p>{draft.disclosure.noveltyHypothesis}</p></section>
               <section><h3>Key components</h3>{draft.disclosure.components.length ? <div className="generator-badges">{draft.disclosure.components.map((component, index) => <span key={index}>{component}</span>)}</div> : <p className="generator-muted">Not assessed yet.</p>}</section>
               <section><h3>Open questions / validation gates</h3><ul>{draft.disclosure.missingQuestions.map((question, index) => <li key={index}>{question}</li>)}</ul></section>
+              <section><h3>Media-ready invention briefs</h3><div className="media-briefs">{Object.entries(buildInventionMediaPrompts(draft.disclosure)).map(([kind, prompt]) => <div className="media-brief" key={kind}><strong>{kind === "conceptImage" ? "Concept image direction" : kind === "prototypeVideo" ? "Prototype video direction" : "Validation diagram direction"}</strong><p>{prompt}</p></div>)}</div><p className="generator-muted">These are structured handoffs for image, video, or diagram generation. They are not visual evidence that the invention works.</p></section>
               <section className="patentscope-card"><h3>Continue in WIPO PATENTSCOPE</h3><p>Run this candidate&apos;s title, field, and model-suggested keywords through WIPO&apos;s public search interface. This is a research handoff, not an automated prior-art result or patentability opinion.</p><code className="patentscope-query">{buildPatentscopeQuery(draft.disclosure)}</code><a className="patentscope-link" href={buildPatentscopeUrl(draft.disclosure)} target="_blank" rel="noreferrer">Open live PATENTSCOPE search ↗</a></section>
               <div className="generator-notice">No live prior-art search ran. Similarity, novelty, feasibility, safety, and patentability remain unassessed. Verify factual claims and test proposed mechanisms independently.</div>
               <button className="generator-button secondary" type="button" onClick={savePrivateDraft} disabled={saving}>{saving ? "Saving private workspace…" : user ? "Save as private workspace" : "Sign in to save privately"}</button>

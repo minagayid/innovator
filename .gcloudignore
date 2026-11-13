@@ -1,0 +1,32 @@
+# Source-control and local tool state
+.git/
+.github/
+node_modules/
+.pnpm-store/
+.wrangler/
+.vinext/
+.next/
+dist/
+dist-pages/
+coverage/
+outputs/
+work/
+*.log
+.DS_Store
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+
+# Preserved research and non-runtime materials
+archive/
+inventions/
+related-projects/
+assets/pictures/
+public/pictures/
+public/engineering/
+skills/
+skills.md/
+tests/
+deployment-templates/
