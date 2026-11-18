@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   const returnedState = request.nextUrl.searchParams.get("state");
   const stateToken = request.cookies.get(GOOGLE_OAUTH_STATE_COOKIE)?.value;
   const statePayload = await verifySignedPayload<GoogleOAuthStatePayload>(stateToken, secret);
-  if (!returnedState || !statePayload || statePayload.state !== returnedState
+  if (!returnedState || !statePayload || statePayload.state !== returnedState || statePayload.provider !== "google"
     || typeof statePayload.issuedAt !== "number" || Date.now() - statePayload.issuedAt > OAUTH_STATE_TTL_MS
     || statePayload.issuedAt > Date.now() + 60_000 || typeof statePayload.verifier !== "string") {
     return fail("google_invalid_state");

@@ -1,20 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  GOOGLE_OAUTH_STATE_COOKIE,
-  GOOGLE_SESSION_COOKIE,
-  safeRelativeReturnPath,
-} from "../../../auth/session";
-
+import { oauthStateCookieName, safeRelativeReturnPath, sessionCookieName, type AuthProvider } from "../../../auth/session";
+const providers: AuthProvider[] = ["google", "github", "linkedin", "orcid"];
 export async function GET(request: NextRequest) {
-  const response = NextResponse.redirect(
-    new URL(safeRelativeReturnPath(request.nextUrl.searchParams.get("return_to")), request.nextUrl.origin),
-  );
+  const response = NextResponse.redirect(new URL(safeRelativeReturnPath(request.nextUrl.searchParams.get("return_to")), request.nextUrl.origin));
   const secure = request.nextUrl.protocol === "https:";
-  response.cookies.set(GOOGLE_SESSION_COOKIE, "", {
-    httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 0,
-  });
-  response.cookies.set(GOOGLE_OAUTH_STATE_COOKIE, "", {
-    httpOnly: true, secure, sameSite: "lax", path: "/api/auth/google/callback", maxAge: 0,
-  });
+  for (const provider of providers) {
+    response.cookies.set(sessionCookieName(provider), "", { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 0 });
+    response.cookies.set(oauthStateCookieName(provider), "", { httpOnly: true, secure, sameSite: "lax", path: `/api/auth/${provider}/callback`, maxAge: 0 });
+  }
   return response;
 }

@@ -1,0 +1,8 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { isAuthProvider, safeRelativeReturnPath } from "../app/auth/session.ts";
+import { parseResearchQuery } from "../app/api/research/input.ts";
+import { fallbackRole } from "../app/ai/roles.ts";
+test("multi-provider auth accepts only the supported providers and keeps redirects local", () => { assert.equal(isAuthProvider("github"), true); assert.equal(isAuthProvider("linkedin"), true); assert.equal(isAuthProvider("orcid"), true); assert.equal(isAuthProvider("twitter"), false); assert.equal(safeRelativeReturnPath("/research?q=water"), "/research?q=water"); assert.equal(safeRelativeReturnPath("https://evil.example"), "/"); });
+test("research queries are bounded and sanitized", () => { assert.deepEqual(parseResearchQuery("  membrane\nfilter  "), { ok: true, query: "membrane filter" }); assert.equal(parseResearchQuery("").ok, false); assert.equal(parseResearchQuery("x".repeat(181)).ok, false); });
+test("role fallbacks preserve evidence boundaries and produce actionable structure", () => { const invention = fallbackRole("invention", "Remote clinics need reliable water treatment"); assert.equal(invention.mode, "deterministic-fallback"); assert.match(invention.candidate.firstTest, /baseline/i); const review = fallbackRole("review", "Assess a proposed membrane"); assert.equal(review.committee.length, 3); assert.match(review.committee[0].finding, /source/i); const plan = fallbackRole("orchestration", "Explore low-energy desalination"); assert.deepEqual(plan.plan.map((item) => item.stage), ["research", "invention", "review", "test"]); });

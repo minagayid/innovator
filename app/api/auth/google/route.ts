@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const challengeBytes = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
   const challenge = toBase64Url(challengeBytes);
   const stateCookie = await signSignedPayload({
-    state,
+    state, provider: "google",
     verifier,
     returnTo: safeRelativeReturnPath(request.nextUrl.searchParams.get("return_to")),
     issuedAt: Date.now(),

@@ -1,0 +1,2 @@
+export const MAX_RESEARCH_QUERY = 180;
+export function parseResearchQuery(value: unknown): { ok: true; query: string } | { ok: false; error: string } { const query = typeof value === "string" ? value.replace(/[\u0000-\u001f]/g, " ").trim() : ""; if (!query) return { ok: false, error: "A research query is required." }; if (query.length > MAX_RESEARCH_QUERY) return { ok: false, error: "Research queries must be 180 characters or fewer." }; return { ok: true, query }; }

@@ -8,6 +8,7 @@ import { buildPatentscopeQuery, buildPatentscopeUrl } from "./patentscope";
 
 type SessionUser = { id: string; email: string; displayName: string };
 type Draft = { problem: string; targetUsers: string; existingApproaches: string; constraints: string; successCriteria: string; category: string; disclosure: StructuredDisclosure | null };
+type ResearchItem = { id: string; title: string; authors: string[]; year: number | null; venue: string; url: string; source: string; evidence: string };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -66,7 +67,7 @@ const CSS = [
   ".generator-error{color:#9d2c24;background:#fff0ed;border:1px solid #f1c8c2;padding:12px;border-radius:10px}",
   ".generator-success{color:#1e6547;background:#edf8f0;border:1px solid #c9e6d1;padding:12px;border-radius:10px}",
   ".generator-footer{max-width:1240px;margin:0 auto;padding:0 26px 30px;font-size:.8rem;color:#738078}",
-  "@media(max-width:850px){.generator-grid{grid-template-columns:1fr}.generator-header{align-items:flex-start;padding:17px 16px}.generator-auth{flex-wrap:wrap;justify-content:flex-end;text-align:right}.generator-card{padding:19px}.generator-main{padding:26px 16px 48px}}"
+  ".research-desk{margin-top:22px}.research-form{display:flex;gap:10px;margin-top:18px}.research-form input{flex:1;min-width:0;border:1px solid #cdd8ce;background:#fcfdfb;border-radius:10px;padding:12px 13px;font:inherit}.research-results{display:grid;gap:8px;margin-top:18px}.research-results article{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #e8ece7;padding:13px 0}.research-results article div{display:grid;gap:4px}.research-results span{font-size:.7rem;color:#6f846f;text-transform:uppercase;letter-spacing:.08em}.research-results b{font-size:.95rem;color:#263f33}.research-results small{color:#718077}.research-results a{color:#17634b;font-weight:800;text-decoration:none;white-space:nowrap}.role-strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid #e8ece7;color:#65756b;font-size:.8rem}.role-strip b{background:#edf4ef;color:#2f5944;border-radius:999px;padding:6px 10px}.generator-auth{flex-wrap:wrap;justify-content:flex-end}.generator-auth a{font-size:.78rem}.research-form button{white-space:nowrap}@media(max-width:850px){.generator-grid{grid-template-columns:1fr}.generator-header{align-items:flex-start;padding:17px 16px}.generator-auth{flex-wrap:wrap;justify-content:flex-end;text-align:right}.generator-card{padding:19px}.generator-main{padding:26px 16px 48px}.research-form{flex-direction:column}.research-results article{align-items:flex-start;flex-direction:column}.research-results a{white-space:normal}}"
 ].join("\n");
 
 const EMPTY_DRAFT: Draft = { problem: "", targetUsers: "", existingApproaches: "", constraints: "", successCriteria: "", category: "Climate and energy", disclosure: null };
@@ -92,6 +93,9 @@ export default function Home() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [authError, setAuthError] = useState("");
+  const [researchQuery, setResearchQuery] = useState("");
+  const [researchResults, setResearchResults] = useState<ResearchItem[]>([]);
+  const [researchLoading, setResearchLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/session")
@@ -217,14 +221,25 @@ export default function Home() {
     }
   }
 
+  async function searchResearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!researchQuery.trim()) return;
+    setResearchLoading(true);
+    try {
+      const response = await fetch(`/api/research?q=${encodeURIComponent(researchQuery)}`);
+      const payload = await response.json() as { results?: ResearchItem[] };
+      setResearchResults(response.ok ? payload.results || [] : []);
+    } finally { setResearchLoading(false); }
+  }
+
   return <div className="generator-app">
     <style>{CSS}</style>
     <header className="generator-header">
       <Link className="generator-brand" href="/">INNOVATOR<small>INVENTION GENERATION STUDIO</small></Link>
       <div className="generator-auth">
         {sessionReady && user
-          ? <><span>Signed in as <b>{user.displayName}</b></span><a href="/api/auth/logout?return_to=%2F">Sign out</a></>
-          : <a href="/api/auth/google?return_to=%2F">{sessionReady ? "Sign in with Google" : "Checking session…"}</a>}
+          ? <><span>Signed in as <b>{user.displayName}</b></span><Link href="/api/auth/logout?return_to=%2F">Sign out</Link></>
+          : <>{sessionReady ? <><Link href="/api/auth/google?return_to=%2F">Google</Link><Link href="/api/auth/github?return_to=%2F">GitHub</Link><Link href="/api/auth/linkedin?return_to=%2F">LinkedIn</Link><Link href="/api/auth/orcid?return_to=%2F">ORCID</Link></> : "Checking session…"}</>}
       </div>
     </header>
     <main className="generator-main">
@@ -287,6 +302,16 @@ export default function Home() {
             </div>}
         </section>
       </div>
+      <section className="generator-card research-desk">
+        <h2>Research desk</h2>
+        <p className="generator-muted">Search OpenAlex and Crossref records, then carry sourced reading into the invention, review, and orchestration roles. Results are navigation aids, not peer-review or patentability decisions.</p>
+        <form className="research-form" onSubmit={searchResearch}>
+          <input aria-label="Research query" value={researchQuery} onChange={(event) => setResearchQuery(event.target.value)} placeholder="Search a mechanism, field, or bottleneck" maxLength={180} />
+          <button className="generator-button" type="submit" disabled={researchLoading}>{researchLoading ? "Searching…" : "Search research"}</button>
+        </form>
+        {researchResults.length > 0 && <div className="research-results">{researchResults.map((item) => <article key={item.id}><div><span>{item.source} · {item.year || "year unlisted"}</span><b>{item.title}</b><small>{item.venue} · {item.authors.join(", ") || "authors unlisted"}</small></div><a href={item.url} target="_blank" rel="noreferrer">Open source ↗</a></article>)}</div>}
+        <div className="role-strip"><span>Three bounded roles</span><b>Invention designer</b><b>Research + peer-review committee</b><b>Orchestrator</b></div>
+      </section>
     </main>
     <footer className="generator-footer">Innovator · Evidence-first invention generation · Private drafts by default</footer>
   </div>;
