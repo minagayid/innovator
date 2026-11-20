@@ -40,7 +40,7 @@ Acquire through official NCBI Datasets/FTP bundles or authorized APIs. Do not sc
 - molecule type, length, checksum and feature annotation
 - rights basis, access restriction, human-data status and retrieval date
 
-The FASTA pipeline requires an accession-level TSV allowlist, checks DNA/RNA/protein alphabets, removes only a terminal protein stop marker, deduplicates exact sequences while retaining all source accessions/taxa, and makes no network requests.
+The FASTA pipeline requires accession-level training and derivative-use permission, checks DNA/RNA/protein alphabets, removes only a terminal protein stop marker, deduplicates exact sequences while retaining all source accessions/taxa, and makes no network requests. Public model-weight release additionally requires explicit weight redistribution permission.
 
 Quality controls must flag contaminated assemblies, chimeras, vector/adaptor contamination, low-complexity regions, ambiguous positions, taxonomy conflicts and annotation-version drift. Preserve valid IUPAC ambiguity; never silently convert it into a concrete base.
 
