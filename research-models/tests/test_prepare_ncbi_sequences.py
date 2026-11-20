@@ -19,7 +19,7 @@ class PrepareNCBISequencesTests(unittest.TestCase):
 
     def write_manifest(self, rows):
         self.manifest.write_text(
-            "accession\tsequence_type\ttaxid\torganism\tsource_database\trelease\ttraining_authorized\tlicense_basis\n"
+            "accession\tsequence_type\ttaxid\torganism\tsource_database\trelease\ttraining_authorized\tderivative_model_allowed\tredistribute_model_weights\tcommercial_use_allowed\tlicense_basis\n"
             + "\n".join("\t".join(row) for row in rows) + "\n",
             encoding="utf-8",
         )
@@ -31,7 +31,7 @@ class PrepareNCBISequencesTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.write_manifest([
-            ["NC_000001.11", "DNA", "9606", "Homo sapiens", "RefSeq", "R1", "true", "public-ncbi-record; rights-reviewed"],
+            ["NC_000001.11", "DNA", "9606", "Homo sapiens", "RefSeq", "R1", "true", "true", "false", "false", "public-ncbi-record; rights-reviewed"],
         ])
         report = prepare_sequences(self.fasta, self.manifest, self.output)
         rows = [json.loads(line) for line in self.output.read_text().splitlines()]
@@ -49,9 +49,9 @@ class PrepareNCBISequencesTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.write_manifest([
-            ["NC_000001.11", "DNA", "9606", "Human", "RefSeq", "R1", "true", ""],
-            ["NP_000002.1", "PROTEIN", "9606", "Human", "RefSeq", "R1", "true", "public-ncbi-record; rights-reviewed"],
-            ["NC_000003.1", "DNA", "9606", "Human", "RefSeq", "R1", "true", "public-ncbi-record; rights-reviewed"],
+            ["NC_000001.11", "DNA", "9606", "Human", "RefSeq", "R1", "true", "true", "false", "false", ""],
+            ["NP_000002.1", "PROTEIN", "9606", "Human", "RefSeq", "R1", "true", "true", "false", "false", "public-ncbi-record; rights-reviewed"],
+            ["NC_000003.1", "DNA", "9606", "Human", "RefSeq", "R1", "true", "true", "false", "false", "public-ncbi-record; rights-reviewed"],
         ])
         report = prepare_sequences(self.fasta, self.manifest, self.output)
         rows = [json.loads(line) for line in self.output.read_text().splitlines()]
@@ -66,7 +66,7 @@ class PrepareNCBISequencesTests(unittest.TestCase):
             encoding="utf-8",
         )
         self.write_manifest([
-            [accession, "DNA", "9606", "Human", "RefSeq", "R1", "true", "reviewed-bulk-license"]
+            [accession, "DNA", "9606", "Human", "RefSeq", "R1", "true", "true", "true", "true", "reviewed-bulk-license"]
             for accession in ["NC_000001.11", "NC_000003.1"]
         ])
         report = prepare_sequences(self.fasta, self.manifest, self.output)
@@ -74,6 +74,12 @@ class PrepareNCBISequencesTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(report["duplicate_sequences"], 1)
         self.assertEqual(rows[0]["source_accessions"], ["NC_000001.11", "NC_000003.1"])
+
+    def test_refuses_public_weight_release_without_explicit_rights(self):
+        self.fasta.write_text(">NC_000001.11 taxid=9606\nACGTACGT\n", encoding="utf-8")
+        self.write_manifest([["NC_000001.11", "DNA", "9606", "Human", "RefSeq", "R1", "true", "true", "false", "false", "reviewed-internal-use-only"]])
+        with self.assertRaisesRegex(ValueError, "redistribute_model_weights"):
+            prepare_sequences(self.fasta, self.manifest, self.output, require_redistributable_weights=True)
 
 
 if __name__ == "__main__":
