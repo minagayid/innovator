@@ -24,7 +24,8 @@ ALPHABETS = {
 }
 REQUIRED_MANIFEST_COLUMNS = {
     "accession", "sequence_type", "taxid", "organism", "source_database",
-    "release", "training_authorized", "license_basis",
+    "release", "training_authorized", "derivative_model_allowed",
+    "redistribute_model_weights", "commercial_use_allowed", "license_basis",
 }
 
 
@@ -95,6 +96,9 @@ def load_rights_manifest(path: Path) -> dict[str, dict[str, str | int | bool]]:
                 "source_database": (row.get("source_database") or "").strip(),
                 "release": (row.get("release") or "").strip(),
                 "training_authorized": parse_bool(row.get("training_authorized") or "", "training_authorized"),
+                "derivative_model_allowed": parse_bool(row.get("derivative_model_allowed") or "", "derivative_model_allowed"),
+                "redistribute_model_weights": parse_bool(row.get("redistribute_model_weights") or "", "redistribute_model_weights"),
+                "commercial_use_allowed": parse_bool(row.get("commercial_use_allowed") or "", "commercial_use_allowed"),
                 "license_basis": (row.get("license_basis") or "").strip(),
             }
     return manifest
@@ -117,9 +121,11 @@ def prepare_sequences(fasta_path: Path, rights_manifest_path: Path, output_path:
         report["records_seen"] += 1
         accession = accession_from_header(header)
         metadata = rights.get(accession)
-        if metadata is None or not metadata["training_authorized"] or not metadata["license_basis"]:
+        if metadata is None or not metadata["training_authorized"] or not metadata["derivative_model_allowed"] or not metadata["license_basis"]:
             report["excluded_no_rights"] += 1
             continue
+        if require_redistributable_weights and metadata["redistribute_model_weights"] is not True:
+            raise ValueError(f"redistribute_model_weights is not explicitly allowed for {accession}")
         if accession in seen_accessions:
             report["duplicate_accessions"] += 1
             continue
@@ -146,6 +152,8 @@ def prepare_sequences(fasta_path: Path, rights_manifest_path: Path, output_path:
                 "source_databases": [str(metadata["source_database"])],
                 "releases": [str(metadata["release"])],
                 "license_bases": [str(metadata["license_basis"])],
+                "redistribute_model_weights": bool(metadata["redistribute_model_weights"]),
+                "commercial_use_allowed": bool(metadata["commercial_use_allowed"]),
             }
         else:
             report["duplicate_sequences"] += 1
@@ -182,8 +190,9 @@ def main() -> int:
     parser.add_argument("--fasta", type=Path, required=True, help="Local NCBI FASTA export")
     parser.add_argument("--rights-manifest", type=Path, required=True, help="Accession-level TSV rights allowlist")
     parser.add_argument("--output", type=Path, required=True, help="Output JSONL path")
+    parser.add_argument("--require-redistributable-weights", action="store_true", help="Fail unless every included record permits model-weight redistribution")
     args = parser.parse_args()
-    print(json.dumps(prepare_sequences(args.fasta, args.rights_manifest, args.output), indent=2, sort_keys=True))
+    print(json.dumps(prepare_sequences(args.fasta, args.rights_manifest, args.output, require_redistributable_weights=args.require_redistributable_weights), indent=2, sort_keys=True))
     return 0
 
 
