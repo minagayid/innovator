@@ -16,6 +16,10 @@
 | Reusable methods | The **eureka_skill** collection: 17 installable skill packages for evidence synthesis, mechanism design, mathematics, high-integrity computation, design-space studies, formal-claim auditing, and adversarial peer review. | [`skills.md/INDEX.md`](skills.md/INDEX.md) |
 | Static companion | A generated GitHub Pages-friendly research archive, deliberately separate from the server-dependent application. | [`GITHUB_PAGES.md`](GITHUB_PAGES.md) |
 
+## Research model tracks: WIPO patents and NCBI Bio Intelligence
+
+The experimental, rights-gated patent and biological model pipelines are documented in [`research-models/`](research-models/README.md). They define WIPO-licensed patent retrieval/domain adaptation and NCBI DNA/RNA/protein expert models. No full-corpus training or model weights are claimed until licences, data manifests, accelerator runs and benchmark evidence exist.
+
 ## `eureka_skill`: reusable advanced-mathematics and innovation methods
 
 The literal `skills.md/` directory name preserves the requested repository path. It is a directory—not a single Markdown file—because every child is a self-contained skill package with a `SKILL.md` and only the scripts, templates, or references it needs.
