@@ -104,7 +104,7 @@ def load_rights_manifest(path: Path) -> dict[str, dict[str, str | int | bool]]:
     return manifest
 
 
-def prepare_sequences(fasta_path: Path, rights_manifest_path: Path, output_path: Path) -> dict[str, int]:
+def prepare_sequences(fasta_path: Path, rights_manifest_path: Path, output_path: Path, *, require_redistributable_weights: bool = False) -> dict[str, int]:
     rights = load_rights_manifest(Path(rights_manifest_path))
     grouped: dict[tuple[str, str], dict[str, object]] = {}
     seen_accessions: set[str] = set()
