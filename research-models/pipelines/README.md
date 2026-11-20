@@ -6,7 +6,7 @@ These scripts do not scrape, download or call WIPO/NCBI. Acquire files only thro
 
     python research-models/pipelines/prepare_ncbi_sequences.py --fasta /data/refseq.fasta --rights-manifest research-models/schemas/ncbi-rights-manifest.tsv --output /data/prepared/ncbi.jsonl
 
-Both training_authorized=true and a non-empty license_basis are required. The manifest explicitly identifies accession.version, sequence type, taxonomy, source database and release. DNA/RNA/protein alphabets are checked separately. Exact duplicates are collapsed while retaining all source accessions and taxa.
+training_authorized=true, derivative_model_allowed=true and a non-empty license_basis are required. Use --require-redistributable-weights before publishing an adapter; this requires explicit permission. The manifest explicitly identifies accession.version, sequence type, taxonomy, source database and release. DNA/RNA/protein alphabets are checked separately. Exact duplicates are collapsed while retaining all source accessions and taxa.
 
 ## WIPO-normalized JSONL
 
