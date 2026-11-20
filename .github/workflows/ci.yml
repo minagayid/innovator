@@ -31,6 +31,14 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Run build and tests
         run: pnpm test
+      - name: Set up Python for research corpus tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run rights-aware research corpus tests
+        env:
+          PYTHONPATH: research-models
+        run: python -m unittest discover -s research-models/tests -v
       - name: Run lint checks
         run: pnpm lint
       - name: Build Docker image

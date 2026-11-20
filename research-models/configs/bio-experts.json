@@ -1,0 +1,29 @@
+{
+  "dna": {
+    "model_id": "arcinstitute/evo2_7b",
+    "smoke_test_model_id": "arcinstitute/evo2_1b_base",
+    "method": "upstream_evo2_training_adapter_or_task_head",
+    "note": "Validate upstream Vortex/Savanna implementation and model checkpoint revision; do not assume generic Transformers/PEFT integration."
+  },
+  "rna": {
+    "model_name": "RNA-FM",
+    "upstream_code": "https://github.com/ml4bio/RNA-FM",
+    "checkpoint_download_endpoint": "https://proj.cse.cuhk.edu.hk/rnafm/api/download?filename=RNA-FM_pretrained.pth",
+    "additional_model_name": "mRNA-FM",
+    "additional_checkpoint_download_endpoint": "https://proj.cse.cuhk.edu.hk/rnafm/api/download?filename=file_mRNA-FM_pretrained.pth",
+    "method": "official_RNA_FM_pretrained_weights_plus_validated_downstream_heads",
+    "note": "These are official project checkpoint URLs, not Hugging Face repo IDs. Review code and weight licensing/redistribution terms separately before redistribution."
+  },
+  "protein": {
+    "model_id": "facebook/esm2_t33_650M_UR50D",
+    "method": "downstream_task_head_or_validated_adapter",
+    "note": "Use exact upstream model card/revision and verify model licence before redistribution."
+  },
+  "shared": {
+    "split_strategy": "homology_family_and_taxon_holdouts",
+    "record_rights_gate": "training_authorized == true && derivative_model_allowed == true && license_basis is non-empty",
+    "public_artifact_gate": "redistribute_model_weights == true for every record or documented licensed exception",
+    "full_corpus_policy": "index_all_eligible_records; train_adapters_on_curated_subsets",
+    "note": "Proposed registry only; no model downloads or fine-tuning have been performed."
+  }
+}

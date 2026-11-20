@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://innovator.local/schemas/corpus-record.schema.json",
+  "title": "Innovator research corpus record",
+  "type": "object",
+  "required": ["record_id", "source", "source_release", "record_uri", "retrieved_at", "training_authorized", "license_basis"],
+  "properties": {
+    "record_id": {"type": "string", "minLength": 1},
+    "source": {"enum": ["WIPO_PATENTSCOPE", "NCBI_GENBANK", "NCBI_REFSEQ", "NCBI_DATASETS", "OTHER_AUTHORIZED"]},
+    "source_release": {"type": "string", "minLength": 1},
+    "record_uri": {"type": "string", "format": "uri"},
+    "retrieved_at": {"type": "string", "format": "date-time"},
+    "publication_id": {"type": "string"},
+    "patent_family_id": {"type": "string"},
+    "accession_version": {"type": "string"},
+    "sequence_type": {"enum": ["DNA", "RNA", "PROTEIN"]},
+    "taxid": {"type": "integer", "minimum": 1},
+    "organism": {"type": "string"},
+    "sequence_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "license_id": {"type": "string"},
+    "license_basis": {"type": "string", "minLength": 1},
+    "training_authorized": {"type": "boolean"},
+    "derivative_model_allowed": {"type": "boolean"},
+    "redistribute_model_weights": {"type": "boolean"},
+    "commercial_use_allowed": {"type": "boolean"},
+    "access_restriction": {"type": "string"},
+    "human_data_status": {"enum": ["not_human", "public_human", "controlled", "unknown"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"source": {"const": "WIPO_PATENTSCOPE"}}, "required": ["source"]}, "then": {"required": ["publication_id", "patent_family_id", "license_id", "derivative_model_allowed"]}},
+    {"if": {"properties": {"source": {"enum": ["NCBI_GENBANK", "NCBI_REFSEQ", "NCBI_DATASETS"]}}, "required": ["source"]}, "then": {"required": ["accession_version", "sequence_type", "taxid", "sequence_sha256", "human_data_status"]}}
+  ]
+}
