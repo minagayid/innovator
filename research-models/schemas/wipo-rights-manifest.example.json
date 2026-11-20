@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "records": {
+    "WOYYYYNNNNNN": {
+      "training_authorized": false,
+      "derivative_model_allowed": false,
+      "redistribute_model_weights": false,
+      "commercial_use_allowed": false,
+      "license_id": "REVIEW_REQUIRED",
+      "source": "WIPO licensed product / agreement",
+      "license_basis": "Populate only after WIPO/counsel confirms the exact clause"
+    }
+  }
+}
