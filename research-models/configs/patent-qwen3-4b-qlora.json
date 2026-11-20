@@ -1,0 +1,17 @@
+{
+  "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+  "method": "QLoRA",
+  "stage": "domain_adaptive_pretraining_then_instruction_sft",
+  "load_in_4bit": true,
+  "bnb_4bit_quant_type": "nf4",
+  "bnb_4bit_compute_dtype": "bfloat16_if_supported_else_float16",
+  "lora": {"r": 32, "alpha": 64, "dropout": 0.05, "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]},
+  "sequence_length_initial": 4096,
+  "gradient_checkpointing": true,
+  "packing": true,
+  "split_key": "patent_family_id",
+  "time_cutoff_field": "priority_date",
+  "training_data_rights_gate": "training_authorized && derivative_model_allowed && license_id_present",
+  "public_adapter_gate": "redistribute_model_weights == true for every training record or documented licensed exception",
+  "note": "Starting design only; validate target modules, memory, sequence packing, model revision and data rights before a run."
+}
