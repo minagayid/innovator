@@ -6,6 +6,10 @@ Do **not** scrape PATENTSCOPE or automate broad browser searches. WIPO's PATENTS
 
 WIPO lists separate PCT data products and service tiers: bibliographic data, image products, limited/full SOAP web-service access, language backfiles and XML backfiles. Each has different coverage and licence conditions. These products do not establish that all national/regional patent-office collections in PATENTSCOPE are included.
 
+WIPO's current PCT data-product page states that patent data of national and regional offices is not currently available from WIPO. Therefore, WIPO's PCT data products cannot by themselves provide all records visible through PATENTSCOPE; national/regional coverage needs separate authorized sources or agreements with the relevant offices. The published price schedule lists PCT-Text at CHF 3,900/year (non-derivative) or CHF 19,500/year (derivative), and backfile products at separate per-copy prices; these figures are indicative, subject to WIPO's quote/invoice, and do not establish AI training or model-weight rights.
+
+WIPO's general PCT product terms define non-derivative rights to acquire, download and store the complete licensed PCT dataset in a searchable database, and derivative rights to redistribute bulk PCT data with added value. Those clauses do not explicitly settle the use of data for ML/LLM training or redistribution of model weights. Obtain written confirmation rather than treating a derivative data licence as automatic model-weight permission.
+
 Before ingestion, obtain a written WIPO quote/licence that confirms:
 1. Included collections and fields: PCT, national/regional offices, bibliography, full text, claims, drawings, OCR, translations, citations and historical backfiles.
 2. Bulk acquisition, local storage, indexing, ML/LLM training, continued pretraining and supervised fine-tuning rights.
