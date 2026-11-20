@@ -2,15 +2,15 @@
 
 Innovator now provides a public-search handoff from every generated invention candidate. The handoff combines the candidate title, technical field, and model-suggested keywords into a bounded query and opens WIPO's public PATENTSCOPE search interface in a new tab.
 
-This is deliberately a link-out integration. WIPO's official PATENTSCOPE data-services page describes programmatic PCT document access as a fee-based SOAP web service. The public PATENTSCOPE search interface is available without that paid service, so the free trial does not scrape, mirror, or redistribute WIPO search results.
+This is deliberately a link-out integration. WIPO's official PATENTSCOPE data-services page describes programmatic PCT document access as a fee-based SOAP web service. The public PATENTSCOPE search interface is available without that paid service, so the free trial does not scrape, mirror, or redistribute WIPO search results. WIPO's October 2025 database terms also prohibit automated queries, bulk acquisition/download/storage, and web scraping; more than 10 search-related actions per minute from one IP may be considered excessive. Full-corpus retrieval or training requires an authorized WIPO data product or other licensed path.
 
 The handoff must not be described as a prior-art search result, novelty assessment, patentability opinion, freedom-to-operate analysis, or legal advice. Users should inspect the live results and obtain qualified patent counsel where appropriate.
 
-## Hugging Face model
+## Hugging Face models
 
-The server-side disclosure route already supports Hugging Face Inference Providers through `https://router.huggingface.co/v1/chat/completions`. Set `HF_TOKEN` as a server secret and optionally set `HF_MODEL`; the default is `Qwen/Qwen3-4B-Instruct-2507:fastest`. The token never belongs in browser code or source control.
+The server-side disclosure and role routes support Hugging Face Inference Providers through `https://router.huggingface.co/v1/chat/completions`. Set `HF_TOKEN` as a server secret and optionally set `HF_MODEL`; the role fallback default is `google/gemma-2-2b-it`. The token never belongs in browser code or source control.
 
-Hugging Face's current pricing documentation says free users do not receive included Inference Provider credits. A trial therefore needs either a token/account with available purchased credits or a provider/model path that the account can access at no charge. Innovator fails back to its deterministic local scaffold when the provider is unavailable; it does not silently claim that model output was produced.
+Hugging Face's current pricing documentation says free users do not receive included Inference Provider credits. A trial therefore needs either a token/account with available purchased credits or a provider/model path that the account can access at no charge. Innovator fails back to its deterministic local scaffold when the provider is unavailable; it does not silently claim that model output was produced. Provider output remains proposed and is subject to the same identity, quota, schema, and evidence boundaries.
 
 ## Free trial deployment
 

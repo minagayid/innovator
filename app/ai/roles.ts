@@ -5,10 +5,22 @@ export function fallbackRole(role: RoleName, brief: string) { const compact = br
 }
 
 export async function runRoleProvider(role: RoleName, brief: string): Promise<Record<string, unknown> | null> {
+  const prompt = `You are the ${ROLE_DESCRIPTIONS[role]} Return JSON only. Keep every claim explicitly sourced, computed, inferred, proposed, or unresolved. Never claim novelty, patentability, safety, feasibility, or validation. Brief: ${brief.slice(0, 5000)}`;
+  const hfToken = process.env.HF_TOKEN;
+  const hfModel = /^[A-Za-z0-9._/-]{1,150}$/.test(process.env.HF_MODEL || "") ? process.env.HF_MODEL! : "google/gemma-2-2b-it";
+  if (hfToken) {
+    try {
+      const response = await fetch("https://router.huggingface.co/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${hfToken}` }, body: JSON.stringify({ model: hfModel, temperature: 0.2, max_tokens: 1400, messages: [{ role: "system", content: prompt }, { role: "user", content: brief.slice(0, 6000) }] }), signal: AbortSignal.timeout(15000) });
+      if (response.ok) {
+        const payload = await response.json() as { choices?: Array<{ message?: { content?: unknown } }> };
+        const content = payload.choices?.[0]?.message?.content;
+        if (typeof content === "string") return { role, mode: "live", provenance: { provider: "Hugging Face", model: hfModel, evidence: "proposed" }, result: JSON.parse(content) };
+      }
+    } catch { /* fall through to another configured provider or deterministic output */ }
+  }
   const token = process.env.OPENAI_API_KEY;
   if (!token) return null;
   const model = /^[A-Za-z0-9._-]{1,100}$/.test(process.env.OPENAI_MODEL || "") ? process.env.OPENAI_MODEL! : "gpt-6.1-sol";
-  const prompt = `You are the ${ROLE_DESCRIPTIONS[role]} Return JSON only. Keep every claim explicitly sourced, computed, inferred, proposed, or unresolved. Never claim novelty, patentability, safety, feasibility, or validation. Brief: ${brief.slice(0, 5000)}`;
   try {
     const response = await fetch("https://api.openai.com/v1/responses", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ model, max_output_tokens: 1400, input: prompt, text: { format: { type: "json_object" } } }), signal: AbortSignal.timeout(15000) });
     if (!response.ok) return null;

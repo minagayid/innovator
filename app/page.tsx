@@ -1,14 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { StructuredDisclosure } from "./api/disclosure/input";
 import { buildInventionMediaPrompts } from "./media-prompts";
 import { buildPatentscopeQuery, buildPatentscopeUrl } from "./patentscope";
+import type { RoleName } from "./ai/roles";
+import styles from "./page.module.css";
 
 type SessionUser = { id: string; email: string; displayName: string };
 type Draft = { problem: string; targetUsers: string; existingApproaches: string; constraints: string; successCriteria: string; category: string; disclosure: StructuredDisclosure | null };
 type ResearchItem = { id: string; title: string; authors: string[]; year: number | null; venue: string; url: string; source: string; evidence: string };
+type RoleCandidate = { title: string; brief: string; mechanism: string; components: string[]; noveltyHypothesis: string; firstTest: string; openQuestions: string[] };
+type CommitteeItem = { seat: string; finding: string; test: string };
+type PlanItem = { stage: string; action: string; output: string };
+type ManufacturingHandoff = { mode: string; boundary: string; requirements: Array<{ item: string; provenance: string; acceptance: string }>; componentRecords: Array<{ component: string; provenance: string; supplier: string; incomingInspection: string }>; gates: Array<{ gate: string; holdPoint: string; reversalCriteria: string }>; exclusions: string[]; unresolved: string[] };
+type RoleResponse = { role?: RoleName; mode?: string; provenance?: { provider?: string | null; model?: string | null; evidence?: string }; candidate?: RoleCandidate; committee?: CommitteeItem[]; plan?: PlanItem[]; result?: unknown };
+type StageId = "frame" | "bridge" | "challenge" | "test";
+
+const STAGES: Array<{ id: StageId; number: string; title: string; hint: string }> = [
+  { id: "frame", number: "01", title: "Frame", hint: "Problem, people, baseline" },
+  { id: "bridge", number: "02", title: "Bridge", hint: "Research and transfer" },
+  { id: "challenge", number: "03", title: "Challenge", hint: "Assumptions and failure modes" },
+  { id: "test", number: "04", title: "Test", hint: "Measure and stop condition" },
+];
+
+const EMPTY_DRAFT: Draft = { problem: "", targetUsers: "", existingApproaches: "", constraints: "", successCriteria: "", category: "Climate and energy", disclosure: null };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -29,49 +46,6 @@ function isStructuredDisclosure(value: unknown): value is StructuredDisclosure {
     && (typeof value.provenance.model === "string" || value.provenance.model === null);
 }
 
-const CSS = [
-  ".generator-app{min-height:100vh;background:#f4f6f3;color:#172b23;font-family:Inter,ui-sans-serif,system-ui,sans-serif}",
-  ".generator-header{max-width:1240px;margin:0 auto;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #dce4dd}",
-  ".generator-brand{font-weight:850;letter-spacing:.16em;font-size:1.02rem;text-decoration:none;color:#173e32}",
-  ".generator-brand small{display:block;letter-spacing:.2em;font-size:.62rem;color:#728279;margin-top:5px}",
-  ".generator-auth{display:flex;align-items:center;gap:14px;font-size:.9rem;color:#52635b}",
-  ".generator-auth a{color:#17634b;font-weight:750;text-decoration:none}",
-  ".generator-main{max-width:1240px;margin:0 auto;padding:34px 26px 70px}",
-  ".generator-hero{padding:12px 0 28px;max-width:850px}",
-  ".generator-eyebrow{color:#897041;font-size:.75rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}",
-  ".generator-hero h1{font-size:clamp(2.3rem,5vw,4rem);line-height:1.04;letter-spacing:-.045em;margin:12px 0 18px;max-width:780px}",
-  ".generator-hero h1 em{color:#28765c;font-style:normal}",
-  ".generator-hero p{max-width:760px;color:#596962;line-height:1.7;font-size:1.04rem}",
-  ".generator-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}",
-  ".generator-card{background:#fff;border:1px solid #e0e5df;border-radius:18px;padding:24px;box-shadow:0 8px 26px rgba(23,50,40,.04);min-width:0}",
-  ".generator-card h2{margin:0 0 8px;font-size:1.25rem;letter-spacing:-.02em}",
-  ".generator-muted{color:#68766f;line-height:1.6;font-size:.92rem}",
-  ".generator-form{display:grid;gap:16px;margin-top:22px}",
-  ".generator-form label{display:grid;gap:7px;font-size:.88rem;font-weight:750;color:#2b4037}",
-  ".generator-form input,.generator-form textarea,.generator-form select{width:100%;box-sizing:border-box;border:1px solid #cdd8ce;background:#fcfdfb;border-radius:10px;padding:12px 13px;font:inherit;color:#172621;min-width:0}",
-  ".generator-form textarea{resize:vertical;line-height:1.55}",
-  ".generator-form input:focus,.generator-form textarea:focus,.generator-form select:focus{outline:3px solid #c8e5d5;border-color:#438968}",
-  ".generator-button{border:0;border-radius:11px;background:#1f654b;color:#fff;font:inherit;font-weight:800;padding:14px 18px;cursor:pointer}",
-  ".generator-button:disabled{opacity:.55;cursor:wait}",
-  ".generator-button.secondary{background:#e7f1ea;color:#1e5e45;border:1px solid #c9ded0}",
-  ".generator-output{display:grid;gap:18px}",
-  ".generator-output section{border-top:1px solid #e8ece7;padding-top:15px}",
-  ".generator-output h3{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:#7a6947;margin:0 0 8px}",
-  ".generator-output p{line-height:1.65;margin:0;color:#394a42;white-space:pre-wrap;overflow-wrap:anywhere}",
-  ".generator-output ul{margin:8px 0 0;padding-left:21px;color:#394a42;line-height:1.7}",
-  ".generator-badges{display:flex;flex-wrap:wrap;gap:7px}",
-  ".generator-badges span{border-radius:999px;background:#edf4ef;padding:6px 10px;color:#2f5944;font-size:.8rem}",
-  ".generator-notice{border-radius:10px;background:#f7f2e7;border:1px solid #eadfc5;padding:13px;color:#61502d;font-size:.86rem;line-height:1.55}",
-  ".patentscope-card{border:1px solid #cfe0d3;background:#f4faf5;border-radius:12px;padding:15px}.patentscope-card h3{margin:0 0 7px;color:#286447;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}.patentscope-card p{margin:0;color:#50665a;line-height:1.55;font-size:.88rem}.patentscope-query{display:block;margin-top:10px;padding:9px 10px;border-radius:8px;background:#e8f1e9;color:#345447;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.patentscope-link{display:inline-block;margin-top:12px;color:#17634b;font-weight:800;text-decoration:none}",
-  ".media-briefs{display:grid;gap:10px}.media-brief{background:#f7f9f6;border:1px solid #e1e9e1;border-radius:9px;padding:12px}.media-brief strong{display:block;color:#376c53;font-size:.78rem;margin-bottom:5px}.media-brief p{font-size:.84rem;line-height:1.55}",
-  ".generator-error{color:#9d2c24;background:#fff0ed;border:1px solid #f1c8c2;padding:12px;border-radius:10px}",
-  ".generator-success{color:#1e6547;background:#edf8f0;border:1px solid #c9e6d1;padding:12px;border-radius:10px}",
-  ".generator-footer{max-width:1240px;margin:0 auto;padding:0 26px 30px;font-size:.8rem;color:#738078}",
-  ".research-desk{margin-top:22px}.research-form{display:flex;gap:10px;margin-top:18px}.research-form input{flex:1;min-width:0;border:1px solid #cdd8ce;background:#fcfdfb;border-radius:10px;padding:12px 13px;font:inherit}.research-results{display:grid;gap:8px;margin-top:18px}.research-results article{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #e8ece7;padding:13px 0}.research-results article div{display:grid;gap:4px}.research-results span{font-size:.7rem;color:#6f846f;text-transform:uppercase;letter-spacing:.08em}.research-results b{font-size:.95rem;color:#263f33}.research-results small{color:#718077}.research-results a{color:#17634b;font-weight:800;text-decoration:none;white-space:nowrap}.role-strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid #e8ece7;color:#65756b;font-size:.8rem}.role-strip b{background:#edf4ef;color:#2f5944;border-radius:999px;padding:6px 10px}.generator-auth{flex-wrap:wrap;justify-content:flex-end}.generator-auth a{font-size:.78rem}.research-form button{white-space:nowrap}@media(max-width:850px){.generator-grid{grid-template-columns:1fr}.generator-header{align-items:flex-start;padding:17px 16px}.generator-auth{flex-wrap:wrap;justify-content:flex-end;text-align:right}.generator-card{padding:19px}.generator-main{padding:26px 16px 48px}.research-form{flex-direction:column}.research-results article{align-items:flex-start;flex-direction:column}.research-results a{white-space:normal}}"
-].join("\n");
-
-const EMPTY_DRAFT: Draft = { problem: "", targetUsers: "", existingApproaches: "", constraints: "", successCriteria: "", category: "Climate and energy", disclosure: null };
-
 function buildBrief(draft: Draft): string {
   return [
     "PROBLEM TO SOLVE:\n" + draft.problem.trim(),
@@ -83,11 +57,47 @@ function buildBrief(draft: Draft): string {
   ].join("\n\n");
 }
 
+function scrollToStage(id: StageId) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+}
+
+function roleLabel(role: RoleName) {
+  return role === "review" ? "Research + peer-review committee" : role === "orchestration" ? "Orchestrator" : "Invention designer";
+}
+
+function RoleOutput({ response }: { response: RoleResponse }) {
+  if (response.candidate) {
+    return <div className={styles.outputSection}>
+      <h4>Candidate mechanism</h4>
+      <p><strong>{response.candidate.mechanism}</strong></p>
+      <p>{response.candidate.firstTest}</p>
+      {response.candidate.openQuestions.length > 0 && <ul>{response.candidate.openQuestions.map((item, index) => <li key={index}>{item}</li>)}</ul>}
+    </div>;
+  }
+  if (response.committee) {
+    return <div className={styles.committee}>{response.committee.map((item) => <article className={styles.committeeCard} key={item.seat}>
+      <strong>{item.seat}</strong>
+      <p>{item.finding}</p>
+      <small>Suggested check: {item.test}</small>
+    </article>)}</div>;
+  }
+  if (response.plan) {
+    return <div className={styles.plan}>{response.plan.map((item) => <article className={styles.planCard} key={item.stage}>
+      <strong>{item.stage}</strong>
+      <div><p>{item.action}</p><small>Output: {item.output}</small></div>
+    </article>)}</div>;
+  }
+  return <pre className={styles.rawResult}>{JSON.stringify(response.result ?? response, null, 2)}</pre>;
+}
+
 export default function Home() {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [draftReady, setDraftReady] = useState(false);
+  const [activeStage, setActiveStage] = useState<StageId>("frame");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -96,6 +106,19 @@ export default function Home() {
   const [researchQuery, setResearchQuery] = useState("");
   const [researchResults, setResearchResults] = useState<ResearchItem[]>([]);
   const [researchLoading, setResearchLoading] = useState(false);
+  const [researchError, setResearchError] = useState("");
+  const [roleResults, setRoleResults] = useState<Partial<Record<RoleName, RoleResponse>>>({});
+  const [roleLoading, setRoleLoading] = useState<RoleName | null>(null);
+  const [manufacturing, setManufacturing] = useState<ManufacturingHandoff | null>(null);
+  const [manufacturingLoading, setManufacturingLoading] = useState(false);
+
+  const roleBrief = useMemo(() => {
+    const sourceNote = researchResults.length > 0
+      ? `\n\nSOURCED RESEARCH RECORDS TO CONSIDER (navigation only):\n${researchResults.map((item) => `- ${item.title} (${item.source}, ${item.year || "year unlisted"})`).join("\n")}`
+      : "";
+    const candidateNote = draft.disclosure ? `\n\nCURRENT CANDIDATE:\n${draft.disclosure.title}\n${draft.disclosure.solution}` : "";
+    return buildBrief(draft) + candidateNote + sourceNote;
+  }, [draft, researchResults]);
 
   useEffect(() => {
     fetch("/api/session")
@@ -122,13 +145,13 @@ export default function Home() {
         }
       }
     } catch {
-      // Session storage is optional; the app still works if browser storage is blocked.
+      // Browser storage is optional; the workspace remains usable without it.
     }
     setDraftReady(true);
 
     const issue = new URLSearchParams(window.location.search).get("auth_error");
     if (issue === "google_email_not_allowed") setAuthError("This Google account is not on the configured access list.");
-    else if (issue) setAuthError("Google sign-in could not be completed. Check the OAuth configuration and try again.");
+    else if (issue) setAuthError("Sign-in could not be completed. Check the OAuth configuration and try again.");
   }, []);
 
   useEffect(() => {
@@ -172,7 +195,9 @@ export default function Home() {
         throw new Error(isRecord(payload) && typeof payload.error === "string" ? payload.error : "The invention draft could not be generated.");
       }
       setDraft((current) => ({ ...current, disclosure: payload }));
+      setActiveStage("frame");
       if (payload.mode === "demo-fallback") setMessage("A deterministic scaffold was returned. Model-assisted generation requires a signed-in user, a configured provider key, and a quota secret.");
+      else setMessage("Candidate drafted. Treat every mechanism and target as a proposal until tested.");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The invention draft could not be generated.");
     } finally {
@@ -221,98 +246,249 @@ export default function Home() {
     }
   }
 
-  async function searchResearch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!researchQuery.trim()) return;
+  async function searchResearch(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    const query = researchQuery.trim();
+    if (!query) {
+      setResearchError("Enter a mechanism, field, or bottleneck to search.");
+      return;
+    }
+    setResearchError("");
     setResearchLoading(true);
     try {
-      const response = await fetch(`/api/research?q=${encodeURIComponent(researchQuery)}`);
-      const payload = await response.json() as { results?: ResearchItem[] };
-      setResearchResults(response.ok ? payload.results || [] : []);
-    } finally { setResearchLoading(false); }
+      const response = await fetch(`/api/research?q=${encodeURIComponent(query)}`);
+      const payload = await response.json() as { results?: ResearchItem[]; error?: string };
+      if (!response.ok) throw new Error(payload.error || "Research search failed.");
+      setResearchResults(payload.results || []);
+    } catch (cause) {
+      setResearchResults([]);
+      setResearchError(cause instanceof Error ? cause.message : "Research search failed. Try again.");
+    } finally {
+      setResearchLoading(false);
+    }
   }
 
-  return <div className="generator-app">
-    <style>{CSS}</style>
-    <header className="generator-header">
-      <Link className="generator-brand" href="/">INNOVATOR<small>INVENTION GENERATION STUDIO</small></Link>
-      <div className="generator-auth">
+  async function runRole(role: RoleName) {
+    if (!draft.problem.trim()) {
+      setError("Frame a problem before running a committee or orchestration pass.");
+      scrollToStage("frame");
+      return;
+    }
+    setError("");
+    setMessage("");
+    setRoleLoading(role);
+    try {
+      const response = await fetch(`/api/roles/${role}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brief: roleBrief }),
+      });
+      const payload: unknown = await response.json();
+      if (!response.ok || !isRecord(payload)) throw new Error(isRecord(payload) && typeof payload.error === "string" ? payload.error : "The role pass could not be completed.");
+      setRoleResults((current) => ({ ...current, [role]: payload as RoleResponse }));
+      setActiveStage(role === "orchestration" ? "test" : "challenge");
+      setMessage(`${roleLabel(role)} returned a bounded result. Review its proposed checks before acting on it.`);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "The role pass could not be completed.");
+    } finally {
+      setRoleLoading(null);
+    }
+  }
+
+  async function copyText(text: string, successMessage: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setMessage(successMessage);
+    } catch {
+      setError("Clipboard access is unavailable in this browser. Use the download action instead.");
+    }
+  }
+
+  async function generateManufacturingHandoff() {
+    if (!disclosure) return;
+    setManufacturingLoading(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/manufacturing", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: disclosure.title, problem: disclosure.problem, components: disclosure.components, category: disclosure.technicalField, researchEvidence: researchResults.map((item) => `${item.source}: ${item.title} — ${item.url}`) }) });
+      const payload: unknown = await response.json();
+      if (!response.ok || !isRecord(payload) || !Array.isArray(payload.gates)) throw new Error(isRecord(payload) && typeof payload.error === "string" ? payload.error : "The manufacturing handoff could not be generated.");
+      setManufacturing(payload as ManufacturingHandoff);
+      setMessage("Manufacturing handoff prepared as a gated research record. It is not build authorization.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "The manufacturing handoff could not be generated."); }
+    finally { setManufacturingLoading(false); }
+  }
+
+  function downloadBrief() {
+    const contents = draft.disclosure ? `${draft.disclosure.title}\n\n${buildBrief(draft)}\n\nPROPOSED SOLUTION:\n${draft.disclosure.solution}\n\nOPEN QUESTIONS:\n${draft.disclosure.missingQuestions.map((item) => `- ${item}`).join("\n")}` : buildBrief(draft);
+    const blob = new Blob([contents], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "innovator-brief.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+    setMessage("Brief downloaded. It contains proposals and unresolved questions, not proof.");
+  }
+
+  function clearDraft() {
+    if (!window.confirm("Clear this unsaved brief and candidate from this browser session?")) return;
+    setDraft(EMPTY_DRAFT);
+    setResearchQuery("");
+    setResearchResults([]);
+    setRoleResults({});
+    setError("");
+    setMessage("Unsaved workspace cleared.");
+    try { sessionStorage.removeItem("innovator-unsaved-draft-v1"); } catch { /* optional storage */ }
+  }
+
+  const disclosure = draft.disclosure;
+  const currentRole = roleResults.review || roleResults.orchestration;
+
+  return <div className={styles.shell}>
+    <header className={styles.header}>
+      <Link className={styles.brand} href="/" aria-label="Innovator home">
+        <span className={styles.brandMark}>IN</span>
+        <span>INNOVATOR<small>EVIDENCE-FIRST INVENTION STUDIO</small></span>
+      </Link>
+      <div className={styles.auth} aria-label="Account actions">
         {sessionReady && user
           ? <><span>Signed in as <b>{user.displayName}</b></span><Link href="/api/auth/logout?return_to=%2F">Sign out</Link></>
           : <>{sessionReady ? <><Link href="/api/auth/google?return_to=%2F">Google</Link><Link href="/api/auth/github?return_to=%2F">GitHub</Link><Link href="/api/auth/linkedin?return_to=%2F">LinkedIn</Link><Link href="/api/auth/orcid?return_to=%2F">ORCID</Link></> : "Checking session…"}</>}
       </div>
     </header>
-    <main className="generator-main">
-      <section className="generator-hero">
-        <div className="generator-eyebrow">FRAME · GENERATE · CHALLENGE · TEST</div>
-        <h1>Turn your problem into a <em>testable invention.</em></h1>
-        <p>Specify the problem, who you want to help, the constraints that matter, and how success could be measured. Innovator generates a structured invention candidate from your brief—not a preloaded invention gallery.</p>
+
+    <main className={styles.main}>
+      <section className={styles.hero} aria-labelledby="page-title">
+        <div>
+          <p className={styles.eyebrow}>Research studio · provisional by design</p>
+          <h1 id="page-title">Turn a hard problem into a <em>testable invention.</em></h1>
+          <p className={styles.heroCopy}>Innovator helps you frame a problem, bridge it to research, challenge the assumptions, and choose the next measurement. The output is a candidate hypothesis—not a patentability opinion or a shortcut around evidence.</p>
+        </div>
+        <aside className={styles.heroAside} aria-label="Evidence legend">
+          <h2>One evidence boundary</h2>
+          <p>Color is always paired with a label. A useful mechanism can still be unverified.</p>
+          <div className={styles.legend}>
+            <div className={styles.legendRow}><i className={styles.legendDot} /> Sourced record from a public index</div>
+            <div className={styles.legendRow}><i className={`${styles.legendDot} ${styles.inferred}`} /> Inferred interpretation from your brief</div>
+            <div className={styles.legendRow}><i className={`${styles.legendDot} ${styles.proposed}`} /> Proposed candidate or test suggestion</div>
+            <div className={styles.legendRow}><i className={`${styles.legendDot} ${styles.unresolved}`} /> Unresolved question requiring evidence</div>
+          </div>
+        </aside>
       </section>
-      {authError && <p className="generator-error" role="alert">{authError}</p>}
-      <div className="generator-grid">
-        <section className="generator-card">
-          <h2>Your invention specification</h2>
-          <p className="generator-muted">Be concrete about constraints and outcomes. Leave unknown details blank; the generated draft should make assumptions and unanswered questions visible.</p>
-          <form className="generator-form" onSubmit={generate}>
-            <label>What problem should the invention solve?
-              <textarea required maxLength={3000} rows={5} value={draft.problem} onChange={(event) => setDraftField("problem", event.target.value)} placeholder="Describe the pain point, why current approaches fall short, and what you want to improve." />
-            </label>
-            <label>Who will use it, and in what environment?
-              <textarea maxLength={600} rows={2} value={draft.targetUsers} onChange={(event) => setDraftField("targetUsers", event.target.value)} placeholder="People, setting, frequency of use, available infrastructure…" />
-            </label>
-            <label>Technology field
-              <select value={draft.category} onChange={(event) => setDraftField("category", event.target.value)}>
-                <option>Health and accessibility</option><option>Climate and energy</option><option>Agriculture</option><option>Education hardware</option><option>Materials and manufacturing</option><option>Software and AI</option><option>Other</option>
-              </select>
-            </label>
-            <label>Existing approaches or attempts
-              <textarea maxLength={1200} rows={3} value={draft.existingApproaches} onChange={(event) => setDraftField("existingApproaches", event.target.value)} placeholder="What is already used or has been tried? Distinguish facts from your observations." />
-            </label>
-            <label>Constraints and exclusions
-              <textarea maxLength={1200} rows={3} value={draft.constraints} onChange={(event) => setDraftField("constraints", event.target.value)} placeholder="Budget, energy, materials, maintenance, environment, legal or safety constraints…" />
-            </label>
-            <label>How could success be measured?
-              <textarea maxLength={1000} rows={3} value={draft.successCriteria} onChange={(event) => setDraftField("successCriteria", event.target.value)} placeholder="Baseline, measurable outcome, trade-offs, and what would falsify the idea…" />
-            </label>
-            <button className="generator-button" type="submit" disabled={loading}>{loading ? "Generating candidate…" : "Generate invention candidate"}</button>
-          </form>
-          <p className="generator-muted">Model-assisted drafting needs a configured provider key, a verified sign-in, and a rate-limit secret. Otherwise, Innovator returns an explicitly labeled deterministic scaffold. This tab preserves unfinished notes across Google sign-in.</p>
-        </section>
-        <section className="generator-card" aria-live="polite">
-          <h2>Invention candidate</h2>
-          <p className="generator-muted">A candidate is a hypothesis, not proof. Novelty, prior art, safety, feasibility, and patentability remain unassessed unless independently validated.</p>
-          {error && <p className="generator-error" role="alert">{error}</p>}
-          {message && <p className="generator-success" role="status">{message}</p>}
-          {!draft.disclosure
-            ? <div className="generator-notice">Your candidate will appear here. Start with your own problem statement; no archived invention is preselected.</div>
-            : <div className="generator-output">
-              <section><h3>Possible title</h3><h2>{draft.disclosure.title}</h2></section>
-              <section><h3>Generation provenance</h3><p>{draft.disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : (draft.disclosure.provenance.provider || "Model") + " draft using " + (draft.disclosure.provenance.model || "an unreported model") + ". This text is unverified."}</p></section>
-              <section><h3>Abstract</h3><p>{draft.disclosure.abstract}</p></section>
-              <section><h3>Problem framing</h3><p>{draft.disclosure.problem}</p></section>
-              <section><h3>Proposed mechanism / solution</h3><p>{draft.disclosure.solution}</p></section>
-              <section><h3>Technical field</h3><p>{draft.disclosure.technicalField}</p></section>
-              <section><h3>Differentiating hypothesis—not a novelty decision</h3><p>{draft.disclosure.noveltyHypothesis}</p></section>
-              <section><h3>Key components</h3>{draft.disclosure.components.length ? <div className="generator-badges">{draft.disclosure.components.map((component, index) => <span key={index}>{component}</span>)}</div> : <p className="generator-muted">Not assessed yet.</p>}</section>
-              <section><h3>Open questions / validation gates</h3><ul>{draft.disclosure.missingQuestions.map((question, index) => <li key={index}>{question}</li>)}</ul></section>
-              <section><h3>Media-ready invention briefs</h3><div className="media-briefs">{Object.entries(buildInventionMediaPrompts(draft.disclosure)).map(([kind, prompt]) => <div className="media-brief" key={kind}><strong>{kind === "conceptImage" ? "Concept image direction" : kind === "prototypeVideo" ? "Prototype video direction" : "Validation diagram direction"}</strong><p>{prompt}</p></div>)}</div><p className="generator-muted">These are structured handoffs for image, video, or diagram generation. They are not visual evidence that the invention works.</p></section>
-              <section className="patentscope-card"><h3>Continue in WIPO PATENTSCOPE</h3><p>Run this candidate&apos;s title, field, and model-suggested keywords through WIPO&apos;s public search interface. This is a research handoff, not an automated prior-art result or patentability opinion.</p><code className="patentscope-query">{buildPatentscopeQuery(draft.disclosure)}</code><a className="patentscope-link" href={buildPatentscopeUrl(draft.disclosure)} target="_blank" rel="noreferrer">Open live PATENTSCOPE search ↗</a></section>
-              <div className="generator-notice">No live prior-art search ran. Similarity, novelty, feasibility, safety, and patentability remain unassessed. Verify factual claims and test proposed mechanisms independently.</div>
-              <button className="generator-button secondary" type="button" onClick={savePrivateDraft} disabled={saving}>{saving ? "Saving private workspace…" : user ? "Save as private workspace" : "Sign in to save privately"}</button>
-            </div>}
-        </section>
+
+      <nav className={styles.stageNav} aria-label="Invention workflow stages">
+        {STAGES.map((stage) => <button key={stage.id} type="button" className={activeStage === stage.id ? styles.active : undefined} aria-current={activeStage === stage.id ? "step" : undefined} onClick={() => { setActiveStage(stage.id); scrollToStage(stage.id); }}>
+          <span className={styles.stageNumber}>{stage.number}</span><span className={styles.stageTitle}>{stage.title}</span><span className={styles.stageHint}>{stage.hint}</span>
+        </button>)}
+      </nav>
+
+      {authError && <p className={styles.error} role="alert">{authError}</p>}
+      {error && <p className={styles.error} role="alert">{error}</p>}
+      {message && <p className={styles.success} role="status">{message}</p>}
+
+      <div className={styles.layout}>
+        <div className={styles.column}>
+          <section id="frame" className={styles.panel} aria-labelledby="frame-title">
+            <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 01 · Frame</p><h2 id="frame-title">Make the problem specific.</h2><p>Start with what you know. Blank context is allowed; Innovator will mark the resulting assumptions instead of filling them with invented facts.</p></div><span className={styles.step}>01</span></div>
+            <form className={styles.form} onSubmit={generate}>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="problem"><span>What problem should the invention solve? <b aria-hidden="true">*</b></span><span>{draft.problem.length}/3000</span></label>
+                <textarea id="problem" required maxLength={3000} rows={5} value={draft.problem} onChange={(event) => setDraftField("problem", event.target.value)} placeholder="Describe the observable pain point and outcome you want to change." aria-describedby="problem-hint" />
+                <p className={styles.fieldHint} id="problem-hint">Separate what you observed from what you suspect. Do not include secrets or personal data.</p>
+              </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="target-users"><span>Who will use it, and in what environment?</span><span>{draft.targetUsers.length}/600</span></label>
+                <textarea id="target-users" maxLength={600} rows={2} value={draft.targetUsers} onChange={(event) => setDraftField("targetUsers", event.target.value)} placeholder="People, setting, frequency of use, available infrastructure…" />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="category"><span>Technology field</span><span>Used for terminology only</span></label>
+                <select id="category" value={draft.category} onChange={(event) => setDraftField("category", event.target.value)}><option>Health and accessibility</option><option>Climate and energy</option><option>Agriculture</option><option>Education hardware</option><option>Materials and manufacturing</option><option>Software and AI</option><option>Other</option></select>
+              </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="approaches"><span>Existing approaches or attempts</span><span>{draft.existingApproaches.length}/1200</span></label>
+                <textarea id="approaches" maxLength={1200} rows={3} value={draft.existingApproaches} onChange={(event) => setDraftField("existingApproaches", event.target.value)} placeholder="What is already used or has been tried? Distinguish facts from your observations." />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="constraints"><span>Constraints and exclusions</span><span>{draft.constraints.length}/1200</span></label>
+                <textarea id="constraints" maxLength={1200} rows={3} value={draft.constraints} onChange={(event) => setDraftField("constraints", event.target.value)} placeholder="Budget, energy, materials, maintenance, environment, legal or safety constraints…" />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="success"><span>How could success be measured?</span><span>{draft.successCriteria.length}/1000</span></label>
+                <textarea id="success" maxLength={1000} rows={3} value={draft.successCriteria} onChange={(event) => setDraftField("successCriteria", event.target.value)} placeholder="Baseline, measurable outcome, trade-offs, and what would falsify the idea…" />
+              </div>
+              <div className={styles.formActions}>
+                <button className={styles.primary} type="submit" disabled={loading}>{loading ? "Generating candidate…" : "Generate invention candidate"}</button>
+                <button className={styles.quiet} type="button" onClick={clearDraft}>Clear unsaved work</button>
+              </div>
+              <p className={styles.formFootnote}><strong>Private by default.</strong> The unfinished brief stays in this browser session. Sign in only when you want to save a private workspace.</p>
+            </form>
+          </section>
+
+          <section id="bridge" className={`${styles.panel} ${styles.researchPanel}`} aria-labelledby="bridge-title">
+            <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 02 · Bridge</p><h2 id="bridge-title">Bring in a source before you make a claim.</h2><p>Search OpenAlex and Crossref for mechanisms, bottlenecks, and field language. These are sourced navigation records—not peer review, truth, novelty, or patentability determinations.</p></div><span className={styles.step}>02</span></div>
+            <form className={styles.researchForm} onSubmit={searchResearch}>
+              <label className={styles.visuallyHidden} htmlFor="research-query">Search mechanism, field, or bottleneck</label>
+              <input id="research-query" className={styles.researchInput} value={researchQuery} onChange={(event) => setResearchQuery(event.target.value)} placeholder="Search mechanism, field, or bottleneck" maxLength={180} />
+              <button className={styles.primary} type="submit" disabled={researchLoading}>{researchLoading ? "Searching…" : "Search records"}</button>
+            </form>
+            {researchError && <p className={styles.error} role="alert">{researchError}</p>}
+            {researchLoading && <p className={styles.notice} role="status" aria-live="polite">Checking two public indexes. Opening a source will not attach evidence automatically.</p>}
+            {!researchLoading && researchResults.length === 0 && !researchError && <div className={styles.resultEmpty}>No records loaded. Search for a mechanism or bottleneck, then record what each source supports and what remains unproven.</div>}
+            {researchResults.length > 0 && <div className={styles.results} aria-live="polite">{researchResults.map((item) => <article className={styles.result} key={`${item.source}-${item.id}`}>
+              <div><div className={styles.resultMeta}><b>{item.source}</b><span>· {item.year || "year unlisted"}</span><span>· Sourced record</span></div><h3>{item.title}</h3><p>{item.venue} · {item.authors.join(", ") || "authors unlisted"}</p></div>
+              <a href={item.url} target="_blank" rel="noopener noreferrer">Open source ↗</a>
+            </article>)}</div>}
+          </section>
+        </div>
+
+        <div className={styles.column}>
+          <section className={styles.panel} aria-labelledby="candidate-title" aria-live="polite">
+            {!disclosure ? <div className={styles.empty}><div className={styles.emptyMark}>?</div><h3 id="candidate-title">No candidate yet.</h3><p>Begin with a problem you can observe. The page will keep your unsaved draft in this browser session.</p><button className={styles.secondary} type="button" onClick={() => { setActiveStage("frame"); scrollToStage("frame"); }}>Start framing →</button></div> : <>
+              <div className={styles.panelHeader}><div><p className={styles.kicker}>Working output</p><h2 id="candidate-title">Candidate brief</h2><p>A draft to inspect, challenge, and test. This is a proposed mechanism, not a finding.</p></div><span className={styles.step}>01</span></div>
+              <div className={styles.output}>
+                <div className={styles.outputTitle}><h3>{disclosure.title}</h3><span className={`${styles.badge} ${styles.proposed}`}>Proposed</span></div>
+                <div className={styles.outputActions}>
+                  <button className={styles.secondary} type="button" onClick={() => copyText(`${disclosure.title}\n\n${disclosure.abstract}\n\n${disclosure.solution}`, "Candidate summary copied.")}>Copy summary</button>
+                  <button className={styles.secondary} type="button" onClick={downloadBrief}>Download brief</button>
+                  <button className={styles.quiet} type="button" onClick={savePrivateDraft} disabled={saving}>{saving ? "Saving…" : user ? "Save private workspace" : "Sign in to save"}</button>
+                </div>
+                <div className={styles.metaGrid}><div className={styles.metaCard}><span>Field</span><b>{disclosure.technicalField}</b></div><div className={styles.metaCard}><span>Draft mode</span><b>{disclosure.mode === "demo-fallback" ? "Deterministic scaffold" : "Model-assisted"}</b></div><div className={styles.metaCard}><span>Evidence state</span><b>Unverified proposal</b></div></div>
+                <div className={styles.outputSection}><h4>Generation provenance</h4><p>{disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : `${disclosure.provenance.provider || "Model"} draft using ${disclosure.provenance.model || "an unreported model"}. This text is unverified.`}</p></div>
+                <div className={styles.outputSection}><h4>Abstract</h4><p>{disclosure.abstract}</p></div>
+                <div className={styles.outputSection}><h4>Problem framing</h4><p>{disclosure.problem}</p></div>
+                <div className={styles.outputSection}><h4>Proposed mechanism / solution</h4><p>{disclosure.solution}</p></div>
+                <div className={styles.outputSection}><h4>Differentiating hypothesis — not a novelty decision</h4><p>{disclosure.noveltyHypothesis}</p></div>
+                <div className={styles.outputSection}><h4>Key components</h4>{disclosure.components.length ? <div className={styles.tags}>{disclosure.components.map((component, index) => <span className={styles.tag} key={index}>{component}</span>)}</div> : <p>Not assessed yet.</p>}</div>
+                <div className={styles.outputSection}><h4>Open questions / validation gates</h4><ul>{disclosure.missingQuestions.map((question, index) => <li key={index}>{question}</li>)}</ul></div>
+                <div className={styles.outputSection}><h4>Creative handoffs</h4><div className={styles.plan}>{Object.entries(buildInventionMediaPrompts(disclosure)).map(([kind, prompt]) => <article className={styles.planCard} key={kind}><strong>{kind === "conceptImage" ? "Concept image" : kind === "prototypeVideo" ? "Prototype video" : "Validation diagram"}</strong><div><p>{prompt}</p><small>Creative direction only; not visual evidence.</small></div></article>)}</div></div>
+                <div className={styles.nextBox}><strong>Continue with a bounded role</strong><p>Use the research records and this candidate to expose assumptions before you choose a test.</p><div className={styles.roleActions}><button className={styles.secondary} type="button" onClick={() => { setActiveStage("challenge"); scrollToStage("challenge"); runRole("review"); }} disabled={roleLoading !== null}>{roleLoading === "review" ? "Reviewing…" : "Challenge with committee"}</button><button className={styles.secondary} type="button" onClick={() => { setActiveStage("test"); scrollToStage("test"); runRole("orchestration"); }} disabled={roleLoading !== null}>{roleLoading === "orchestration" ? "Orchestrating…" : "Choose next test"}</button><button className={styles.secondary} type="button" onClick={generateManufacturingHandoff} disabled={manufacturingLoading}>{manufacturingLoading ? "Preparing handoff…" : "Manufacturing handoff"}</button></div></div>
+                {manufacturing && <div className={styles.outputSection}><h4>Manufacturing handoff · gated research record</h4><p>{manufacturing.boundary}</p><h5>Requirements and provenance</h5><ul>{manufacturing.requirements.map((item) => <li key={item.item}><b>{item.item}</b> <span>({item.provenance}) — {item.acceptance}</span></li>)}</ul><h5>Manufacturing and test gates</h5><div className={styles.plan}>{manufacturing.gates.map((gate) => <article className={styles.planCard} key={gate.gate}><strong>{gate.gate}</strong><div><p>{gate.holdPoint}</p><small>Reversal: {gate.reversalCriteria}</small></div></article>)}</div><h5>Explicit exclusions</h5><ul>{manufacturing.exclusions.map((item) => <li key={item}>{item}</li>)}</ul><h5>Unresolved before any qualified work</h5><ul>{manufacturing.unresolved.map((item) => <li key={item}>{item}</li>)}</ul></div>}
+                <div className={styles.notice}>No live prior-art search ran. Similarity, novelty, feasibility, safety, and patentability remain unassessed. Verify factual claims and test proposed mechanisms independently.</div>
+                <a className={styles.quiet} href={buildPatentscopeUrl(disclosure)} target="_blank" rel="noopener noreferrer">Continue in WIPO PATENTSCOPE ↗</a>
+                <code className={styles.rawResult}>{buildPatentscopeQuery(disclosure)}</code>
+              </div>
+            </>}
+          </section>
+        </div>
       </div>
-      <section className="generator-card research-desk">
-        <h2>Research desk</h2>
-        <p className="generator-muted">Search OpenAlex and Crossref records, then carry sourced reading into the invention, review, and orchestration roles. Results are navigation aids, not peer-review or patentability decisions.</p>
-        <form className="research-form" onSubmit={searchResearch}>
-          <input aria-label="Research query" value={researchQuery} onChange={(event) => setResearchQuery(event.target.value)} placeholder="Search a mechanism, field, or bottleneck" maxLength={180} />
-          <button className="generator-button" type="submit" disabled={researchLoading}>{researchLoading ? "Searching…" : "Search research"}</button>
-        </form>
-        {researchResults.length > 0 && <div className="research-results">{researchResults.map((item) => <article key={item.id}><div><span>{item.source} · {item.year || "year unlisted"}</span><b>{item.title}</b><small>{item.venue} · {item.authors.join(", ") || "authors unlisted"}</small></div><a href={item.url} target="_blank" rel="noreferrer">Open source ↗</a></article>)}</div>}
-        <div className="role-strip"><span>Three bounded roles</span><b>Invention designer</b><b>Research + peer-review committee</b><b>Orchestrator</b></div>
+
+      <section id="challenge" className={`${styles.panel} ${styles.rolesPanel}`} aria-labelledby="challenge-title">
+        <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 03 · Challenge</p><h2 id="challenge-title">One committee, one evidence boundary.</h2><p>Ask the research and peer-review committee to attack sources, controls, alternatives, safety, and deployment gaps. Run it again after adding research.</p></div><span className={styles.step}>03</span></div>
+        <div className={styles.roleTabs}><button className={styles.roleButton} type="button" onClick={() => runRole("review")} disabled={roleLoading !== null}>{roleLoading === "review" ? "Running committee…" : "Run research + peer-review committee"}</button><button className={styles.roleButton} type="button" onClick={() => runRole("invention")} disabled={roleLoading !== null}>{roleLoading === "invention" ? "Designing…" : "Refine mechanism"}</button></div>
+        {roleResults.review && <div className={styles.roleResult}><div className={styles.roleResultHeader}><strong>{roleLabel("review")}</strong><span>{roleResults.review.mode === "deterministic-fallback" ? "Deterministic fallback · proposed" : "Provider result · proposed"}</span></div><div className={styles.roleBody}><RoleOutput response={roleResults.review} /></div></div>}
+        {roleResults.invention && <div className={styles.roleResult}><div className={styles.roleResultHeader}><strong>{roleLabel("invention")}</strong><span>Proposed mechanism</span></div><div className={styles.roleBody}><RoleOutput response={roleResults.invention} /></div></div>}
+        {!roleResults.review && !roleResults.invention && <div className={styles.resultEmpty}>No committee pass yet. Generate a candidate first, then run the committee to expose the weakest assumptions and the cheapest useful checks.</div>}
+      </section>
+
+      <section id="test" className={`${styles.panel} ${styles.rolesPanel}`} aria-labelledby="test-title">
+        <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 04 · Test</p><h2 id="test-title">Choose the next measurement, not the final answer.</h2><p>The orchestrator sequences research, invention, review, and a stop condition. It prepares the next action; it does not establish truth.</p></div><span className={styles.step}>04</span></div>
+        <div className={styles.roleTabs}><button className={styles.primary} type="button" onClick={() => runRole("orchestration")} disabled={roleLoading !== null}>{roleLoading === "orchestration" ? "Sequencing…" : "Sequence next test"}</button></div>
+        {currentRole && roleResults.orchestration && <div className={styles.roleResult}><div className={styles.roleResultHeader}><strong>{roleLabel("orchestration")}</strong><span>{roleResults.orchestration.mode === "deterministic-fallback" ? "Deterministic fallback · proposed" : "Provider result · proposed"}</span></div><div className={styles.roleBody}><RoleOutput response={roleResults.orchestration} /></div></div>}
+        {!roleResults.orchestration && <div className={styles.resultEmpty}>The next test should name a baseline, intervention, measurement, sample or observation plan, and a result that would stop or reframe the idea.</div>}
       </section>
     </main>
-    <footer className="generator-footer">Innovator · Evidence-first invention generation · Private drafts by default</footer>
+
+    <footer className={styles.footer}><span>Innovator · Evidence-first invention generation</span><strong>Keep the claim smaller than the evidence.</strong></footer>
   </div>;
 }
