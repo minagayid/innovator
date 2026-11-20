@@ -1,0 +1,4 @@
+accession	sequence_type	taxid	organism	source_database	release	training_authorized	license_basis
+NC_000001.11	DNA	9606	Homo sapiens	RefSeq	R1	false	REVIEW_REQUIRED
+NM_000546.6	RNA	9606	Homo sapiens	RefSeq	R1	false	REVIEW_REQUIRED
+NP_000537.3	PROTEIN	9606	Homo sapiens	RefSeq	R1	false	REVIEW_REQUIRED
