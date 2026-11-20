@@ -1,0 +1,25 @@
+{
+  "dna": {
+    "model_id": "arcinstitute/evo2_7b",
+    "smoke_test_model_id": "arcinstitute/evo2_1b_base",
+    "method": "upstream_evo2_training_adapter_or_task_head",
+    "note": "Validate upstream Vortex/Savanna implementation and target modules; not a generic Transformer adapter."
+  },
+  "rna": {
+    "model_id": "ml4bio/RNA-FM",
+    "additional_model_id": "mRNA-FM",
+    "method": "downstream_task_head_or_validated_adapter",
+    "note": "Keep ncRNA and mRNA tasks separately evaluated; check checkpoint provenance and licence."
+  },
+  "protein": {
+    "model_id": "facebook/esm2_t33_650M_UR50D",
+    "method": "downstream_task_head_or_validated_adapter",
+    "note": "Use exact upstream model card/revision and check licence before redistribution."
+  },
+  "shared": {
+    "split_strategy": "homology_family_and_taxon_holdouts",
+    "record_rights_gate": "training_authorized == true && license_basis is non-empty",
+    "full_corpus_policy": "index_all_eligible_records; train_adapters_on_curated_subsets",
+    "note": "Proposed registry only; this is not evidence that models have been downloaded or fine-tuned."
+  }
+}
