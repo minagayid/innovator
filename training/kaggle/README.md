@@ -11,7 +11,7 @@ These notebooks are reproducible training experiments for Innovator. They are st
 - Metrics: training loss 2.0397; validation loss 1.8974.
 - Output archive: `innovator_patent_adapter_artifacts.zip` in the Kaggle version output.
 
-**WIPO boundary:** this is not a PATENTSCOPE dataset. WIPO PATENTSCOPE terms restrict automated queries, bulk acquisition/downloads, copying and scraping. Use only separately authorized WIPO data products; do not scrape PATENTSCOPE.
+**WIPO boundary:** this is not a PATENTSCOPE dataset. WIPO's PCT-data products are license-governed: a non-derivative license permits acquiring/downloading/storing the full dataset in a searchable database, while bulk redistribution requires a derivative license with added value. The PATENTSCOPE web service limits retrieval to 10 actions per minute per subscriber/IP and prohibits parallel IP use to increase throughput. This notebook does not scrape the service. For a full PCT corpus, obtain the appropriate WIPO data product/license. [Official terms](https://www.wipo.int/en/web/patentscope/data/terms).
 
 ## NCBI multi-omics encoder
 
