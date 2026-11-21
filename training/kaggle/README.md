@@ -10,6 +10,7 @@ These notebooks are reproducible training experiments for Innovator. They are st
 - Training: 100 optimizer steps, sequence length 512, effective batch size 8. This consumed approximately 800 training examples; it is a pilot, not a full-corpus training run.
 - Metrics: training loss 2.0397; validation loss 1.8974.
 - Output archive: `innovator_patent_adapter_artifacts.zip` in the Kaggle version output.
+- Interim private Hub artifact: [minagayid/Innovator-Patent-Domain-Adapter](https://huggingface.co/minagayid/Innovator-Patent-Domain-Adapter). This currently contains the 100-step pilot; the longer 1,500-step run is still in progress and will supersede it after validation.
 
 **WIPO boundary:** this is not a PATENTSCOPE dataset. WIPO's PCT-data products are license-governed: a non-derivative license permits acquiring/downloading/storing the full dataset in a searchable database, while bulk redistribution requires a derivative license with added value. The PATENTSCOPE web service limits retrieval to 10 actions per minute per subscriber/IP and prohibits parallel IP use to increase throughput. This notebook does not scrape the service. For a full PCT corpus, obtain the appropriate WIPO data product/license. [Official terms](https://www.wipo.int/en/web/patentscope/data/terms).
 
