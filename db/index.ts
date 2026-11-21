@@ -4,6 +4,7 @@ import { buildProjectListQuery, makeProjectPage, type ProjectCursor, type Projec
 import { buildVisibleProjectQuery } from "./project-access.ts";
 
 export type StoredUser = { id: string; email: string; displayName: string; createdAt: string; updatedAt: string };
+export type StoredUserAuth = StoredUser & { passwordHash: string | null };
 export type ProjectRecord = {
   id: string; slug: string; ownerId: string; ownerName: string; title: string; summary: string; category: string;
   status: string; readinessStage: string; visibility: string; documentKey: string; createdAt: string; updatedAt: string;
@@ -32,6 +33,7 @@ export async function ensureDataSchema() {
       id TEXT PRIMARY KEY NOT NULL,
       email TEXT NOT NULL UNIQUE,
       display_name TEXT NOT NULL,
+      password_hash TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     )`),
@@ -53,6 +55,41 @@ export async function ensureDataSchema() {
     db.prepare("CREATE INDEX IF NOT EXISTS projects_visibility_idx ON projects (visibility)"),
     db.prepare("CREATE INDEX IF NOT EXISTS projects_updated_idx ON projects (updated_at)"),
   ]);
+  // Older databases predate the password column; add it idempotently.
+  try {
+    await db.prepare("ALTER TABLE users ADD COLUMN password_hash TEXT").run();
+  } catch (error) {
+    if (!(error instanceof Error) || !/duplicate column/i.test(error.message)) throw error;
+  }
+}
+
+const USER_AUTH_COLUMNS = "id, email, display_name AS displayName, password_hash AS passwordHash, created_at AS createdAt, updated_at AS updatedAt";
+
+export async function getUserForEmailAuth(email: string): Promise<StoredUserAuth | null> {
+  await ensureDataSchema();
+  const db = getDatabase();
+  return db.prepare(`SELECT ${USER_AUTH_COLUMNS} FROM users WHERE email = ?`).bind(email).first<StoredUserAuth>();
+}
+
+export async function createEmailUser(email: string, displayName: string, passwordHash: string): Promise<StoredUser> {
+  await ensureDataSchema();
+  const db = getDatabase();
+  const now = new Date().toISOString();
+  const user = { id: crypto.randomUUID(), email, displayName, createdAt: now, updatedAt: now };
+  await db.prepare("INSERT INTO users (id, email, display_name, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)")
+    .bind(user.id, user.email, user.displayName, passwordHash, user.createdAt, user.updatedAt).run();
+  return user;
+}
+
+/** Links a password to an account that was created through OAuth. */
+export async function attachPasswordToUser(userId: string, passwordHash: string): Promise<StoredUser | null> {
+  await ensureDataSchema();
+  const db = getDatabase();
+  const now = new Date().toISOString();
+  await db.prepare("UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?").bind(passwordHash, now, userId).run();
+  const updated = await db.prepare(`SELECT ${USER_AUTH_COLUMNS} FROM users WHERE id = ?`).bind(userId).first<StoredUserAuth>();
+  if (!updated) return null;
+  return { id: updated.id, email: updated.email, displayName: updated.displayName, createdAt: updated.createdAt, updatedAt: updated.updatedAt };
 }
 
 export async function upsertUser(email: string, displayName: string): Promise<StoredUser> {
