@@ -21,7 +21,7 @@ These notebooks are reproducible training experiments for Innovator. They are st
 - Source: NCBI RefSeq through NCBI Datasets CLI.
 - Scope: 8 representative assemblies across bacteria, archaea, fungi, plants, insects and nematodes; 182,419 extracted sequence windows.
 - Training: 3 epochs; assembly-level train/validation/test split.
-- Held-out metrics: masked-token accuracy 34.25%; loss 1.6004.
+- Held-out metrics: overall masked-token accuracy 34.25%; loss 1.6004. By modality: DNA 40.06%, RNA 37.48%, protein 19.57% (protein is the weakest modality and needs substantial improvement).
 - Output archive: `ncbi_multiomics_model_artifacts.zip` in the Kaggle version output.
 - Private Hub artifact: [minagayid/NCBI-MultiOmics-MLM](https://huggingface.co/minagayid/NCBI-MultiOmics-MLM) — contains the trained PyTorch state dictionary, architecture loader, vocabulary, config and manifests.
 
