@@ -17,7 +17,7 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const EMAIL_MAX_LENGTH = 254;
 export const DISPLAY_NAME_MAX_LENGTH = 80;
 
-const PBKDF2_ITERATIONS = 210_000;
+const PBKDF2_ITERATIONS = 100_000; // Workers WebCrypto caps PBKDF2 at 100,000 iterations
 const PBKDF2_KEY_LENGTH_BYTES = 32;
 const HASH_FORMAT = "pbkdf2-sha256";
 
