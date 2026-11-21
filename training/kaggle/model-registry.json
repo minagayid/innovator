@@ -26,7 +26,21 @@
       "evaluation": {
         "epochs": 3,
         "held_out_masked_token_accuracy": 0.3425,
-        "held_out_loss": 1.6004
+        "held_out_loss": 1.6004,
+        "per_modality": {
+          "DNA": {
+            "masked_token_accuracy": 0.40057278720415,
+            "test_tokens": 721734
+          },
+          "RNA": {
+            "masked_token_accuracy": 0.3748424306494132,
+            "test_tokens": 373645
+          },
+          "PROTEIN": {
+            "masked_token_accuracy": 0.1956629872547927,
+            "test_tokens": 367903
+          }
+        }
       },
       "kaggle_run_url": "https://www.kaggle.com/code/minagayid/ncbi-multi-omics-sequence-model-dna-rna-protein?scriptVersionId=372009604"
     },
