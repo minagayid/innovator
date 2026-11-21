@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-21",
+  "note": "Research registry for model artifacts. These models are private Hugging Face repositories and are not enabled in production inference. Promotion requires the evaluation gates in README.md.",
+  "models": {
+    "ncbi_multiomics_mlm": {
+      "repo_id": "minagayid/NCBI-MultiOmics-MLM",
+      "hub_url": "https://huggingface.co/minagayid/NCBI-MultiOmics-MLM",
+      "visibility": "private",
+      "status": "research_candidate",
+      "task": "masked_residue_prediction",
+      "modalities": [
+        "DNA",
+        "RNA",
+        "PROTEIN"
+      ],
+      "loader": "custom_pytorch",
+      "entrypoint": "modeling_multiomics.load_model",
+      "checkpoint": "multiomics_mlm.pt",
+      "data_scope": {
+        "source": "NCBI RefSeq via NCBI Datasets CLI",
+        "assemblies": 8,
+        "windows": 182419,
+        "full_corpus": false
+      },
+      "evaluation": {
+        "epochs": 3,
+        "held_out_masked_token_accuracy": 0.3425,
+        "held_out_loss": 1.6004,
+        "per_modality": {
+          "DNA": {
+            "masked_token_accuracy": 0.40057278720415,
+            "test_tokens": 721734
+          },
+          "RNA": {
+            "masked_token_accuracy": 0.3748424306494132,
+            "test_tokens": 373645
+          },
+          "PROTEIN": {
+            "masked_token_accuracy": 0.1956629872547927,
+            "test_tokens": 367903
+          }
+        }
+      },
+      "kaggle_run_url": "https://www.kaggle.com/code/minagayid/ncbi-multi-omics-sequence-model-dna-rna-protein?scriptVersionId=372009604"
+    },
+    "patent_domain_adapter": {
+      "repo_id": "minagayid/Innovator-Patent-Domain-Adapter",
+      "hub_url": "https://huggingface.co/minagayid/Innovator-Patent-Domain-Adapter",
+      "visibility": "private",
+      "status": "interim_pilot_full_sample_run_pending",
+      "task": "patent_domain_adaptation",
+      "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+      "loader": "peft",
+      "checkpoint": "adapter_model.safetensors",
+      "data_scope": {
+        "source": "allenai/us-patents (PatentsView)",
+        "license": "ODC-BY",
+        "training_records_streamed": 12000,
+        "validation_records_streamed": 600,
+        "full_corpus": false
+      },
+      "pilot_evaluation": {
+        "optimizer_steps": 100,
+        "effective_batch_size": 8,
+        "approx_training_examples_consumed": 800,
+        "training_loss": 2.0397,
+        "validation_loss": 1.8974
+      },
+      "full_sample_run": {
+        "status": "running",
+        "target_optimizer_steps": 1500,
+        "kaggle_run_url": "https://www.kaggle.com/code/minagayid/innovator-patent-domain-adapter-open-patents?scriptVersionId=372019865"
+      },
+      "kaggle_pilot_url": "https://www.kaggle.com/code/minagayid/innovator-patent-domain-adapter-open-patents?scriptVersionId=372016489"
+    }
+  }
+}
