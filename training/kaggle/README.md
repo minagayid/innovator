@@ -1,6 +1,6 @@
 # Kaggle domain-training pipelines
 
-These notebooks are reproducible training experiments for Innovator. They are stored as source in GitHub; trained weights and output archives remain in the private Kaggle notebook outputs linked below.
+These notebooks are reproducible training experiments for Innovator. They are stored as source in GitHub; trained weights and output archives are published in private Hugging Face model repos. See [model-registry.json](./model-registry.json) for machine-readable model IDs, loaders, status and evaluation.
 
 ## Patent-domain adapter
 
