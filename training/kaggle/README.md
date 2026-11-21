@@ -22,6 +22,7 @@ These notebooks are reproducible training experiments for Innovator. They are st
 - Training: 3 epochs; assembly-level train/validation/test split.
 - Held-out metrics: masked-token accuracy 34.25%; loss 1.6004.
 - Output archive: `ncbi_multiomics_model_artifacts.zip` in the Kaggle version output.
+- Private Hub artifact: [minagayid/NCBI-MultiOmics-MLM](https://huggingface.co/minagayid/NCBI-MultiOmics-MLM) — contains the trained PyTorch state dictionary, architecture loader, vocabulary, config and manifests.
 
 ## Promotion gates
 
