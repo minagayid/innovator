@@ -354,7 +354,7 @@ export default function Home() {
       <div className={styles.auth} aria-label="Account actions">
         {sessionReady && user
           ? <><span>Signed in as <b>{user.displayName}</b></span><Link href="/api/auth/logout?return_to=%2F">Sign out</Link></>
-          : <>{sessionReady ? <><Link href="/api/auth/google?return_to=%2F">Google</Link><Link href="/api/auth/github?return_to=%2F">GitHub</Link><Link href="/api/auth/linkedin?return_to=%2F">LinkedIn</Link><Link href="/api/auth/orcid?return_to=%2F">ORCID</Link></> : "Checking session…"}</>}
+          : <>{sessionReady ? <><Link href="/login">Email</Link><Link href="/api/auth/google?return_to=%2F">Google</Link><Link href="/api/auth/github?return_to=%2F">GitHub</Link><Link href="/api/auth/linkedin?return_to=%2F">LinkedIn</Link><Link href="/api/auth/orcid?return_to=%2F">ORCID</Link></> : "Checking session…"}</>}
       </div>
     </header>
 
