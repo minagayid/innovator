@@ -245,3 +245,34 @@
   .card { padding: 24px 20px 18px; border-radius: 18px; }
   .heading h1 { font-size: 22px; }
 }
+
+/* ---------- OAuth providers ---------- */
+.oauth { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.oauthBtn {
+  position: relative;
+  display: flex; align-items: center; justify-content: flex-start; gap: 12px;
+  width: 100%; padding: 12px 16px 12px 18px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e8eef7; text-decoration: none; font-size: 14.5px; font-weight: 600;
+  transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.25s;
+}
+.oauthBtn svg { width: 19px; height: 19px; flex: none; }
+.oauthBtn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.28); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); }
+.oauthBtn:active { transform: translateY(0) scale(0.99); }
+.oauthOff, .oauthOff:hover {
+  opacity: 0.45; pointer-events: none; transform: none; box-shadow: none;
+}
+.soon {
+  margin-left: auto; flex: none; font-style: normal; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #93a1b5;
+  padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.16);
+}
+.divider {
+  display: flex; align-items: center; gap: 14px; margin: 4px 0 18px;
+  color: #64748b; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+}

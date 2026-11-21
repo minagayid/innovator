@@ -34,12 +34,20 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [returnTo, setReturnTo] = useState("/");
+  const [providers, setProviders] = useState<{ google: boolean; github: boolean; linkedin: boolean } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Read the return target once after hydration; it only exists on the client.
     setReturnTo(safeReturnTo(params.get("return_to")));
     if (params.get("mode") === "signup") setMode("signup");
+    fetch("/api/auth/providers")
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload: { providers?: { google: boolean; github: boolean; linkedin: boolean } } | null) => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Provider availability is known only after the client fetch.
+        setProviders(payload?.providers ?? { google: true, github: true, linkedin: true });
+      })
+      .catch(() => setProviders({ google: true, github: true, linkedin: true }));
   }, []);
 
   const strength = useMemo(() => strengthOf(password), [password]);
@@ -105,6 +113,38 @@ export default function LoginPage() {
             ? "Sign in to pick up your workspace, drafts, and validation runs."
             : "One account for invention candidates, research trails, and peer-review runs."}</p>
         </header>
+
+        <div className={styles.oauth} aria-label="Social sign-in">
+          <a
+            className={`${styles.oauthBtn} ${providers && !providers.google ? styles.oauthOff : ""}`}
+            href={!providers || providers.google ? `/api/auth/google?return_to=${encodeURIComponent(returnTo)}` : undefined}
+            aria-disabled={providers ? !providers.google : undefined}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.27c0-.85-.08-1.66-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.87c2.26-2.09 3.57-5.16 3.57-8.81Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.92l-3.87-3c-1.07.72-2.44 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.27 14.27A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.27v-3.1H1.29a12 12 0 0 0 0 10.74l3.98-3.1Z"/><path fill="#EA4335" d="M12 4.77c1.76 0 3.35.61 4.6 1.8l3.42-3.42A11.97 11.97 0 0 0 12 0 12 12 0 0 0 1.29 6.63l3.98 3.1C6.22 6.88 8.87 4.77 12 4.77Z"/></svg>
+            <span>Continue with Google</span>
+            {providers && !providers.google && <em className={styles.soon}>setup pending</em>}
+          </a>
+          <a
+            className={`${styles.oauthBtn} ${providers && !providers.github ? styles.oauthOff : ""}`}
+            href={!providers || providers.github ? `/api/auth/github?return_to=${encodeURIComponent(returnTo)}` : undefined}
+            aria-disabled={providers ? !providers.github : undefined}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/></svg>
+            <span>Continue with GitHub</span>
+            {providers && !providers.github && <em className={styles.soon}>setup pending</em>}
+          </a>
+          <a
+            className={`${styles.oauthBtn} ${providers && !providers.linkedin ? styles.oauthOff : ""}`}
+            href={!providers || providers.linkedin ? `/api/auth/linkedin?return_to=${encodeURIComponent(returnTo)}` : undefined}
+            aria-disabled={providers ? !providers.linkedin : undefined}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0A66C2" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45Z"/></svg>
+            <span>Continue with LinkedIn</span>
+            {providers && !providers.linkedin && <em className={styles.soon}>setup pending</em>}
+          </a>
+        </div>
+
+        <div className={styles.divider} role="separator"><span>or continue with email</span></div>
 
         <form className={`${styles.form} ${error ? styles.formError : ""}`} onSubmit={submit} noValidate>
           <div className={`${styles.slide} ${mode === "signup" ? styles.slideOpen : ""}`}>

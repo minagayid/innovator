@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { CSSProperties, FormEvent, useEffect, useMemo, useState } from "react";
 import type { StructuredDisclosure } from "./api/disclosure/input";
 import { buildInventionMediaPrompts } from "./media-prompts";
 import { buildPatentscopeQuery, buildPatentscopeUrl } from "./patentscope";
@@ -146,6 +146,29 @@ export default function Home() {
       }
     } catch {
       // Browser storage is optional; the workspace remains usable without it.
+    }
+    try {
+      const seedRaw = sessionStorage.getItem("innovator-paper-seed-v1");
+      if (seedRaw) {
+        sessionStorage.removeItem("innovator-paper-seed-v1");
+        const seed: unknown = JSON.parse(seedRaw);
+        if (isRecord(seed) && typeof seed.title === "string") {
+          const venue = typeof seed.venue === "string" && seed.venue ? ` (${seed.venue}${typeof seed.year === "number" ? `, ${seed.year}` : ""})` : "";
+          const sourceLines = [
+            `Seed paper: ${seed.title}${venue}`,
+            typeof seed.url === "string" && seed.url ? `Source: ${seed.url}` : "",
+            ...(Array.isArray(seed.similar) ? seed.similar.filter((item): item is string => typeof item === "string").slice(0, 6).map((item) => `Related: ${item}`) : []),
+          ].filter(Boolean).join("\n");
+          setDraft((current) => ({
+            ...current,
+            problem: current.problem.trim() || `Build on findings from: ${seed.title}${typeof seed.abstract === "string" && seed.abstract ? `\n\nPaper context: ${seed.abstract.slice(0, 700)}` : ""}`,
+            existingApproaches: current.existingApproaches.trim() ? `${current.existingApproaches}\n\n${sourceLines}` : sourceLines,
+          }));
+          setMessage(`Studio seeded from "${seed.title.slice(0, 80)}". Research records are attached to your brief; claims still need verification.`);
+        }
+      }
+    } catch {
+      // Optional seed handoff from the research lab.
     }
     setDraftReady(true);
 
@@ -351,15 +374,19 @@ export default function Home() {
         <span className={styles.brandMark}>IN</span>
         <span>INNOVATOR<small>EVIDENCE-FIRST INVENTION STUDIO</small></span>
       </Link>
+      <nav className={styles.nav} aria-label="Primary">
+        <Link className={`${styles.navLink} ${styles.navLinkActive}`} href="/">Studio</Link>
+        <Link className={styles.navLink} href="/research">Research lab</Link>
+      </nav>
       <div className={styles.auth} aria-label="Account actions">
         {sessionReady && user
-          ? <><span>Signed in as <b>{user.displayName}</b></span><Link href="/api/auth/logout?return_to=%2F">Sign out</Link></>
-          : <>{sessionReady ? <><Link href="/login">Email</Link><Link href="/api/auth/google?return_to=%2F">Google</Link><Link href="/api/auth/github?return_to=%2F">GitHub</Link><Link href="/api/auth/linkedin?return_to=%2F">LinkedIn</Link><Link href="/api/auth/orcid?return_to=%2F">ORCID</Link></> : "Checking session…"}</>}
+          ? <><span className={styles.userChip}>{user.displayName}</span><Link href="/api/auth/logout?return_to=%2F">Sign out</Link></>
+          : <>{sessionReady ? <Link className={styles.signInCta} href="/login">Sign in</Link> : "Checking session…"}</>}
       </div>
     </header>
 
     <main className={styles.main}>
-      <section className={styles.hero} aria-labelledby="page-title">
+      <section className={`${styles.hero} reveal`} aria-labelledby="page-title">
         <div>
           <p className={styles.eyebrow}>Research studio · provisional by design</p>
           <h1 id="page-title">Turn a hard problem into a <em>testable invention.</em></h1>
@@ -377,7 +404,7 @@ export default function Home() {
         </aside>
       </section>
 
-      <nav className={styles.stageNav} aria-label="Invention workflow stages">
+      <nav className={`${styles.stageNav} reveal`} style={{ "--d": "90ms" } as CSSProperties} aria-label="Invention workflow stages">
         {STAGES.map((stage) => <button key={stage.id} type="button" className={activeStage === stage.id ? styles.active : undefined} aria-current={activeStage === stage.id ? "step" : undefined} onClick={() => { setActiveStage(stage.id); scrollToStage(stage.id); }}>
           <span className={styles.stageNumber}>{stage.number}</span><span className={styles.stageTitle}>{stage.title}</span><span className={styles.stageHint}>{stage.hint}</span>
         </button>)}
