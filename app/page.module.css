@@ -153,9 +153,28 @@
 }
 .field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 19px) 50%, calc(100% - 14px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
 .fieldHint { margin: 0; font-size: 12px; color: var(--faint); }
+.advanced { border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+.advanced summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); }
+.advanced summary span { color: var(--faint); font-weight: 500; font-size: 12px; }
+.advanced[open] summary { margin-bottom: 2px; }
 .formActions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
 .formFootnote { margin: 4px 0 0; font-size: 12.5px; color: var(--faint); }
 .formFootnote strong { color: var(--muted); }
+.followUp { display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(163, 230, 53, 0.25); border-radius: 14px; padding: 16px; background: rgba(163, 230, 53, 0.05); }
+.followUp h4 { margin: 0; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.followUp p { margin: 0; font-size: 13px; color: var(--muted); }
+.followUp textarea {
+  width: 100%; border-radius: 12px; border: 1px solid var(--line);
+  background: rgba(4, 7, 13, 0.55); color: var(--ink);
+  padding: 12px 14px; font-size: 14px; line-height: 1.5; resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.followUp textarea::placeholder { color: var(--faint); }
+.followUp textarea:focus {
+  outline: none; border-color: rgba(163, 230, 53, 0.55);
+  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.12);
+  background: rgba(4, 7, 13, 0.8);
+}
 
 /* ---------- Buttons ---------- */
 .primary, .secondary, .quiet {

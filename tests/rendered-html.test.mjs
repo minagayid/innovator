@@ -14,7 +14,9 @@ test("build contains the staged research studio and private-workspace contracts"
     readFile(new URL("../drizzle/0000_cloudy_johnny_blaze.sql", import.meta.url), "utf8"),
     readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /What problem should the invention solve/);
+  assert.match(page, /Your idea, concept, data, and context/);
+  assert.match(page, /Say it the way you&rsquo;d explain it/);
+  assert.match(page, /Only the follow-ups that matter/);
   assert.match(page, /Constraints and exclusions/);
   assert.match(page, /Generate invention candidate/);
   assert.match(page, /Stage 01 · Frame/);

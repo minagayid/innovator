@@ -19,7 +19,7 @@ type RoleResponse = { role?: RoleName; mode?: string; provenance?: { provider?: 
 type StageId = "frame" | "bridge" | "challenge" | "test";
 
 const STAGES: Array<{ id: StageId; number: string; title: string; hint: string }> = [
-  { id: "frame", number: "01", title: "Frame", hint: "Problem, people, baseline" },
+  { id: "frame", number: "01", title: "Frame", hint: "One box, your words" },
   { id: "bridge", number: "02", title: "Bridge", hint: "Research and transfer" },
   { id: "challenge", number: "03", title: "Challenge", hint: "Assumptions and failure modes" },
   { id: "test", number: "04", title: "Test", hint: "Measure and stop condition" },
@@ -111,6 +111,7 @@ export default function Home() {
   const [roleLoading, setRoleLoading] = useState<RoleName | null>(null);
   const [manufacturing, setManufacturing] = useState<ManufacturingHandoff | null>(null);
   const [manufacturingLoading, setManufacturingLoading] = useState(false);
+  const [followUp, setFollowUp] = useState("");
 
   const roleBrief = useMemo(() => {
     const sourceNote = researchResults.length > 0
@@ -192,18 +193,30 @@ export default function Home() {
     setMessage("");
   }
 
-  async function generate(event: FormEvent<HTMLFormElement>) {
+  function generate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    void runGeneration(draft);
+  }
+
+  function refineWithAnswers() {
+    const answers = followUp.trim();
+    if (!answers || loading) return;
+    setFollowUp("");
+    const merged = `${draft.problem.trim()}\n\nFollow-up answers from the creator:\n${answers}`.slice(0, 5000);
+    void runGeneration({ ...draft, problem: merged });
+  }
+
+  async function runGeneration(nextDraft: Draft) {
     setError("");
     setMessage("");
-    setDraft((current) => ({ ...current, disclosure: null }));
-    if (!draft.problem.trim()) {
-      setError("Describe the problem you want to solve first.");
+    setDraft({ ...nextDraft, disclosure: null });
+    if (!nextDraft.problem.trim()) {
+      setError("Describe your idea first. Even one rough paragraph is enough.");
       return;
     }
-    const notes = buildBrief(draft);
+    const notes = buildBrief(nextDraft);
     if (notes.length > 8000) {
-      setError("Your full specification is too long. Shorten the fields and try again.");
+      setError("Your full specification is too long. Shorten it and try again.");
       return;
     }
     setLoading(true);
@@ -211,7 +224,7 @@ export default function Home() {
       const response = await fetch("/api/disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notes, category: draft.category }),
+        body: JSON.stringify({ notes, category: nextDraft.category }),
       });
       const payload: unknown = await response.json();
       if (!response.ok || !isStructuredDisclosure(payload)) {
@@ -417,20 +430,22 @@ export default function Home() {
       <div className={styles.layout}>
         <div className={styles.column}>
           <section id="frame" className={styles.panel} aria-labelledby="frame-title">
-            <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 01 · Frame</p><h2 id="frame-title">Make the problem specific.</h2><p>Start with what you know. Blank context is allowed; Innovator will mark the resulting assumptions instead of filling them with invented facts.</p></div><span className={styles.step}>01</span></div>
+            <div className={styles.panelHeader}><div><p className={styles.kicker}>Stage 01 · Frame</p><h2 id="frame-title">Say it the way you&rsquo;d explain it.</h2><p>One box, in your own words: the idea, the data or context you have, and what exists today. Innovator organizes it into a structured draft, then asks only the follow-ups that matter.</p></div><span className={styles.step}>01</span></div>
             <form className={styles.form} onSubmit={generate}>
               <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="problem"><span>What problem should the invention solve? <b aria-hidden="true">*</b></span><span>{draft.problem.length}/3000</span></label>
-                <textarea id="problem" required maxLength={3000} rows={5} value={draft.problem} onChange={(event) => setDraftField("problem", event.target.value)} placeholder="Describe the observable pain point and outcome you want to change." aria-describedby="problem-hint" />
-                <p className={styles.fieldHint} id="problem-hint">Separate what you observed from what you suspect. Do not include secrets or personal data.</p>
-              </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="target-users"><span>Who will use it, and in what environment?</span><span>{draft.targetUsers.length}/600</span></label>
-                <textarea id="target-users" maxLength={600} rows={2} value={draft.targetUsers} onChange={(event) => setDraftField("targetUsers", event.target.value)} placeholder="People, setting, frequency of use, available infrastructure…" />
+                <label className={styles.fieldLabel} htmlFor="idea"><span>Your idea, concept, data, and context <b aria-hidden="true">*</b></span><span>{draft.problem.length}/5000</span></label>
+                <textarea id="idea" required maxLength={5000} rows={9} value={draft.problem} onChange={(event) => setDraftField("problem", event.target.value)} placeholder="Example: A low-cost sensor that flags early root infection in greenhouse tomatoes. I have two seasons of leaf photos, roughly labeled. Current options need lab tests. Budget under $50 per unit, must run off-grid…" aria-describedby="idea-hint" />
+                <p className={styles.fieldHint} id="idea-hint">Write it like a message to a colleague. No structure needed. Do not include secrets or personal data.</p>
               </div>
               <div className={styles.field}>
                 <label className={styles.fieldLabel} htmlFor="category"><span>Technology field</span><span>Used for terminology only</span></label>
                 <select id="category" value={draft.category} onChange={(event) => setDraftField("category", event.target.value)}><option>Health and accessibility</option><option>Climate and energy</option><option>Agriculture</option><option>Education hardware</option><option>Materials and manufacturing</option><option>Software and AI</option><option>Other</option></select>
+              </div>
+              <details className={styles.advanced}>
+                <summary>Structured details <span>(optional — blank fields become open questions, not invented facts)</span></summary>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel} htmlFor="target-users"><span>Who will use it, and in what environment?</span><span>{draft.targetUsers.length}/600</span></label>
+                <textarea id="target-users" maxLength={600} rows={2} value={draft.targetUsers} onChange={(event) => setDraftField("targetUsers", event.target.value)} placeholder="People, setting, frequency of use, available infrastructure…" />
               </div>
               <div className={styles.field}>
                 <label className={styles.fieldLabel} htmlFor="approaches"><span>Existing approaches or attempts</span><span>{draft.existingApproaches.length}/1200</span></label>
@@ -444,6 +459,7 @@ export default function Home() {
                 <label className={styles.fieldLabel} htmlFor="success"><span>How could success be measured?</span><span>{draft.successCriteria.length}/1000</span></label>
                 <textarea id="success" maxLength={1000} rows={3} value={draft.successCriteria} onChange={(event) => setDraftField("successCriteria", event.target.value)} placeholder="Baseline, measurable outcome, trade-offs, and what would falsify the idea…" />
               </div>
+              </details>
               <div className={styles.formActions}>
                 <button className={styles.primary} type="submit" disabled={loading}>{loading ? "Generating candidate…" : "Generate invention candidate"}</button>
                 <button className={styles.quiet} type="button" onClick={clearDraft}>Clear unsaved work</button>
@@ -471,7 +487,7 @@ export default function Home() {
 
         <div className={styles.column}>
           <section className={styles.panel} aria-labelledby="candidate-title" aria-live="polite">
-            {!disclosure ? <div className={styles.empty}><div className={styles.emptyMark}>?</div><h3 id="candidate-title">No candidate yet.</h3><p>Begin with a problem you can observe. The page will keep your unsaved draft in this browser session.</p><button className={styles.secondary} type="button" onClick={() => { setActiveStage("frame"); scrollToStage("frame"); }}>Start framing →</button></div> : <>
+            {!disclosure ? <div className={styles.empty}><div className={styles.emptyMark}>?</div><h3 id="candidate-title">No candidate yet.</h3><p>Describe your idea in the single box — a rough paragraph with whatever data or context you have is enough. The page keeps your unsaved draft in this browser session.</p><button className={styles.secondary} type="button" onClick={() => { setActiveStage("frame"); scrollToStage("frame"); }}>Start framing →</button></div> : <>
               <div className={styles.panelHeader}><div><p className={styles.kicker}>Working output</p><h2 id="candidate-title">Candidate brief</h2><p>A draft to inspect, challenge, and test. This is a proposed mechanism, not a finding.</p></div><span className={styles.step}>01</span></div>
               <div className={styles.output}>
                 <div className={styles.outputTitle}><h3>{disclosure.title}</h3><span className={`${styles.badge} ${styles.proposed}`}>Proposed</span></div>
@@ -488,6 +504,14 @@ export default function Home() {
                 <div className={styles.outputSection}><h4>Differentiating hypothesis — not a novelty decision</h4><p>{disclosure.noveltyHypothesis}</p></div>
                 <div className={styles.outputSection}><h4>Key components</h4>{disclosure.components.length ? <div className={styles.tags}>{disclosure.components.map((component, index) => <span className={styles.tag} key={index}>{component}</span>)}</div> : <p>Not assessed yet.</p>}</div>
                 <div className={styles.outputSection}><h4>Open questions / validation gates</h4><ul>{disclosure.missingQuestions.map((question, index) => <li key={index}>{question}</li>)}</ul></div>
+                <div className={styles.followUp}>
+                  <h4>Only the follow-ups that matter</h4>
+                  <p>Answer any of these in your own words and refine the draft. What you skip stays marked as an open question.</p>
+                  <textarea rows={4} maxLength={2000} value={followUp} onChange={(event) => setFollowUp(event.target.value)} placeholder="e.g. Budget is under $50 per unit. I already have about 400 labeled photos. It must work off-grid…" aria-label="Answers to the open questions" />
+                  <div className={styles.formActions}>
+                    <button className={styles.primary} type="button" onClick={refineWithAnswers} disabled={loading || !followUp.trim()}>{loading ? "Refining…" : "Refine draft with these answers"}</button>
+                  </div>
+                </div>
                 <div className={styles.outputSection}><h4>Creative handoffs</h4><div className={styles.plan}>{Object.entries(buildInventionMediaPrompts(disclosure)).map(([kind, prompt]) => <article className={styles.planCard} key={kind}><strong>{kind === "conceptImage" ? "Concept image" : kind === "prototypeVideo" ? "Prototype video" : "Validation diagram"}</strong><div><p>{prompt}</p><small>Creative direction only; not visual evidence.</small></div></article>)}</div></div>
                 <div className={styles.nextBox}><strong>Continue with a bounded role</strong><p>Use the research records and this candidate to expose assumptions before you choose a test.</p><div className={styles.roleActions}><button className={styles.secondary} type="button" onClick={() => { setActiveStage("challenge"); scrollToStage("challenge"); runRole("review"); }} disabled={roleLoading !== null}>{roleLoading === "review" ? "Reviewing…" : "Challenge with committee"}</button><button className={styles.secondary} type="button" onClick={() => { setActiveStage("test"); scrollToStage("test"); runRole("orchestration"); }} disabled={roleLoading !== null}>{roleLoading === "orchestration" ? "Orchestrating…" : "Choose next test"}</button><button className={styles.secondary} type="button" onClick={generateManufacturingHandoff} disabled={manufacturingLoading}>{manufacturingLoading ? "Preparing handoff…" : "Manufacturing handoff"}</button></div></div>
                 {manufacturing && <div className={styles.outputSection}><h4>Manufacturing handoff · gated research record</h4><p>{manufacturing.boundary}</p><h5>Requirements and provenance</h5><ul>{manufacturing.requirements.map((item) => <li key={item.item}><b>{item.item}</b> <span>({item.provenance}) — {item.acceptance}</span></li>)}</ul><h5>Manufacturing and test gates</h5><div className={styles.plan}>{manufacturing.gates.map((gate) => <article className={styles.planCard} key={gate.gate}><strong>{gate.gate}</strong><div><p>{gate.holdPoint}</p><small>Reversal: {gate.reversalCriteria}</small></div></article>)}</div><h5>Explicit exclusions</h5><ul>{manufacturing.exclusions.map((item) => <li key={item}>{item}</li>)}</ul><h5>Unresolved before any qualified work</h5><ul>{manufacturing.unresolved.map((item) => <li key={item}>{item}</li>)}</ul></div>}

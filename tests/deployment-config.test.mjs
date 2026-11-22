@@ -32,7 +32,7 @@ test("Docker excludes old invention samples and reusable skills from deployment"
 
 test("active page is specification-driven while original demo records are preserved", async () => {
   const page = await readFile(resolve(root, "app/page.tsx"), "utf8");
-  assert.match(page, /What problem should the invention solve/);
+  assert.match(page, /Your idea, concept, data, and context/);
   assert.match(page, /Who will use it/);
   assert.match(page, /Constraints and exclusions/);
   assert.doesNotMatch(page, /Modular Prosthetic Hand|Solar Crop Dryer|AURORA Thermal Containment Rig|TIDEGILL Carbon Cell Module/);
