@@ -11,7 +11,7 @@ export async function runRoleProvider(role: RoleName, brief: string): Promise<Re
   if (freeLlmSelected()) {
     const result = await freeLlmChat([{ role: "system", content: prompt }, { role: "user", content: brief.slice(0, 6000) }], 1400);
     if (!result) return null;
-    try { return { role, mode: "live", provenance: { provider: "FreeLLMAPI", model: result.model, evidence: "proposed" }, result: JSON.parse(result.text) }; }
+    try { return { role, mode: "live", provenance: { provider: "FreeLLMAPI", model: null, routerSelector: result.selector, evidence: "proposed" }, result: JSON.parse(result.text) }; }
     catch { return null; }
   }
   const hfToken = process.env.HF_TOKEN;
