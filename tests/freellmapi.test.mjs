@@ -21,6 +21,8 @@ test("configured router sends bounded OpenAI-compatible chat and records its mod
     assert.equal(request.init.headers.Authorization, "Bearer test-key");
     assert.equal(JSON.parse(request.init.body).model, "auto");
     assert.equal(value?.provenance?.provider, "FreeLLMAPI");
+    assert.equal(value?.provenance?.model, null);
+    assert.equal(value?.provenance?.routerSelector, "auto");
     assert.equal(value?.result?.finding, "proposed");
   } finally { process.env = previous; globalThis.fetch = oldFetch; }
 });
