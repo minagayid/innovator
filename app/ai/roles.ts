@@ -7,7 +7,7 @@ export function fallbackRole(role: RoleName, brief: string) { const compact = br
 export async function runRoleProvider(role: RoleName, brief: string): Promise<Record<string, unknown> | null> {
   const prompt = `You are the ${ROLE_DESCRIPTIONS[role]} Return JSON only. Keep every claim explicitly sourced, computed, inferred, proposed, or unresolved. Never claim novelty, patentability, safety, feasibility, or validation. Brief: ${brief.slice(0, 5000)}`;
   const hfToken = process.env.HF_TOKEN;
-  const hfModel = /^[A-Za-z0-9._/-]{1,150}$/.test(process.env.HF_MODEL || "") ? process.env.HF_MODEL! : "google/gemma-2-2b-it";
+  const hfModel = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}(?::[A-Za-z0-9._-]{1,80})?$/.test(process.env.HF_MODEL || "") ? process.env.HF_MODEL! : "Qwen/Qwen3-4B-Instruct-2507:fastest";
   if (hfToken) {
     try {
       const response = await fetch("https://router.huggingface.co/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${hfToken}` }, body: JSON.stringify({ model: hfModel, temperature: 0.2, max_tokens: 1400, messages: [{ role: "system", content: prompt }, { role: "user", content: brief.slice(0, 6000) }] }), signal: AbortSignal.timeout(15000) });
@@ -30,3 +30,4 @@ export async function runRoleProvider(role: RoleName, brief: string): Promise<Re
     return { role, mode: "live", provenance: { provider: "OpenAI", model, evidence: "proposed" }, result: value };
   } catch { return null; }
 }
+
