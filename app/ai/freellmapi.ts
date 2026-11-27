@@ -20,7 +20,7 @@ export function freeLlmConfig(): { endpoint: string; token: string; model: strin
   } catch { return null; }
 }
 
-export async function freeLlmChat(messages: Message[], maxTokens: number): Promise<{ text: string; model: string } | null> {
+export async function freeLlmChat(messages: Message[], maxTokens: number): Promise<{ text: string; selector: string } | null> {
   const config = freeLlmConfig();
   if (!config) return null;
   try {
@@ -34,6 +34,6 @@ export async function freeLlmChat(messages: Message[], maxTokens: number): Promi
     if (!response.ok) return null;
     const payload = JSON.parse(await readBoundedProviderResponse(response)) as { choices?: Array<{ message?: { content?: unknown } }> };
     const text = payload.choices?.[0]?.message?.content;
-    return typeof text === "string" ? { text, model: config.model } : null;
+    return typeof text === "string" ? { text, selector: config.model } : null;
   } catch { return null; }
 }
