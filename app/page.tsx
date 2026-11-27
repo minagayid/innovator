@@ -40,9 +40,9 @@ function isStructuredDisclosure(value: unknown): value is StructuredDisclosure {
     && Array.isArray(value.components) && value.components.every((item) => typeof item === "string")
     && Array.isArray(value.keywords) && value.keywords.every((item) => typeof item === "string")
     && Array.isArray(value.missingQuestions) && value.missingQuestions.every((item) => typeof item === "string")
-    && (value.mode === "live" || value.mode === "gemini-live" || value.mode === "huggingface-live" || value.mode === "demo-fallback")
+    && (value.mode === "live" || value.mode === "gemini-live" || value.mode === "huggingface-live" || value.mode === "freellmapi-live" || value.mode === "demo-fallback")
     && (value.provenance.kind === "model-assisted-draft" || value.provenance.kind === "deterministic-fallback")
-    && (value.provenance.provider === "OpenAI" || value.provenance.provider === "Gemini" || value.provenance.provider === "Hugging Face" || value.provenance.provider === null)
+    && (value.provenance.provider === "OpenAI" || value.provenance.provider === "Gemini" || value.provenance.provider === "Hugging Face" || value.provenance.provider === "FreeLLMAPI" || value.provenance.provider === null)
     && (typeof value.provenance.model === "string" || value.provenance.model === null);
 }
 
@@ -543,3 +543,4 @@ export default function Home() {
     <footer className={styles.footer}><span>Innovator · Evidence-first invention generation</span><strong>Keep the claim smaller than the evidence.</strong></footer>
   </div>;
 }
+
