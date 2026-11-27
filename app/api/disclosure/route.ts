@@ -20,7 +20,7 @@ async function callPaidProvider(hasGemini: boolean, hasHuggingFace: boolean, not
       { role: "user", content: `Category: ${category || "unspecified"}\nNotes: ${notes}` },
     ], MAX_PROVIDER_OUTPUT_TOKENS);
     const disclosure = result ? parseStructuredDisclosure(result.text) : null;
-    if (disclosure && result) return NextResponse.json({ ...disclosure, mode: "freellmapi-live", provenance: { kind: "model-assisted-draft", provider: "FreeLLMAPI", model: result.model } });
+    if (disclosure && result) return NextResponse.json({ ...disclosure, mode: "freellmapi-live", provenance: { kind: "model-assisted-draft", provider: "FreeLLMAPI", model: null, routerSelector: result.selector } });
     return NextResponse.json(buildFallbackDisclosure(notes, category));
   }
   // Use one paid provider per request. A failed Gemini call does not fall through to OpenAI.
