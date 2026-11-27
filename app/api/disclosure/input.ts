@@ -12,7 +12,7 @@ export type DisclosureInputResult =
 
 export type DisclosureProvenance = {
   kind: "model-assisted-draft" | "deterministic-fallback";
-  provider: "OpenAI" | "Gemini" | "Hugging Face" | null;
+  provider: "OpenAI" | "Gemini" | "Hugging Face" | "FreeLLMAPI" | null;
   model: string | null;
 };
 
@@ -27,7 +27,7 @@ export type StructuredDisclosure = {
   keywords: string[];
   missingQuestions: string[];
   publicSummary: string;
-  mode: "live" | "gemini-live" | "huggingface-live" | "demo-fallback";
+  mode: "live" | "gemini-live" | "huggingface-live" | "freellmapi-live" | "demo-fallback";
   provenance: DisclosureProvenance;
 };
 
@@ -194,3 +194,4 @@ export function parseDisclosureBody(bodyText: string): DisclosureInputResult {
     },
   };
 }
+
