@@ -43,6 +43,7 @@ function isStructuredDisclosure(value: unknown): value is StructuredDisclosure {
     && (value.mode === "live" || value.mode === "gemini-live" || value.mode === "huggingface-live" || value.mode === "freellmapi-live" || value.mode === "demo-fallback")
     && (value.provenance.kind === "model-assisted-draft" || value.provenance.kind === "deterministic-fallback")
     && (value.provenance.provider === "OpenAI" || value.provenance.provider === "Gemini" || value.provenance.provider === "Hugging Face" || value.provenance.provider === "FreeLLMAPI" || value.provenance.provider === null)
+    && (value.provenance.routerSelector === undefined || typeof value.provenance.routerSelector === "string")
     && (typeof value.provenance.model === "string" || value.provenance.model === null);
 }
 
@@ -497,7 +498,7 @@ export default function Home() {
                   <button className={styles.quiet} type="button" onClick={savePrivateDraft} disabled={saving}>{saving ? "Saving…" : user ? "Save private workspace" : "Sign in to save"}</button>
                 </div>
                 <div className={styles.metaGrid}><div className={styles.metaCard}><span>Field</span><b>{disclosure.technicalField}</b></div><div className={styles.metaCard}><span>Draft mode</span><b>{disclosure.mode === "demo-fallback" ? "Deterministic scaffold" : "Model-assisted"}</b></div><div className={styles.metaCard}><span>Evidence state</span><b>Unverified proposal</b></div></div>
-                <div className={styles.outputSection}><h4>Generation provenance</h4><p>{disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : `${disclosure.provenance.provider || "Model"} draft using ${disclosure.provenance.model || "an unreported model"}. This text is unverified.`}</p></div>
+                <div className={styles.outputSection}><h4>Generation provenance</h4><p>{disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : disclosure.provenance.provider === "FreeLLMAPI" ? `FreeLLMAPI draft; router selector ${disclosure.provenance.routerSelector || "unreported"}. The actual model is unverified. This text is unverified.` : `${disclosure.provenance.provider || "Model"} draft using ${disclosure.provenance.model || "an unreported model"}. This text is unverified.`}</p></div>
                 <div className={styles.outputSection}><h4>Abstract</h4><p>{disclosure.abstract}</p></div>
                 <div className={styles.outputSection}><h4>Problem framing</h4><p>{disclosure.problem}</p></div>
                 <div className={styles.outputSection}><h4>Proposed mechanism / solution</h4><p>{disclosure.solution}</p></div>
