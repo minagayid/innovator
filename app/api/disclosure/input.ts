@@ -13,6 +13,7 @@ export type DisclosureInputResult =
 export type DisclosureProvenance = {
   kind: "model-assisted-draft" | "deterministic-fallback";
   provider: "OpenAI" | "Gemini" | "Hugging Face" | "FreeLLMAPI" | null;
+  routerSelector?: string;
   model: string | null;
 };
 
