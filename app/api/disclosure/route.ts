@@ -4,6 +4,7 @@ import { authenticatedDisclosureCallerHash, runDisclosureProviderIfQuotaAllows, 
 import { getDatabase } from "../../../db/index.ts";
 import { getChatGPTUser } from "../../chatgpt-auth";
 import { freeLlmChat, freeLlmSelected } from "../../ai/freellmapi.ts";
+import { callKiloFree, KILO_FREE_MODEL } from "../../ai/kilo-free.ts";
 
 const PROVIDER_TIMEOUT_MS = 15_000;
 const MAX_PROVIDER_OUTPUT_TOKENS = 1200;
@@ -133,7 +134,24 @@ export async function POST(request: NextRequest) {
   }
   const parsed = parseDisclosureBody(bodyText);
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: parsed.status });
-  const { notes, category } = parsed.value;
+  const { notes, category, kiloConsent } = parsed.value;
+
+  // A request explicitly choosing Kilo never falls through to another provider.
+  // Consent alone is insufficient: the deployment must also enable it.
+  if (kiloConsent) {
+    if (process.env.KILO_FREE_ENABLED !== "true") return NextResponse.json(buildFallbackDisclosure(notes, category));
+    const identity = await getChatGPTUser();
+    const callerHash = identity
+      ? await authenticatedDisclosureCallerHash(identity.email, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET)
+      : await trustedDisclosureCallerHash(request, process.env.DISCLOSURE_TRUST_CF_EDGE, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET);
+    const gated = await runDisclosureProviderIfQuotaAllows(callerHash, getDatabase, async () => {
+      const disclosure = await callKiloFree(DISCLOSURE_SYSTEM_PROMPT, `Category: ${category || "unspecified"}\nNotes: ${notes}`);
+      return disclosure
+        ? NextResponse.json({ ...disclosure, mode: "kilo-free-live", provenance: { kind: "model-assisted-draft", provider: "Kilo Gateway", model: null, requestedModel: KILO_FREE_MODEL } })
+        : NextResponse.json(buildFallbackDisclosure(notes, category));
+    });
+    return gated.allowed ? gated.value : NextResponse.json(buildFallbackDisclosure(notes, category));
+  }
 
   const hasGemini = Boolean(process.env.GEMINI_API_KEY);
   const hasHuggingFace = Boolean(process.env.HF_TOKEN);
