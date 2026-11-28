@@ -12,6 +12,10 @@ The temporary sandbox deliberately runs without provider credentials. In that mo
 
 ## AI roles
 
+### Optional Kilo free model for disclosure
+
+Set `KILO_FREE_ENABLED=true` on the server to offer the fixed `baidu/ernie-5.5-flash-preview:free` model through Kilo's anonymous gateway. The user must also opt in for each draft in the form; Kilo requests never fall through to another provider. Requests remain behind Innovator's existing identity, HMAC and shared D1 quota gate. The model may become unavailable or rate-limited, in which case the app returns a deterministic scaffold. Kilo's free tier is experimental and may log or use submitted material. Do not send confidential inventions, secrets, health information or personal data. See [Kilo authentication](https://kilo.ai/docs/gateway/authentication) and [model terms](https://kilo.ai/docs/gateway/models-and-providers). The fixed requested model is recorded, but the actual serving model is not independently verified.
+
 ### Optional FreeLLMAPI router
 
 Innovator can call a separately hosted [FreeLLMAPI](https://github.com/tashfeenahmed/freellmapi) instance using its OpenAI-compatible chat endpoint. This is an experimental, opt-in integration; installing this app does not provide a router, provider accounts, or free API keys. Configure the router with your provider keys and an appropriately restricted model chain, then set these server-only environment variables:
