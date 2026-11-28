@@ -5,15 +5,16 @@ export const MAX_PROVIDER_RESPONSE_BYTES = 32_768;
 
 export class RequestBodyTooLargeError extends Error {}
 
-export type DisclosureInput = { notes: string; category: string };
+export type DisclosureInput = { notes: string; category: string; kiloConsent?: true };
 export type DisclosureInputResult =
   | { ok: true; value: DisclosureInput }
   | { ok: false; status: 400 | 413; error: string };
 
 export type DisclosureProvenance = {
   kind: "model-assisted-draft" | "deterministic-fallback";
-  provider: "OpenAI" | "Gemini" | "Hugging Face" | "FreeLLMAPI" | null;
+  provider: "OpenAI" | "Gemini" | "Hugging Face" | "FreeLLMAPI" | "Kilo Gateway" | null;
   routerSelector?: string;
+  requestedModel?: string;
   model: string | null;
 };
 
@@ -28,7 +29,7 @@ export type StructuredDisclosure = {
   keywords: string[];
   missingQuestions: string[];
   publicSummary: string;
-  mode: "live" | "gemini-live" | "huggingface-live" | "freellmapi-live" | "demo-fallback";
+  mode: "live" | "gemini-live" | "huggingface-live" | "freellmapi-live" | "kilo-free-live" | "demo-fallback";
   provenance: DisclosureProvenance;
 };
 
@@ -176,7 +177,7 @@ export function parseDisclosureBody(bodyText: string): DisclosureInputResult {
     return { ok: false, status: 400, error: "Request body must be an object." };
   }
 
-  const input = body as { notes?: unknown; category?: unknown };
+  const input = body as { notes?: unknown; category?: unknown; kiloConsent?: unknown };
   if (typeof input.notes !== "string" || !input.notes.trim()) {
     return { ok: false, status: 400, error: "Notes are required." };
   }
@@ -192,6 +193,7 @@ export function parseDisclosureBody(bodyText: string): DisclosureInputResult {
     value: {
       notes: input.notes.trim(),
       category: typeof input.category === "string" ? input.category.trim() : "unspecified",
+      ...(input.kiloConsent === true ? { kiloConsent: true as const } : {}),
     },
   };
 }
