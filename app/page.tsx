@@ -373,6 +373,7 @@ export default function Home() {
   function clearDraft() {
     if (!window.confirm("Clear this unsaved brief and candidate from this browser session?")) return;
     setDraft(EMPTY_DRAFT);
+    setKiloConsent(false);
     setResearchQuery("");
     setResearchResults([]);
     setRoleResults({});
