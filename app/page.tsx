@@ -223,6 +223,7 @@ export default function Home() {
       return;
     }
     setLoading(true);
+    setKiloConsent(false);
     try {
       const response = await fetch("/api/disclosure", {
         method: "POST",
@@ -464,7 +465,7 @@ export default function Home() {
                 <textarea id="success" maxLength={1000} rows={3} value={draft.successCriteria} onChange={(event) => setDraftField("successCriteria", event.target.value)} placeholder="Baseline, measurable outcome, trade-offs, and what would falsify the idea…" />
               </div>
               </details>
-              <label><input type="checkbox" checked={kiloConsent} onChange={(event) => setKiloConsent(event.target.checked)} /> If enabled, use the optional Kilo free model for this draft. I agree to send this brief to Kilo and its model provider, which may retain or use the data. Do not include confidential inventions, secrets, or personal data.</label>
+              <label><input type="checkbox" checked={kiloConsent} onChange={(event) => setKiloConsent(event.target.checked)} /> If enabled, use the optional Kilo free model for this draft. I agree to send this brief to Kilo and the Baidu model provider, which may retain or use the data. Do not include confidential inventions, secrets, or personal data.</label>
               <div className={styles.formActions}>
                 <button className={styles.primary} type="submit" disabled={loading}>{loading ? "Generating candidate…" : "Generate invention candidate"}</button>
                 <button className={styles.quiet} type="button" onClick={clearDraft}>Clear unsaved work</button>
