@@ -40,9 +40,11 @@ function isStructuredDisclosure(value: unknown): value is StructuredDisclosure {
     && Array.isArray(value.components) && value.components.every((item) => typeof item === "string")
     && Array.isArray(value.keywords) && value.keywords.every((item) => typeof item === "string")
     && Array.isArray(value.missingQuestions) && value.missingQuestions.every((item) => typeof item === "string")
-    && (value.mode === "live" || value.mode === "gemini-live" || value.mode === "huggingface-live" || value.mode === "demo-fallback")
+    && (value.mode === "live" || value.mode === "gemini-live" || value.mode === "huggingface-live" || value.mode === "freellmapi-live" || value.mode === "kilo-free-live" || value.mode === "demo-fallback")
     && (value.provenance.kind === "model-assisted-draft" || value.provenance.kind === "deterministic-fallback")
-    && (value.provenance.provider === "OpenAI" || value.provenance.provider === "Gemini" || value.provenance.provider === "Hugging Face" || value.provenance.provider === null)
+    && (value.provenance.provider === "OpenAI" || value.provenance.provider === "Gemini" || value.provenance.provider === "Hugging Face" || value.provenance.provider === "FreeLLMAPI" || value.provenance.provider === "Kilo Gateway" || value.provenance.provider === null)
+    && (value.provenance.routerSelector === undefined || typeof value.provenance.routerSelector === "string")
+    && (value.provenance.requestedModel === undefined || typeof value.provenance.requestedModel === "string")
     && (typeof value.provenance.model === "string" || value.provenance.model === null);
 }
 
@@ -112,6 +114,7 @@ export default function Home() {
   const [manufacturing, setManufacturing] = useState<ManufacturingHandoff | null>(null);
   const [manufacturingLoading, setManufacturingLoading] = useState(false);
   const [followUp, setFollowUp] = useState("");
+  const [kiloConsent, setKiloConsent] = useState(false);
 
   const roleBrief = useMemo(() => {
     const sourceNote = researchResults.length > 0
@@ -220,11 +223,12 @@ export default function Home() {
       return;
     }
     setLoading(true);
+    setKiloConsent(false);
     try {
       const response = await fetch("/api/disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notes, category: nextDraft.category }),
+        body: JSON.stringify({ notes, category: nextDraft.category, kiloConsent }),
       });
       const payload: unknown = await response.json();
       if (!response.ok || !isStructuredDisclosure(payload)) {
@@ -232,7 +236,7 @@ export default function Home() {
       }
       setDraft((current) => ({ ...current, disclosure: payload }));
       setActiveStage("frame");
-      if (payload.mode === "demo-fallback") setMessage("A deterministic scaffold was returned. Model-assisted generation requires a signed-in user, a configured provider key, and a quota secret.");
+      if (payload.mode === "demo-fallback") setMessage("A deterministic scaffold was returned. Model-assisted generation requires an enabled provider and the configured identity and quota controls.");
       else setMessage("Candidate drafted. Treat every mechanism and target as a proposal until tested.");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The invention draft could not be generated.");
@@ -370,6 +374,7 @@ export default function Home() {
   function clearDraft() {
     if (!window.confirm("Clear this unsaved brief and candidate from this browser session?")) return;
     setDraft(EMPTY_DRAFT);
+    setKiloConsent(false);
     setResearchQuery("");
     setResearchResults([]);
     setRoleResults({});
@@ -460,11 +465,12 @@ export default function Home() {
                 <textarea id="success" maxLength={1000} rows={3} value={draft.successCriteria} onChange={(event) => setDraftField("successCriteria", event.target.value)} placeholder="Baseline, measurable outcome, trade-offs, and what would falsify the idea…" />
               </div>
               </details>
+              <label><input type="checkbox" checked={kiloConsent} onChange={(event) => setKiloConsent(event.target.checked)} /> If enabled, use the optional Kilo free model for this draft. I agree to send this brief to Kilo and the Baidu model provider, which may retain or use the data. Do not include confidential inventions, secrets, or personal data.</label>
               <div className={styles.formActions}>
                 <button className={styles.primary} type="submit" disabled={loading}>{loading ? "Generating candidate…" : "Generate invention candidate"}</button>
                 <button className={styles.quiet} type="button" onClick={clearDraft}>Clear unsaved work</button>
               </div>
-              <p className={styles.formFootnote}><strong>Private by default.</strong> The unfinished brief stays in this browser session. Sign in only when you want to save a private workspace.</p>
+              <p className={styles.formFootnote}>Your unfinished brief stays in this browser session. Generating may send it to the configured AI provider. Sign in to save a private workspace.</p>
             </form>
           </section>
 
@@ -497,7 +503,7 @@ export default function Home() {
                   <button className={styles.quiet} type="button" onClick={savePrivateDraft} disabled={saving}>{saving ? "Saving…" : user ? "Save private workspace" : "Sign in to save"}</button>
                 </div>
                 <div className={styles.metaGrid}><div className={styles.metaCard}><span>Field</span><b>{disclosure.technicalField}</b></div><div className={styles.metaCard}><span>Draft mode</span><b>{disclosure.mode === "demo-fallback" ? "Deterministic scaffold" : "Model-assisted"}</b></div><div className={styles.metaCard}><span>Evidence state</span><b>Unverified proposal</b></div></div>
-                <div className={styles.outputSection}><h4>Generation provenance</h4><p>{disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : `${disclosure.provenance.provider || "Model"} draft using ${disclosure.provenance.model || "an unreported model"}. This text is unverified.`}</p></div>
+                <div className={styles.outputSection}><h4>Generation provenance</h4><p>{disclosure.mode === "demo-fallback" ? "Deterministic local scaffold; no semantic model analysis was performed." : disclosure.provenance.provider === "FreeLLMAPI" ? `FreeLLMAPI draft; router selector ${disclosure.provenance.routerSelector || "unreported"}. The actual model is unverified. This text is unverified.` : disclosure.provenance.provider === "Kilo Gateway" ? `Kilo Gateway draft; requested model ${disclosure.provenance.requestedModel || "unreported"}. The actual model is unverified. This text is unverified.` : `${disclosure.provenance.provider || "Model"} draft using ${disclosure.provenance.model || "an unreported model"}. This text is unverified.`}</p></div>
                 <div className={styles.outputSection}><h4>Abstract</h4><p>{disclosure.abstract}</p></div>
                 <div className={styles.outputSection}><h4>Problem framing</h4><p>{disclosure.problem}</p></div>
                 <div className={styles.outputSection}><h4>Proposed mechanism / solution</h4><p>{disclosure.solution}</p></div>
@@ -543,3 +549,4 @@ export default function Home() {
     <footer className={styles.footer}><span>Innovator · Evidence-first invention generation</span><strong>Keep the claim smaller than the evidence.</strong></footer>
   </div>;
 }
+

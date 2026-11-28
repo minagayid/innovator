@@ -104,10 +104,11 @@ Application code is available under the [MIT License](LICENSE). Individual inven
 
 ## Provider and project limits
 
-A disclosure request uses at most one configured provider. Priority is Gemini, then Hugging Face Inference Providers, then OpenAI; provider errors do not trigger a second provider request. Hugging Face uses the OpenAI-compatible `https://router.huggingface.co/v1/chat/completions` endpoint and defaults to `Qwen/Qwen3-4B-Instruct-2507:fastest`. Create a fine-grained Hugging Face token with Inference Providers permission and store it as the server-side `HF_TOKEN`; never expose it to the browser or commit it. The route requires the configured trusted-edge identity and shared D1 quota controls before paid inference. See [`docs/paid-inference-boundary.md`](docs/paid-inference-boundary.md) before enabling paid providers in a public deployment.
+A disclosure request uses at most one configured application-level provider. Priority is an opt-in FreeLLMAPI router, then Gemini, Hugging Face Inference Providers, and OpenAI; provider errors do not trigger a second application-level provider request. A router may itself retry upstream services, with their own costs and data policies. See [`docs/provider-and-research-setup.md`](docs/provider-and-research-setup.md) for router configuration. Hugging Face uses the OpenAI-compatible `https://router.huggingface.co/v1/chat/completions` endpoint and defaults to `Qwen/Qwen3-4B-Instruct-2507:fastest`. Create a fine-grained Hugging Face token with Inference Providers permission and store it as the server-side `HF_TOKEN`; never expose it to the browser or commit it. The route requires the configured trusted-edge identity and shared D1 quota controls before paid inference. See [`docs/paid-inference-boundary.md`](docs/paid-inference-boundary.md) before enabling paid providers in a public deployment.
 
 Project creation uses shared D1 quotas (3 per user per UTC hour, 10 per user per UTC day, 25 per deployment per UTC hour, and 100 per deployment per UTC day) and fails closed if the quota store is unavailable. Project listing is cursor-paginated (20 by default, maximum 50). These limits control request and page volume; they do not define a lifetime storage or retention policy. Set a deletion policy and monitor storage before broad production use.
 
 ## Consolidated project materials
 
 The related Innovart project and its additional source branch are preserved under [`related-projects/`](related-projects/). See the [consolidation index](CONSOLIDATED_PROJECTS.md).
+

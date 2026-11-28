@@ -19,6 +19,10 @@ services:
       GEMINI_MODEL: "${GEMINI_MODEL:-gemini-3.8-flash}"
       HF_TOKEN: "${HF_TOKEN:-}"
       HF_MODEL: "${HF_MODEL:-Qwen/Qwen3-4B-Instruct-2507:fastest}"
+      FREELLMAPI_BASE_URL: "${FREELLMAPI_BASE_URL:-}"
+      FREELLMAPI_API_KEY: "${FREELLMAPI_API_KEY:-}"
+      FREELLMAPI_MODEL: "${FREELLMAPI_MODEL:-auto}"
+      KILO_FREE_ENABLED: "${KILO_FREE_ENABLED:-false}"
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
       GOOGLE_REDIRECT_URI: "${GOOGLE_REDIRECT_URI:-}"
@@ -53,3 +57,4 @@ volumes:
   innovator_state:
   innovator_registry:
   innovator_logs:
+

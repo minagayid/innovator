@@ -6,4 +6,7 @@ Set `DISCLOSURE_TRUST_CF_EDGE=true` only when requests reach this Worker through
 
 The shared D1 limits are 4 requests per caller per hour, 12 per caller per day, 24 total requests per hour, and 120 total requests per day. Each provider call is capped by the route's output-token limit and bounded response body. Quota/schema errors return the deterministic response without calling a provider. Disclosure and role calls share this conservative budget.
 
+If the optional FreeLLMAPI router is configured, a single application request may trigger retries or multiple requests inside the router. The application quota counts router calls, not upstream attempts or charges. Configure the router's free-only chain and provider-side budgets independently; prompts are sent to the router and its selected upstream provider.
+
 These application limits reduce repeated and aggregate spend; they do not prove a monthly financial ceiling or protect an origin that bypasses Cloudflare. Configure provider-side budget alerts and ensure there is no alternate public path to the Worker before enabling paid inference. This configuration does not establish clinical, patentability, safety, or other domain review. Generated disclosures, role results, and research records remain unverified drafting aids or navigation records.
+

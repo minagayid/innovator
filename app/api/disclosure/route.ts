@@ -3,6 +3,8 @@ import { buildFallbackDisclosure, parseDisclosureBody, parseHuggingFaceChatCompl
 import { authenticatedDisclosureCallerHash, runDisclosureProviderIfQuotaAllows, trustedDisclosureCallerHash } from "../../../db/disclosure-quota.ts";
 import { getDatabase } from "../../../db/index.ts";
 import { getChatGPTUser } from "../../chatgpt-auth";
+import { freeLlmChat, freeLlmSelected } from "../../ai/freellmapi.ts";
+import { callKiloFree, KILO_FREE_MODEL } from "../../ai/kilo-free.ts";
 
 const PROVIDER_TIMEOUT_MS = 15_000;
 const MAX_PROVIDER_OUTPUT_TOKENS = 1200;
@@ -13,6 +15,15 @@ function providerFetch(url: string, init: RequestInit): Promise<Response> {
 }
 
 async function callPaidProvider(hasGemini: boolean, hasHuggingFace: boolean, notes: string, category: string): Promise<NextResponse> {
+  if (freeLlmSelected()) {
+    const result = await freeLlmChat([
+      { role: "system", content: DISCLOSURE_SYSTEM_PROMPT },
+      { role: "user", content: `Category: ${category || "unspecified"}\nNotes: ${notes}` },
+    ], MAX_PROVIDER_OUTPUT_TOKENS);
+    const disclosure = result ? parseStructuredDisclosure(result.text) : null;
+    if (disclosure && result) return NextResponse.json({ ...disclosure, mode: "freellmapi-live", provenance: { kind: "model-assisted-draft", provider: "FreeLLMAPI", model: null, routerSelector: result.selector } });
+    return NextResponse.json(buildFallbackDisclosure(notes, category));
+  }
   // Use one paid provider per request. A failed Gemini call does not fall through to OpenAI.
   if (hasGemini) {
     const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
@@ -123,12 +134,29 @@ export async function POST(request: NextRequest) {
   }
   const parsed = parseDisclosureBody(bodyText);
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: parsed.status });
-  const { notes, category } = parsed.value;
+  const { notes, category, kiloConsent } = parsed.value;
+
+  // A request explicitly choosing Kilo never falls through to another provider.
+  // Consent alone is insufficient: the deployment must also enable it.
+  if (kiloConsent) {
+    if (process.env.KILO_FREE_ENABLED !== "true") return NextResponse.json(buildFallbackDisclosure(notes, category));
+    const identity = await getChatGPTUser();
+    const callerHash = identity
+      ? await authenticatedDisclosureCallerHash(identity.email, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET)
+      : await trustedDisclosureCallerHash(request, process.env.DISCLOSURE_TRUST_CF_EDGE, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET);
+    const gated = await runDisclosureProviderIfQuotaAllows(callerHash, getDatabase, async () => {
+      const disclosure = await callKiloFree(DISCLOSURE_SYSTEM_PROMPT, `Category: ${category || "unspecified"}\nNotes: ${notes}`);
+      return disclosure
+        ? NextResponse.json({ ...disclosure, mode: "kilo-free-live", provenance: { kind: "model-assisted-draft", provider: "Kilo Gateway", model: null, requestedModel: KILO_FREE_MODEL } })
+        : NextResponse.json(buildFallbackDisclosure(notes, category));
+    });
+    return gated.allowed ? gated.value : NextResponse.json(buildFallbackDisclosure(notes, category));
+  }
 
   const hasGemini = Boolean(process.env.GEMINI_API_KEY);
   const hasHuggingFace = Boolean(process.env.HF_TOKEN);
   const hasOpenAI = Boolean(process.env.OPENAI_API_KEY);
-  if (!hasGemini && !hasHuggingFace && !hasOpenAI) return NextResponse.json(buildFallbackDisclosure(notes, category));
+  if (!hasGemini && !hasHuggingFace && !hasOpenAI && !freeLlmSelected()) return NextResponse.json(buildFallbackDisclosure(notes, category));
 
   // Paid work requires an authenticated app identity (or an explicitly trusted edge) and the shared quota.
   const identity = await getChatGPTUser();
@@ -144,3 +172,4 @@ export async function POST(request: NextRequest) {
   if (!gated.allowed) return NextResponse.json(buildFallbackDisclosure(notes, category));
   return gated.value;
 }
+

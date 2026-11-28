@@ -3,6 +3,7 @@ import { fallbackRole, isRole, runRoleProvider, type RoleName } from "../../../a
 import { authenticatedDisclosureCallerHash, runDisclosureProviderIfQuotaAllows, trustedDisclosureCallerHash } from "../../../../db/disclosure-quota.ts";
 import { getDatabase } from "../../../../db/index.ts";
 import { getChatGPTUser } from "../../../chatgpt-auth";
+import { freeLlmSelected } from "../../../ai/freellmapi.ts";
 export const dynamic = "force-dynamic";
 const MAX_BRIEF_BYTES = 12000;
 export async function POST(request: NextRequest, context: { params: Promise<{ role: string }> }) {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ro
 
   // Paid role calls use the same verified identity and D1 quota boundary as disclosure.
   // If any control is missing, return the deterministic scaffold instead of spending anonymously.
-  if (process.env.OPENAI_API_KEY || process.env.HF_TOKEN) {
+  if (process.env.OPENAI_API_KEY || process.env.HF_TOKEN || freeLlmSelected()) {
     const identity = await getChatGPTUser();
     const callerHash = identity
       ? await authenticatedDisclosureCallerHash(identity.email, process.env.DISCLOSURE_RATE_LIMIT_HMAC_SECRET)
@@ -39,3 +40,4 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ro
 
   return NextResponse.json(fallbackRole(rawRole as RoleName, brief));
 }
+
